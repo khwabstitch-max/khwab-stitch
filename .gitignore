@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Production build output
+dist/
+dist.zip
+
+# Database & Storage
+data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# Environment & Secret variables
+.env
+.env.*
+!.env.example
+
+# Deployment platforms local metadata
+.netlify/
+.vercel/
+
+# Logs & OS artifacts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
