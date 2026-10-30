@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Check, X, Heart, Search, Trash2, Download, FileText, ChevronRight, ChevronLeft, Star, Scissors, Eye } from "lucide-react";
+import { Check, X, Heart, Search, Trash2, Download, FileText, ChevronRight, ChevronLeft, Star, Scissors } from "lucide-react";
 import "./styles.css";
 import StepHeader from "./components/StepHeader.jsx";
 import WelcomeStep from "./components/WelcomeStep.jsx";
@@ -968,48 +968,25 @@ export default function App() {
                   </button>
 
                   {currentSection < 6 ? (
-                    <>
+                    editingFromReview ? (
                       <button
                         type="button"
-                        onClick={() => {
-                          setStepError("");
-                          if (currentSection === 2 && !validateAndSyncCustomer()) return;
-                          if (currentSection === 3 && !outfit.type) {
-                            setStepError("कृपया आगे बढ़ने से पहले परिधान चुनें · Please choose an outfit before continuing.");
-                            return;
-                          }
-                          setEditingFromReview(false);
-                          setCurrentSection(6);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
-                        className="h-12 px-3.5 sm:px-4 rounded-full border border-[var(--primary)]/30 bg-[#fffbf7] text-[var(--primary)] font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 shadow-2xs hover:bg-[var(--primary)] hover:text-white transition-all cursor-pointer"
-                        title="Skip straight to Order Review / सीधे संपूर्ण सारांश पर जाएँ"
+                        onClick={saveAndReturnToReview}
+                        className="flex-[1.5] h-12 rounded-full text-white font-bold text-[13.5px] sm:text-[14px] flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-opacity cursor-pointer"
+                        style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
                       >
-                        <Eye size={15} />
-                        <span className="hidden sm:inline">Review / सारांश (Step 6)</span>
-                        <span className="sm:hidden">सारांश</span>
+                        <Check size={17} />
+                        <span>Save & Return to Review / सहेजें और सारांश (Step 6)</span>
                       </button>
-
-                      {editingFromReview ? (
-                        <button
-                          type="button"
-                          onClick={saveAndReturnToReview}
-                          className="flex-[1.5] h-12 rounded-full text-white font-bold text-[13px] sm:text-[14px] flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-opacity cursor-pointer"
-                          style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
-                        >
-                          <Check size={17} />
-                          <span>Save & Return / सहेजें और लौटें</span>
-                        </button>
-                      ) : (
-                        <button
-                          type="submit"
-                          className="flex-[1.5] h-12 rounded-full text-white font-bold text-[13.5px] sm:text-[14px] flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-opacity cursor-pointer"
-                          style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
-                        >
-                          Next / आगे बढ़ें <ChevronRight size={17} />
-                        </button>
-                      )}
-                    </>
+                    ) : (
+                      <button
+                        type="submit"
+                        className="flex-[1.5] h-12 rounded-full text-white font-bold text-[13.5px] sm:text-[14px] flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-opacity cursor-pointer"
+                        style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
+                      >
+                        Next / आगे बढ़ें <ChevronRight size={17} />
+                      </button>
+                    )
                   ) : (
                     <button
                       type="submit"
