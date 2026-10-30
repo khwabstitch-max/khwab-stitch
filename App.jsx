@@ -133,6 +133,10 @@ const syncOrderToCloud = async (order) => {
         ...order.outfit,
         uploadedPhoto: (order.outfit?.uploadedPhoto && order.outfit.uploadedPhoto.length < 30000) ? order.outfit.uploadedPhoto : "",
       },
+      design: {
+        ...order.design,
+        backPhoto: (order.design?.backPhoto && order.design.backPhoto.length < 30000) ? order.design.backPhoto : "",
+      },
     };
     await fetch(CLOUD_BRIDGE_URL, {
       method: "POST",
@@ -194,7 +198,17 @@ export default function App() {
     type: "", pieces: "1", designCode: "", refPhoto: "", specialReq: "",
     uploadedPhoto: "", uploadedPhotoName: "", uploadedPhotoSize: ""
   });
-  const [design, setDesign] = useState({ neckFront: "", neckBack: "", sleeveLength: "", sleeveDesign: "", fit: "Regular", additionalInstructions: "" });
+  const [design, setDesign] = useState({
+    neckFront: "",
+    neckBack: "",
+    sleeveLength: "",
+    sleeveDesign: "",
+    fit: "Regular",
+    additionalInstructions: "",
+    backPhoto: "",
+    backPhotoName: "",
+    backPhotoSize: "",
+  });
   const [measurements, setMeasurements] = useState({
     unit: "inch",
     provideMethod: "Self measurement / खुद से नाप लेकर",
@@ -1112,6 +1126,9 @@ export default function App() {
                         sleeveDesign: "",
                         fit: "Regular",
                         additionalInstructions: "",
+                        backPhoto: "",
+                        backPhotoName: "",
+                        backPhotoSize: "",
                       });
                       setMeasurements({
                         unit: "inch",

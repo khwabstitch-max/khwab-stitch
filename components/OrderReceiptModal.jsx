@@ -581,9 +581,9 @@ export default function OrderReceiptModal({ order, onClose }) {
                       Back Neck / पीछे गला
                     </p>
                     <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
-                      {backNeckInfo?.photo ? (
+                      {(order.design?.neckBack === "as-photo" && order.design?.backPhoto) || backNeckInfo?.photo ? (
                         <img
-                          src={backNeckInfo.photo}
+                          src={(order.design?.neckBack === "as-photo" && order.design?.backPhoto) || backNeckInfo.photo}
                           alt={backNeckInfo.en || "Back Neck"}
                           className="h-full w-full object-contain"
                           loading="eager"
@@ -600,7 +600,9 @@ export default function OrderReceiptModal({ order, onClose }) {
                       {backNeckInfo?.en || order.design?.neckBack || "Standard"}
                     </p>
                     <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
-                      {backNeckInfo?.hi || "सामान्य बैक"}
+                      {order.design?.neckBack === "as-photo" && order.design?.backPhoto
+                        ? `Custom Photo Attached / फ़ोटो अनुसार (${order.design.backPhotoName || "Design Photo"})`
+                        : backNeckInfo?.hi || "सामान्य बैक"}
                     </p>
                   </div>
                 </div>

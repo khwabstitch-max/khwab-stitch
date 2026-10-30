@@ -117,7 +117,10 @@ export default function DeliveryAddressStep({
 
   // Photo lookups
   const frontNeckPhoto = FRONT_NECK_PHOTOS[design?.neckFront];
-  const backNeckPhoto = BACK_NECK_PHOTOS[design?.neckBack];
+  const backNeckPhoto =
+    design?.neckBack === "as-photo" && design?.backPhoto
+      ? design.backPhoto
+      : BACK_NECK_PHOTOS[design?.neckBack];
   const sleeveLengthPhoto = SLEEVE_LENGTH_PHOTOS[design?.sleeveLength];
   const sleeveDesignPhoto = SLEEVE_DESIGN_PHOTOS[design?.sleeveDesign];
   const outfitPhoto = outfit?.uploadedPhoto || OUTFIT_PHOTOS[outfit?.type] || "./images/kurti.jpg";
@@ -345,6 +348,11 @@ export default function DeliveryAddressStep({
                   ? `${selectedBackNeck.en} / ${selectedBackNeck.hiScript || selectedBackNeck.hi}`
                   : design?.neckBack || "Standard / सामान्य"}
               </p>
+              {design?.neckBack === "as-photo" && design?.backPhoto && (
+                <p className="text-[11px] text-emerald-700 font-bold mt-0.5 truncate">
+                  ✓ Photo Attached / फ़ोटो संलग्न है
+                </p>
+              )}
             </div>
           </div>
 

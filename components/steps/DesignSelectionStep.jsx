@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Check, ZoomIn, Eye, Sparkles, RefreshCw, X, ChevronRight } from "lucide-react";
+import React, { useState, useRef } from "react";
+import { Check, ZoomIn, Eye, Sparkles, RefreshCw, X, ChevronRight, UploadCloud, Trash2, Camera } from "lucide-react";
 import DesignArt from "../DesignArt.jsx";
 
 // Studio photos for Front Necklines (from Khwab Stitch Catalog)
@@ -115,6 +115,7 @@ function ChoiceGroup({
   supportsViews = false,
   activeView = "front",
   onToggleView,
+  design,
 }) {
   return (
     <section className="design-group mb-8">
@@ -169,7 +170,11 @@ function ChoiceGroup({
           if (groupType === "neckFront") {
             photoSrc = FRONT_NECK_PHOTOS[option.id];
           } else if (groupType === "neckBack") {
-            photoSrc = BACK_NECK_PHOTOS[option.id];
+            if (option.id === "as-photo" && design?.backPhoto) {
+              photoSrc = design.backPhoto;
+            } else {
+              photoSrc = BACK_NECK_PHOTOS[option.id];
+            }
           } else if (groupType === "sleeveLength") {
             const lengthPhoto = SLEEVE_LENGTH_PHOTOS[option.id];
             photoSrc = activeView === "side" ? lengthPhoto?.side : lengthPhoto?.front;
@@ -177,6 +182,8 @@ function ChoiceGroup({
             const sleeve = SLEEVE_DESIGN_PHOTOS[option.id];
             photoSrc = activeView === "side" ? (sleeve?.side || sleeve?.front) : (sleeve?.front || sleeve?.side);
           }
+
+          const hasCustomPhoto = groupType === "neckBack" && option.id === "as-photo" && Boolean(design?.backPhoto);
 
           return (
             <div
@@ -215,6 +222,13 @@ function ChoiceGroup({
                   </span>
                 )}
 
+                {/* Custom Photo Uploaded Badge */}
+                {hasCustomPhoto && (
+                  <span className="absolute top-2.5 left-2.5 flex items-center gap-1 rounded-full bg-emerald-600 px-2 py-0.5 text-[9.5px] font-bold text-white shadow-md">
+                    ✓ Custom Photo
+                  </span>
+                )}
+
                 {/* Preview / Zoom Button */}
                 <button
                   type="button"
@@ -240,6 +254,16 @@ function ChoiceGroup({
                   <p className="text-[11px] text-[var(--text-light)] mt-1.5">
                     {groupType === "sleeveLength" && option.cm ? (
                       <span>Length / लंबाई: <b>{option.cm}</b></span>
+                    ) : groupType === "neckBack" && option.id === "as-photo" ? (
+                      hasCustomPhoto ? (
+                        <span className="text-emerald-700 font-bold truncate block">
+                          ✓ {design.backPhotoName || "Photo Attached"}
+                        </span>
+                      ) : (
+                        <span className="text-[var(--primary)] font-semibold flex items-center gap-1">
+                          <Camera size={12} /> Upload Photo / अपलोड करें
+                        </span>
+                      )
                     ) : (
                       <span>Base: Natural Cotton / शुद्ध सूती कपड़ा</span>
                     )}
@@ -279,6 +303,77 @@ export default function DesignSelectionStep({
   const [sleeveLengthView, setSleeveLengthView] = useState("front");
   const [sleeveDesignView, setSleeveDesignView] = useState("side");
   const [detailModal, setDetailModal] = useState(null);
+  const backFileInputRef = useRef(null);
+
+  const handleBackPhotoProcess = (file) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      alert("Please choose an image file (JPG, PNG, WEBP) / कृपया इमेज फ़ाइल ही चुनें।");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new window.Image();
+      img.onload = () => {
+        try {
+          const maxDimension = 900;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxDimension || height > maxDimension) {
+            if (width > height) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            } else {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
+            }
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.75);
+          const sizeKb = Math.round((compressedDataUrl.length * 3) / 4 / 1024);
+
+          setDesign((prev) => ({
+            ...prev,
+            neckBack: "as-photo",
+            backPhoto: compressedDataUrl,
+            backPhotoName: file.name,
+            backPhotoSize: `${sizeKb} KB`,
+          }));
+        } catch (err) {
+          console.error("Back photo processing error:", err);
+          setDesign((prev) => ({
+            ...prev,
+            neckBack: "as-photo",
+            backPhoto: e.target.result,
+            backPhotoName: file.name,
+            backPhotoSize: `${Math.round(file.size / 1024)} KB`,
+          }));
+        }
+      };
+      img.onerror = () => {
+        alert("Could not load image / इमेज लोड नहीं हो सकी, कृपया दूसरी फ़ोटो आज़माएं।");
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveBackPhoto = () => {
+    setDesign((prev) => ({
+      ...prev,
+      backPhoto: "",
+      backPhotoName: "",
+      backPhotoSize: "",
+    }));
+  };
 
   const openDetail = (option, groupType) => {
     setDetailModal({ option, groupType });
@@ -319,6 +414,7 @@ export default function DesignSelectionStep({
           options={neckFront}
           onSelect={(value) => selectDesign("neckFront", value)}
           onOpenDetail={openDetail}
+          design={design}
         />
 
         {/* 2. BACK NECKLINE (STUDIO CATALOG PHOTOS) */}
@@ -331,7 +427,113 @@ export default function DesignSelectionStep({
           options={neckBack}
           onSelect={(value) => selectDesign("neckBack", value)}
           onOpenDetail={openDetail}
+          design={design}
         />
+
+        {/* CUSTOM BACK PHOTO UPLOADER (WHEN "AS PER PHOTO" IS SELECTED) */}
+        {design.neckBack === "as-photo" && (
+          <div className="mt-2 mb-8 rounded-2xl border-2 border-dashed border-[var(--primary)]/45 bg-[#fffbf7] p-4 sm:p-5 shadow-xs transition-all">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#eeddd0] pb-3 mb-3.5">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--primary)] text-white text-[14px] shadow-2xs">
+                  <Camera size={17} />
+                </span>
+                <div>
+                  <h4 className="font-serif text-[14px] sm:text-[15px] font-bold text-[var(--primary-dark)]">
+                    Upload Back Neck Design Photo / पिछले गले का फ़ोटो अपलोड करें
+                  </h4>
+                  <p className="text-[12px] text-[var(--text-light)]">
+                    Upload your reference photo (from Pinterest, Instagram, or phone) / अपनी पसंद का फ़ोटो चुनें
+                  </p>
+                </div>
+              </div>
+
+              <input
+                type="file"
+                ref={backFileInputRef}
+                accept="image/*"
+                onChange={(e) => {
+                  if (e.target.files?.[0]) handleBackPhotoProcess(e.target.files[0]);
+                  e.target.value = "";
+                }}
+                className="hidden"
+              />
+
+              <button
+                type="button"
+                onClick={() => backFileInputRef.current?.click()}
+                className="w-full sm:w-auto h-9 px-4 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white text-[12px] font-bold flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+              >
+                <UploadCloud size={15} />
+                <span>{design.backPhoto ? "Change Photo / फ़ोटो बदलें" : "Upload Photo / फ़ोटो चुनें"}</span>
+              </button>
+            </div>
+
+            {design.backPhoto ? (
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 rounded-xl bg-white p-3.5 border border-[#eedfd6] shadow-2xs">
+                <div className="relative group shrink-0">
+                  <img
+                    src={design.backPhoto}
+                    alt="Uploaded Back Design"
+                    className="h-20 w-20 rounded-xl object-contain border border-[#ebdcd0] bg-[#faf7f2] shadow-2xs cursor-zoom-in"
+                    onClick={() => onPreview && onPreview("Custom Back Design Photo / पिछला गला", design.backPhoto, design.backPhotoName)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => onPreview && onPreview("Custom Back Design Photo / पिछला गला", design.backPhoto, design.backPhotoName)}
+                    className="absolute bottom-1 right-1 h-5 w-5 rounded-full bg-black/75 text-white flex items-center justify-center text-[10px] shadow-sm"
+                    title="Enlarge / बड़ा देखें"
+                  >
+                    <Eye size={11} />
+                  </button>
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2 py-0.5 rounded-md flex items-center gap-1">
+                      <Check size={12} strokeWidth={3} /> Photo Ready / फ़ोटो संलग्न है
+                    </span>
+                    {design.backPhotoSize && (
+                      <span className="text-[11px] text-stone-500 font-medium">({design.backPhotoSize})</span>
+                    )}
+                  </div>
+                  <p className="font-bold text-[13px] text-stone-900 truncate mt-1">
+                    {design.backPhotoName || "custom-back-neck.jpg"}
+                  </p>
+                  <p className="text-[11.5px] text-stone-500 mt-0.5">
+                    Our master tailor will stitch the back neck exactly according to this photo.
+                    / मास्टर दर्जी ठीक इसी फ़ोटो के अनुसार आपका पिछला गला तैयार करेंगे।
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleRemoveBackPhoto}
+                  className="w-full sm:w-auto text-[12px] text-red-600 hover:text-red-700 font-bold flex items-center justify-center gap-1 p-2 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                  title="Remove Photo / फ़ोटो हटाएं"
+                >
+                  <Trash2 size={14} />
+                  <span>Remove / हटाएं</span>
+                </button>
+              </div>
+            ) : (
+              <div
+                onClick={() => backFileInputRef.current?.click()}
+                className="flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed border-[#e0d2c5] bg-white hover:bg-[#fffdfa] hover:border-[var(--primary)] transition-all cursor-pointer text-center group"
+              >
+                <div className="h-12 w-12 rounded-full bg-[#fcf5ef] text-[var(--primary)] flex items-center justify-center mb-2 shadow-2xs group-hover:scale-105 transition-transform">
+                  <UploadCloud size={24} />
+                </div>
+                <p className="text-[13.5px] font-bold text-[var(--primary-dark)]">
+                  Click here to browse & upload back neck photo / पिछले गले का फ़ोटो अपलोड करने के लिए क्लिक करें
+                </p>
+                <p className="text-[11.5px] text-[var(--text-light)] mt-1">
+                  Supports JPG, PNG, WEBP (Max 10 MB) · Automatic size optimization
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* 3. SLEEVE LENGTH (WITH FRONT & SIDE VIEW TOGGLE + CATALOG PHOTOS) */}
         <ChoiceGroup
@@ -451,7 +653,10 @@ export default function DesignSelectionStep({
                   <div className="mx-auto max-w-[340px] overflow-hidden rounded-2xl border border-[#e8ded2] bg-[#fbf9f6] p-3 text-center shadow-sm">
                     <div className="aspect-[3/4] w-full mb-2 overflow-hidden rounded-xl bg-white border border-[#ece3d9] flex items-center justify-center">
                       <img
-                        src={BACK_NECK_PHOTOS[detailModal.option.id]}
+                        src={
+                          (detailModal.option.id === "as-photo" && design?.backPhoto) ||
+                          BACK_NECK_PHOTOS[detailModal.option.id]
+                        }
                         alt={detailModal.option.en}
                         className="h-full w-full object-contain"
                       />
