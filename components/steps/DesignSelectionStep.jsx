@@ -233,14 +233,11 @@ function ChoiceGroup({
               {/* Card Body - Content & Base Details */}
               <div className="p-3 border-t border-[#f4ece3] bg-white flex flex-col justify-between flex-1">
                 <div>
-                  <h4 className="font-serif text-[13px] font-bold text-[var(--primary-dark)] group-hover:text-[var(--primary)] transition-colors leading-tight">
-                    {option.en} / {option.hi}
+                  <h4 className="font-serif text-[13.5px] font-bold text-[var(--primary-dark)] group-hover:text-[var(--primary)] transition-colors leading-tight">
+                    {option.en} / {option.hiScript || option.hi}
                   </h4>
-                  <p className="text-[11.5px] font-semibold text-[var(--secondary)] mt-0.5 truncate">
-                    {option.hiScript ? `${option.hiScript} (${option.hi})` : option.hi}
-                  </p>
                   {/* Base description */}
-                  <p className="text-[11px] text-[var(--text-light)] mt-1">
+                  <p className="text-[11px] text-[var(--text-light)] mt-1.5">
                     {groupType === "sleeveLength" && option.cm ? (
                       <span>Length / लंबाई: <b>{option.cm}</b></span>
                     ) : (
@@ -410,7 +407,7 @@ export default function DesignSelectionStep({
             <div className="flex items-center justify-between border-b px-6 py-4 bg-[#faf7f2]">
               <div>
                 <h3 className="font-serif text-[18px] font-bold text-[var(--primary-dark)]">
-                  {detailModal.option.en} / {detailModal.option.hi}
+                  {detailModal.option.en} / {detailModal.option.hiScript || detailModal.option.hi}
                 </h3>
                 {detailModal.option.cm && (
                   <p className="text-[12px] text-[var(--secondary)] font-semibold mt-0.5">
@@ -544,7 +541,7 @@ export default function DesignSelectionStep({
                   </div>
 
                   <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200 p-3 text-center text-[12px] text-stone-600">
-                    <b>Base:</b> Natural Cotton Studio Cut · <b>Sleeve Style:</b> {detailModal.option.en} / {detailModal.option.hi}
+                    <b>Base:</b> Natural Cotton Studio Cut · <b>Sleeve Style:</b> {detailModal.option.en} / {detailModal.option.hiScript || detailModal.option.hi}
                   </div>
                 </div>
               ) : null}

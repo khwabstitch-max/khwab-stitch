@@ -312,10 +312,9 @@ export default function DeliveryAddressStep({
             </div>
             <div>
               <p className="text-[12.5px] font-bold text-stone-900 leading-tight">
-                {selectedFrontNeck?.en || design?.neckFront || "Standard / सामान्य"}
-              </p>
-              <p className="text-[11px] text-[var(--secondary)] mt-0.5">
-                {selectedFrontNeck?.hiScript || selectedFrontNeck?.hi || "गला"}
+                {selectedFrontNeck
+                  ? `${selectedFrontNeck.en} / ${selectedFrontNeck.hiScript || selectedFrontNeck.hi}`
+                  : design?.neckFront || "Standard / सामान्य"}
               </p>
             </div>
           </div>
@@ -342,10 +341,9 @@ export default function DeliveryAddressStep({
             </div>
             <div>
               <p className="text-[12.5px] font-bold text-stone-900 leading-tight">
-                {selectedBackNeck?.en || design?.neckBack || "Standard / सामान्य"}
-              </p>
-              <p className="text-[11px] text-[var(--secondary)] mt-0.5">
-                {selectedBackNeck?.hiScript || selectedBackNeck?.hi || "बैक"}
+                {selectedBackNeck
+                  ? `${selectedBackNeck.en} / ${selectedBackNeck.hiScript || selectedBackNeck.hi}`
+                  : design?.neckBack || "Standard / सामान्य"}
               </p>
             </div>
           </div>
@@ -372,11 +370,15 @@ export default function DeliveryAddressStep({
             </div>
             <div>
               <p className="text-[12.5px] font-bold text-stone-900 leading-tight">
-                {selectedSleeveLength?.en || design?.sleeveLength || "Standard / सामान्य"}
+                {selectedSleeveLength
+                  ? `${selectedSleeveLength.en} / ${selectedSleeveLength.hiScript || selectedSleeveLength.hi}`
+                  : design?.sleeveLength || "Standard / सामान्य"}
               </p>
-              <p className="text-[11px] text-[var(--secondary)] mt-0.5">
-                {selectedSleeveLength?.hiScript || selectedSleeveLength?.hi || "बाज़ू"}
-              </p>
+              {selectedSleeveLength?.cm && (
+                <p className="text-[11px] text-[var(--secondary)] mt-0.5 font-semibold">
+                  {selectedSleeveLength.cm}
+                </p>
+              )}
             </div>
           </div>
 
@@ -402,10 +404,9 @@ export default function DeliveryAddressStep({
             </div>
             <div>
               <p className="text-[12.5px] font-bold text-stone-900 leading-tight">
-                {selectedSleeveDesign?.en || design?.sleeveDesign || "Straight / सीधी"}
-              </p>
-              <p className="text-[11px] text-[var(--secondary)] mt-0.5">
-                {selectedSleeveDesign?.hiScript || selectedSleeveDesign?.hi || "डिज़ाइन"}
+                {selectedSleeveDesign
+                  ? `${selectedSleeveDesign.en} / ${selectedSleeveDesign.hiScript || selectedSleeveDesign.hi}`
+                  : design?.sleeveDesign || "Straight / सीधी"}
               </p>
             </div>
           </div>
