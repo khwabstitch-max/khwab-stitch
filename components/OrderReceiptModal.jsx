@@ -399,7 +399,7 @@ export default function OrderReceiptModal({ order, onClose }) {
                 <p className="text-[14.5px] font-bold text-stone-900">{order.customer?.name || "Customer"}</p>
                 <p className="text-[12.5px] text-stone-700 flex items-center gap-1.5 mt-1 font-semibold">
                   <Phone size={13} className="text-emerald-700" />
-                  <span>+91 {order.customer?.whatsapp}</span>
+                  <span>+91 {order.customer?.whatsapp ? order.customer.whatsapp.replace(/\D/g, "").slice(-10) : ""}</span>
                 </p>
                 {order.customer?.email && (
                   <p className="text-[12.5px] text-stone-600 flex items-center gap-1.5 mt-0.5">

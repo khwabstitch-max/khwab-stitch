@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   AlertCircle,
   ChevronDown,
+  X,
 } from "lucide-react";
 
 // List of all Indian States & Union Territories
@@ -85,12 +86,16 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
     });
   };
 
-  // WhatsApp input cleaner: numeric only, max 10 digits
+  // WhatsApp input cleaner: numeric only, strictly 10 digits
   const handlePhoneChange = (raw) => {
-    const digits = raw.replace(/\D/g, "");
-    // If user pasted with 91 country code (12 digits), strip 91
-    const clean = digits.length === 12 && digits.startsWith("91") ? digits.slice(2) : digits;
-    const final10 = clean.slice(0, 10);
+    let digits = (raw || "").replace(/\D/g, "");
+    // If user pasted or typed with 91 country code (when > 10 digits total)
+    if (digits.length > 10 && digits.startsWith("91")) {
+      digits = digits.slice(2);
+    } else if (digits.length > 10 && digits.startsWith("0")) {
+      digits = digits.slice(1);
+    }
+    const final10 = digits.slice(0, 10);
     handleChange("whatsapp", final10);
   };
 
@@ -179,26 +184,42 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
               </span>
             )}
           </span>
-          <div className="relative">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-[13px] text-stone-500 select-none">
-              +91
-            </span>
+          <div
+            className={`flex items-stretch rounded-xl border transition-all overflow-hidden bg-[#fffdfb] focus-within:bg-white ${
+              phoneLength > 0 && !isPhoneValid
+                ? "border-amber-400 focus-within:border-amber-500 ring-2 ring-amber-100"
+                : isPhoneValid
+                ? "border-emerald-500 focus-within:border-emerald-600 ring-2 ring-emerald-100"
+                : "border-[#eedfd6] focus-within:border-[var(--primary)] focus-within:ring-2 focus-within:ring-[var(--primary)]/10"
+            }`}
+          >
+            <div className="flex items-center gap-1.5 bg-[#f5ece5] px-3.5 border-r border-[#eedfd6] text-stone-700 font-bold text-[13.5px] select-none shrink-0">
+              <span aria-hidden="true" className="text-[14px]">🇮🇳</span>
+              <span>+91</span>
+            </div>
             <input
               type="tel"
               autoComplete="tel"
               required
+              inputMode="numeric"
+              pattern="[0-9]*"
               maxLength={10}
               value={customer.whatsapp || ""}
               onChange={(e) => handlePhoneChange(e.target.value)}
               placeholder="9876543210 (10 अंक)"
-              className={`w-full rounded-xl border pl-13 pr-3.5 py-3 text-[13.5px] font-mono tracking-wider transition-all focus:bg-white ${
-                phoneLength > 0 && !isPhoneValid
-                  ? "border-amber-400 bg-amber-50/30 focus:border-amber-500"
-                  : isPhoneValid
-                  ? "border-emerald-500 bg-emerald-50/20"
-                  : "border-[#eedfd6] bg-[#fffdfb] focus:border-[var(--primary)]"
-              }`}
+              className="w-full bg-transparent px-3.5 py-3 text-[14px] font-mono tracking-wider text-stone-900 outline-none placeholder:text-stone-400 placeholder:font-sans placeholder:tracking-normal"
             />
+            {phoneLength > 0 && (
+              <button
+                type="button"
+                onClick={() => handleChange("whatsapp", "")}
+                className="px-3 text-stone-400 hover:text-stone-700 flex items-center justify-center transition-colors cursor-pointer"
+                title="Clear / साफ़ करें"
+                aria-label="Clear WhatsApp Number"
+              >
+                <X size={15} />
+              </button>
+            )}
           </div>
           {phoneLength > 0 && !isPhoneValid && (
             <p className="text-[11px] font-semibold text-amber-700 mt-1 flex items-center gap-1">

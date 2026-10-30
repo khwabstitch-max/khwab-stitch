@@ -110,6 +110,16 @@ export default function DeliveryAddressStep({
   };
 
   const handleCustomerChange = (field, value) => {
+    if (field === "whatsapp") {
+      let digits = (value || "").replace(/\D/g, "");
+      if (digits.length > 10 && digits.startsWith("91")) {
+        digits = digits.slice(2);
+      } else if (digits.length > 10 && digits.startsWith("0")) {
+        digits = digits.slice(1);
+      }
+      setCustomer((prev) => ({ ...prev, whatsapp: digits.slice(0, 10) }));
+      return;
+    }
     setCustomer((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -205,12 +215,19 @@ export default function DeliveryAddressStep({
               </div>
               <div>
                 <label className="block text-[11px] font-bold text-stone-600 mb-1">WhatsApp / फ़ोन *</label>
-                <input
-                  type="tel"
-                  value={customer?.whatsapp || ""}
-                  onChange={(e) => handleCustomerChange("whatsapp", e.target.value)}
-                  className="w-full rounded-xl border border-stone-300 p-2 text-[12.5px] outline-none focus:border-[var(--primary)] bg-white"
-                />
+                <div className="flex rounded-xl border border-stone-300 overflow-hidden bg-white focus-within:border-[var(--primary)]">
+                  <span className="px-2.5 py-1.5 bg-stone-100 border-r border-stone-200 text-stone-600 font-bold text-[12px] select-none flex items-center shrink-0">
+                    +91
+                  </span>
+                  <input
+                    type="tel"
+                    maxLength={10}
+                    value={customer?.whatsapp || ""}
+                    onChange={(e) => handleCustomerChange("whatsapp", e.target.value)}
+                    placeholder="9876543210"
+                    className="w-full p-2 text-[12.5px] font-mono outline-none bg-transparent text-stone-900"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-[11px] font-bold text-stone-600 mb-1">Email / ईमेल</label>
@@ -687,7 +704,9 @@ export default function DeliveryAddressStep({
             <Phone size={16} className="text-emerald-600 shrink-0" />
             <div>
               <p className="text-[10.5px] font-bold text-stone-500 uppercase">WhatsApp Number / फ़ोन</p>
-              <p className="font-bold text-stone-900">{customer?.whatsapp || "Not provided"}</p>
+              <p className="font-bold text-stone-900">
+                {customer?.whatsapp ? `+91 ${customer.whatsapp.replace(/\D/g, "").slice(-10)}` : "Not provided"}
+              </p>
             </div>
           </div>
 
