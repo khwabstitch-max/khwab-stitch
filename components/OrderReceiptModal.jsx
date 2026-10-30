@@ -13,7 +13,134 @@ import {
   Tag,
   Clock,
   Ruler,
+  Eye,
+  Check,
 } from "lucide-react";
+
+// Catalog of Design Codes with Photos & Details
+const DESIGN_CODE_CATALOG = {
+  "K-01": {
+    code: "K-01",
+    name: "Classic Cotton Printed Kurti",
+    hi: "क्लासिक कॉटन प्रिंटेड कुर्ती",
+    outfit: "Kurti",
+    image: "./images/designs/k-01.jpg",
+    details: "Mandarin collar, button placket, 3/4 sleeves, straight side-slit cut",
+    tag: "Studio Signature / सर्वाधिक लोकप्रिय",
+  },
+  "K-02": {
+    code: "K-02",
+    name: "Festive Embroidered Straight Kurti",
+    hi: "फ़ेस्टिव एम्ब्रॉयडर्ड स्ट्रेट कुर्ती",
+    outfit: "Kurti",
+    image: "./images/kurti.jpg",
+    details: "Round neck with V-slit, quarter sleeves, elegant side-slit hem",
+    tag: "Designer Choice",
+  },
+  "B-01": {
+    code: "B-01",
+    name: "Royal Velvet Embroidered Blouse",
+    hi: "रॉयल वेलवेट एम्ब्रॉयडर्ड ब्लाउज़",
+    outfit: "Blouse",
+    image: "./images/blouse.jpg",
+    details: "Sweetheart neckline, golden zardozi embroidery, elbow sleeves, dori back",
+    tag: "Bridal & Festive / लोकप्रिय",
+  },
+  "B-02": {
+    code: "B-02",
+    name: "Classic Saree Designer Choli",
+    hi: "क्लासिक साड़ी डिज़ाइनर चोली",
+    outfit: "Blouse",
+    image: "./images/blouse.jpg",
+    details: "Deep round back with tassels, fitted bust cup padding, clean finish",
+    tag: "Partywear",
+  },
+  "SU-01": {
+    code: "SU-01",
+    name: "Traditional Punjabi Straight Kameez",
+    hi: "पारंपरिक पंजाबी स्ट्रेट कमीज़",
+    outfit: "Suit Upper",
+    image: "./images/suit-upper.jpg",
+    details: "Boat neck with lace border, full sleeves, side chak open slits",
+    tag: "Classic Punjabi / पारंपरिक",
+  },
+  "SU-02": {
+    code: "SU-02",
+    name: "Festive Embroidered Silk Suit Upper",
+    hi: "फ़ेस्टिव एम्ब्रॉयडर्ड सिल्क सूट कमीज़",
+    outfit: "Suit Upper",
+    image: "./images/suit-upper.jpg",
+    details: "Collar neck styling, straight fitted silhouette with side borders",
+    tag: "Festive Wear",
+  },
+};
+
+// Outfit Types Catalog
+const OUTFIT_CATALOG = {
+  Blouse: {
+    en: "Blouse",
+    hi: "ब्लाउज़ / चोली",
+    photo: "./images/blouse.jpg",
+  },
+  Kurti: {
+    en: "Kurti",
+    hi: "कुर्ती / कुर्ता",
+    photo: "./images/kurti.jpg",
+  },
+  "Suit Upper": {
+    en: "Suit Upper",
+    hi: "सूट अपर / कमीज़",
+    photo: "./images/suit-upper.jpg",
+  },
+};
+
+// Front Necklines with Photos
+const FRONT_NECK_CATALOG = {
+  round: { en: "Round Neck", hi: "गोल गला", photo: "./images/neck_front/round.jpg" },
+  vneck: { en: "V-Neck", hi: "वी गला", photo: "./images/neck_front/vneck.jpg" },
+  boat: { en: "Boat Neck", hi: "नाव (बोट) गला", photo: "./images/neck_front/boat.jpg" },
+  collar: { en: "Collar Neck", hi: "कॉलर वाला गला", photo: "./images/neck_front/collar.jpg" },
+  square: { en: "Square Neck", hi: "चौकोर गला", photo: "./images/neck_front/square.jpg" },
+  sweetheart: { en: "Sweetheart", hi: "स्वीटहार्ट (दिल वाला) गला", photo: "./images/neck_front/sweetheart.jpg" },
+  high: { en: "High Neck", hi: "बंद / हाई नेक", photo: "./images/neck_front/high.jpg" },
+  mandarin: { en: "Mandarin Collar", hi: "चाइनीज़ (मंदारिन) गला", photo: "./images/neck_front/mandarin.jpg" },
+};
+
+// Back Necklines with Photos
+const BACK_NECK_CATALOG = {
+  simple: { en: "Simple Back", hi: "सीधा / सामान्य बैक", photo: "./images/neck_back/simple.jpg" },
+  "round-back": { en: "Round Back", hi: "गोल बैक", photo: "./images/neck_back/round-back.jpg" },
+  "v-back": { en: "V-Back", hi: "वी बैक", photo: "./images/neck_back/v-back.jpg" },
+  "square-back": { en: "Square Back", hi: "चौकोर बैक", photo: "./images/neck_back/square-back.jpg" },
+  deep: { en: "Deep Back with Dori", hi: "गहरा बैक डोरी सहित", photo: "./images/neck_back/deep.jpg" },
+  button: { en: "Keyhole with Button", hi: "बटन वाला बैक", photo: "./images/neck_back/button.jpg" },
+  cutout: { en: "Cut-out Back", hi: "डिज़ाइनर कटआउट", photo: "./images/neck_back/cutout.jpg" },
+  "as-photo": { en: "As per Photo", hi: "फ़ोटो जैसा बैक", photo: "./images/neck_back/as-photo.jpg" },
+};
+
+// Sleeve Lengths with Photos
+const SLEEVE_LENGTH_CATALOG = {
+  sleeveless: { en: "Sleeveless", hi: "बिना बाज़ू", length: "0 cm (0\")", photo: "./images/sleeve_lengths/sleeveless_front.jpg" },
+  quarter: { en: "1/4 Sleeve (Quarter)", hi: "छोटी बाज़ू (चौथाई)", length: "10 cm (4\")", photo: "./images/sleeve_lengths/quarter_front.jpg" },
+  half: { en: "1/2 Sleeve (Half)", hi: "आधी बाज़ू", length: "20 cm (7.9\")", photo: "./images/sleeve_lengths/half_front.jpg" },
+  "three-quarter": { en: "3/4 Sleeve (Three-Quarter)", hi: "पौनी बाज़ू (3/4)", length: "38 cm (15\")", photo: "./images/sleeve_lengths/three_quarter_front.jpg" },
+  full: { en: "Full Sleeve", hi: "पूरी बाज़ू", length: "55 cm (21.7\")", photo: "./images/sleeve_lengths/full_front.jpg" },
+};
+
+// Sleeve Designs with Photos
+const SLEEVE_DESIGN_CATALOG = {
+  straight: { en: "Straight Plain", hi: "सादी / सीधी बाज़ू", photo: "./images/sleeves/straight_front.jpg" },
+  puff: { en: "Puff Sleeve", hi: "फूली (पफ) बाज़ू", photo: "./images/sleeves/puff_front.jpg" },
+  bell: { en: "Bell Sleeve", hi: "घंटी (बेल) बाज़ू", photo: "./images/sleeves/bell_front.jpg" },
+  ruffle: { en: "Ruffle Sleeve", hi: "झालर (रफ़ल) बाज़ू", photo: "./images/sleeves/ruffle_front.jpg" },
+  cap: { en: "Cap Sleeve", hi: "कैप बाज़ू", photo: "./images/sleeves/cap_front.jpg" },
+  bishop: { en: "Bishop Balloon", hi: "गुब्बारे (बिशप) बाज़ू", photo: "./images/sleeves/bishop_front.jpg" },
+  butterfly: { en: "Butterfly", hi: "तितली बाज़ू", photo: "./images/sleeves/butterfly_front.jpg" },
+  cold: { en: "Cold Shoulder", hi: "कंधा खुला (कट-शोल्डर)", photo: "./images/sleeves/cold_front.jpg" },
+  flutter: { en: "Flutter", hi: "लहर (फ्लटर) बाज़ू", photo: "./images/sleeves/flutter_front.jpg" },
+  "bell-cuff": { en: "Bell-Cuff", hi: "कफ़ वाली बाज़ू", photo: "./images/sleeves/bell_cuff_front.jpg" },
+  pleated: { en: "Pleated", hi: "चुन्नट (प्लीटेड) बाज़ू", photo: "./images/sleeves/pleated_front.jpg" },
+};
 
 const MEASURE_LABELS = {
   blouseLength: "Blouse Length / ब्लाउज़ लंबाई",
@@ -32,6 +159,29 @@ const MEASURE_LABELS = {
   backNeck: "Back Neck Depth / पीछे गला गहराई",
 };
 
+// Safe lookup helper
+function lookupItem(catalog, key, fallbackEn = "", fallbackHi = "", fallbackPhoto = "") {
+  if (!key) return null;
+  const k = String(key).trim().toLowerCase();
+  if (catalog[key]) return catalog[key];
+  if (catalog[k]) return catalog[k];
+  for (const [id, item] of Object.entries(catalog)) {
+    if (
+      id.toLowerCase() === k ||
+      item.en?.toLowerCase() === k ||
+      item.hi?.toLowerCase() === k ||
+      (item.code && item.code.toLowerCase() === k)
+    ) {
+      return item;
+    }
+  }
+  return {
+    en: fallbackEn || key,
+    hi: fallbackHi || "",
+    photo: fallbackPhoto || "",
+  };
+}
+
 export default function OrderReceiptModal({ order, onClose }) {
   if (!order) return null;
 
@@ -43,24 +193,36 @@ export default function OrderReceiptModal({ order, onClose }) {
     const receiptEl = document.getElementById("printable-receipt");
     if (!receiptEl) return;
 
+    const baseUrl =
+      typeof window !== "undefined"
+        ? window.location.origin + window.location.pathname
+        : "";
+
     const fullHtml = `<!DOCTYPE html>
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
+  <base href="${baseUrl}">
   <title>Khwab-Stitch-Order-${order.orderId}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    :root {
+      --primary: #6b2d46;
+      --primary-dark: #4e1d31;
+      --primary-light: #fbf0f4;
+      --secondary: #9c4d68;
+    }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Georgia, serif; background: #faf7f2; color: #2d2621; padding: 24px; margin: 0; }
-    .receipt-box { position: relative; max-width: 780px; margin: 0 auto; background: white; border-radius: 16px; border: 1px solid #e6dacd; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow: hidden; }
-    h1, h2, h3 { color: #6b2d46; margin-top: 0; }
+    .receipt-box { position: relative; max-width: 820px; margin: 0 auto; background: white; border-radius: 20px; border: 1px solid #e6dacd; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow: hidden; }
     table { width: 100%; border-collapse: collapse; margin-top: 12px; }
     th, td { border: 1px solid #ece2d6; padding: 8px 12px; font-size: 13px; text-align: left; }
     th { background: #faf5f0; color: #6b2d46; font-weight: bold; }
-    .badge { display: inline-block; background: #f7eef2; color: #6b2d46; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 12px; border: 1px solid #ebd4de; }
     .stylish-watermark { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) rotate(-32deg); font-size: 72px; font-weight: 800; color: rgba(107, 38, 54, 0.05); text-transform: uppercase; letter-spacing: 0.18em; pointer-events: none; white-space: nowrap; font-family: Georgia, serif; z-index: 0; }
     @media print {
       body { background: white !important; padding: 0 !important; margin: 0 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
       .no-print { display: none !important; }
       .receipt-box { border: none !important; box-shadow: none !important; padding: 12px !important; }
+      img { max-height: 220px !important; object-fit: contain !important; break-inside: avoid !important; }
     }
   </style>
 </head>
@@ -88,11 +250,27 @@ export default function OrderReceiptModal({ order, onClose }) {
     "Not specified";
   const landmark = order.delivery?.landmark || order.customer?.landmark || "";
 
+  // Lookups for selected outfit and styling
+  const outfitInfo = lookupItem(OUTFIT_CATALOG, order.outfit?.type, order.outfit?.type, "परिधान", "./images/kurti.jpg");
+  const designCodeInfo = order.outfit?.designCode ? DESIGN_CODE_CATALOG[order.outfit.designCode] : null;
+
+  const frontNeckInfo = lookupItem(FRONT_NECK_CATALOG, order.design?.neckFront, order.design?.neckFront, "गला", "./images/neck_front/round.jpg");
+  const backNeckInfo = lookupItem(BACK_NECK_CATALOG, order.design?.neckBack, order.design?.neckBack, "बैक", "./images/neck_back/simple.jpg");
+  const sleeveLengthInfo = lookupItem(SLEEVE_LENGTH_CATALOG, order.design?.sleeveLength, order.design?.sleeveLength, "बाज़ू", "./images/sleeve_lengths/full_front.jpg");
+  const sleeveDesignInfo = lookupItem(SLEEVE_DESIGN_CATALOG, order.design?.sleeveDesign, order.design?.sleeveDesign, "बाज़ू स्टाइल", "./images/sleeves/straight_front.jpg");
+
+  // Determine primary showcase photo
+  const showcasePhoto =
+    order.outfit?.uploadedPhoto ||
+    designCodeInfo?.image ||
+    outfitInfo?.photo ||
+    "./images/kurti.jpg";
+
   return (
     <div className="order-receipt-overlay fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm p-3 md:p-6 overflow-y-auto flex items-start justify-center">
       <div
         id="printable-receipt-container"
-        className="relative w-full max-w-[820px] bg-white rounded-[28px] shadow-2xl border border-stone-200 my-4 overflow-hidden"
+        className="relative w-full max-w-[840px] bg-white rounded-[28px] shadow-2xl border border-stone-200 my-4 overflow-hidden"
       >
         {/* ACTION BAR (HIDDEN IN PRINT) */}
         <div className="no-print sticky top-0 z-20 flex items-center justify-between gap-3 p-4 bg-stone-900 text-white border-b border-stone-800 rounded-t-[28px]">
@@ -163,6 +341,7 @@ export default function OrderReceiptModal({ order, onClose }) {
                     src="./images/khwabstitch_logo.jpg"
                     alt="Khwab Stitch Logo"
                     className="h-14 w-14 rounded-full object-cover border-2 border-[#dfc5b5] shadow-xs flex-shrink-0"
+                    loading="eager"
                   />
                   <div>
                     <h1 className="font-serif text-[24px] sm:text-[27px] font-bold text-[var(--primary-dark)] m-0 leading-tight">
@@ -202,7 +381,7 @@ export default function OrderReceiptModal({ order, onClose }) {
                 <p className="text-[14.5px] font-bold text-stone-900">{order.customer?.name || "Customer"}</p>
                 <p className="text-[12.5px] text-stone-700 flex items-center gap-1.5 mt-1 font-semibold">
                   <Phone size={13} className="text-emerald-700" />
-                  <span>{order.customer?.whatsapp}</span>
+                  <span>+91 {order.customer?.whatsapp}</span>
                 </p>
                 {order.customer?.email && (
                   <p className="text-[12.5px] text-stone-600 flex items-center gap-1.5 mt-0.5">
@@ -226,7 +405,7 @@ export default function OrderReceiptModal({ order, onClose }) {
                   </p>
                 )}
                 <p className="text-[12.5px] font-bold text-stone-800 mt-0.5">
-                  {order.customer?.cityState} — <b>PIN: {order.customer?.pin}</b>
+                  {order.customer?.cityState || `${order.customer?.city || ""}, ${order.customer?.state || ""}`} — <b>PIN: {order.customer?.pin}</b>
                 </p>
                 <div className="mt-2 inline-flex items-center gap-1 rounded-md bg-white border border-[#e2d5c8] px-2 py-0.5 text-[11px] font-bold text-stone-700">
                   <Clock size={12} />
@@ -235,64 +414,242 @@ export default function OrderReceiptModal({ order, onClose }) {
               </div>
             </div>
 
-            {/* OUTFIT & DESIGN CHOICES (COMPLETELY MAPPED) */}
+            {/* 1. FEATURED SELECTED OUTFIT & DESIGN CODE SHOWCASE (WITH PHOTO) */}
             <div className="receipt-section-block">
-              <h3 className="font-serif text-[14px] font-bold text-[var(--primary-dark)] pb-1.5 border-b border-[#f0e4d8] mb-3">
-                👗 Outfit & Selected Styling / परिधान व डिज़ाइन
+              <h3 className="font-serif text-[14px] font-bold text-[var(--primary-dark)] pb-1.5 border-b border-[#f0e4d8] mb-3 flex items-center justify-between">
+                <span>👗 Selected Outfit & Design Code / चुना गया परिधान व डिज़ाइन कोड:</span>
+                <span className="text-[11px] font-bold text-[var(--primary)] bg-[#fbf0f4] px-2.5 py-0.5 rounded-full border border-[#f0d5df]">
+                  {order.outfit?.pieces || 1} Piece(s)
+                </span>
+              </h3>
+
+              <div className="rounded-2xl border-2 border-[#ebdcd0] bg-[#faf7f2]/90 p-4 sm:p-5">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+                  {/* DESIGN CODE / OUTFIT PHOTO PREVIEW */}
+                  <div className="relative shrink-0 w-36 h-36 sm:w-40 sm:h-40 rounded-2xl overflow-hidden border-2 border-white shadow-md bg-white">
+                    <img
+                      src={showcasePhoto}
+                      alt={designCodeInfo?.name || order.outfit?.type || "Selected Design"}
+                      className="w-full h-full object-cover"
+                      loading="eager"
+                    />
+                    {order.outfit?.designCode && (
+                      <span className="absolute top-2 left-2 px-2.5 py-1 rounded-lg bg-[var(--primary)] text-white text-[11px] font-mono font-extrabold shadow-sm">
+                        {order.outfit.designCode}
+                      </span>
+                    )}
+                    <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-black/70 text-white text-[10px] font-bold">
+                      × {order.outfit?.pieces || 1}
+                    </span>
+                  </div>
+
+                  {/* DESIGN CODE DETAILS & SPECIFICATIONS */}
+                  <div className="flex-1 text-center sm:text-left space-y-2">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                      {order.outfit?.designCode ? (
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[var(--primary)] text-white text-[12px] font-mono font-bold shadow-xs">
+                          <Tag size={12} />
+                          <span>Design Code: {order.outfit.designCode}</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[var(--secondary)] text-white text-[12px] font-bold shadow-xs">
+                          <Scissors size={12} />
+                          <span>Custom Bespoke Design / विशेष कारीगरी</span>
+                        </span>
+                      )}
+
+                      {designCodeInfo?.tag && (
+                        <span className="px-2.5 py-0.5 rounded-full bg-[#fbf0e0] text-[var(--secondary)] text-[11px] font-bold border border-[#ebdcd0]">
+                          {designCodeInfo.tag}
+                        </span>
+                      )}
+                    </div>
+
+                    <h4 className="font-serif text-[18px] sm:text-[20px] font-bold text-[var(--primary-dark)] leading-tight">
+                      {designCodeInfo?.name || order.outfit?.type || "Bespoke Garment"}
+                    </h4>
+
+                    <p className="text-[13px] font-semibold text-[var(--secondary)]">
+                      {designCodeInfo?.hi || outfitInfo?.hi || "ख़्वाब स्टिच विशेष परिधान"}
+                    </p>
+
+                    {designCodeInfo?.details && (
+                      <p className="text-[12px] text-stone-700 bg-white/90 p-2.5 rounded-xl border border-[#ece2d6] leading-relaxed">
+                        <b>Design Features / खासियत:</b> {designCodeInfo.details}
+                      </p>
+                    )}
+
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-1 text-[12px] text-stone-700">
+                      <span>Outfit Type: <b>{order.outfit?.type} ({outfitInfo?.hi})</b></span>
+                      <span>•</span>
+                      <span>Quantity: <b>{order.outfit?.pieces || 1} Piece(s)</b></span>
+                      {order.outfit?.refPhoto && (
+                        <>
+                          <span>•</span>
+                          <span>Reference: <b>{order.outfit.refPhoto}</b></span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. STYLING BLUEPRINT (4 CARDS WITH REAL PHOTOS) */}
+            <div className="receipt-section-block">
+              <h3 className="font-serif text-[14px] font-bold text-[var(--primary-dark)] pb-1.5 border-b border-[#f0e4d8] mb-3 flex items-center justify-between">
+                <span>✂️ Necklines & Sleeves Styling Blueprint / गले व बाज़ू का चुना गया स्टाइल:</span>
+                <span className="text-[11px] font-semibold text-stone-500">Photos with Specifications</span>
               </h3>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="p-3 rounded-xl bg-white border border-[#ece2d6]">
-                  <span className="text-[10.5px] font-semibold text-stone-500 uppercase">Outfit / परिधान</span>
-                  <p className="text-[14px] font-bold text-stone-900 mt-0.5">{order.outfit?.type}</p>
-                  <p className="text-[11.5px] text-stone-600">Quantity: <b>{order.outfit?.pieces || 1} Piece(s)</b></p>
-                </div>
-
-                {order.outfit?.designCode ? (
-                  <div className="p-3 rounded-xl bg-white border border-[#ece2d6]">
-                    <span className="text-[10.5px] font-semibold text-stone-500 uppercase">Design Code / कोड</span>
-                    <p className="text-[13.5px] font-bold text-[var(--primary)] mt-0.5">{order.outfit.designCode}</p>
-                    <p className="text-[11px] text-stone-500">Studio Catalog Selection</p>
+                {/* 1. FRONT NECK */}
+                <div className="rounded-xl border border-[#ebdcd0] bg-white p-2.5 flex flex-col justify-between shadow-2xs">
+                  <div>
+                    <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
+                      Front Neck / आगे गला
+                    </p>
+                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#faf7f2] border border-stone-200 mb-2">
+                      {frontNeckInfo?.photo ? (
+                        <img
+                          src={frontNeckInfo.photo}
+                          alt={frontNeckInfo.en || "Front Neck"}
+                          className="h-full w-full object-contain"
+                          loading="eager"
+                        />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center text-[10px] text-stone-400">
+                          No photo
+                        </div>
+                      )}
+                    </div>
                   </div>
-                ) : (
-                  <div className="p-3 rounded-xl bg-white border border-[#ece2d6]">
-                    <span className="text-[10.5px] font-semibold text-stone-500 uppercase">Design Reference</span>
-                    <p className="text-[12.5px] font-bold text-stone-800 mt-0.5">
-                      {order.outfit?.uploadedPhoto ? "Custom Photo Attached" : (order.outfit?.refPhoto || "Custom Styling")}
+                  <div>
+                    <p className="text-[12px] font-bold text-stone-900 leading-tight">
+                      {frontNeckInfo?.en || order.design?.neckFront || "Standard"}
+                    </p>
+                    <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
+                      {frontNeckInfo?.hi || "सामान्य गला"}
                     </p>
                   </div>
-                )}
-
-                <div className="p-3 rounded-xl bg-white border border-[#ece2d6]">
-                  <span className="text-[10.5px] font-semibold text-stone-500 uppercase">Necklines / गले का आकार</span>
-                  <p className="text-[12px] font-bold text-stone-900 mt-0.5">
-                    Front: {order.design?.neckFront || "Standard"}
-                  </p>
-                  <p className="text-[12px] font-medium text-stone-700">
-                    Back: {order.design?.neckBack || "Standard"}
-                  </p>
                 </div>
 
-                <div className="p-3 rounded-xl bg-white border border-[#ece2d6]">
-                  <span className="text-[10.5px] font-semibold text-stone-500 uppercase">Sleeves & Fit / बाज़ू व फिट</span>
-                  <p className="text-[12px] font-bold text-stone-900 mt-0.5">
-                    Sleeve: {order.design?.sleeveLength || "Standard"} ({order.design?.sleeveDesign || "Straight"})
-                  </p>
-                  <p className="text-[12px] font-semibold text-stone-700">
-                    Fit: <b>{order.design?.fit || "Regular"} Fit</b>
-                  </p>
+                {/* 2. BACK NECK */}
+                <div className="rounded-xl border border-[#ebdcd0] bg-white p-2.5 flex flex-col justify-between shadow-2xs">
+                  <div>
+                    <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
+                      Back Neck / पीछे गला
+                    </p>
+                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#faf7f2] border border-stone-200 mb-2">
+                      {backNeckInfo?.photo ? (
+                        <img
+                          src={backNeckInfo.photo}
+                          alt={backNeckInfo.en || "Back Neck"}
+                          className="h-full w-full object-contain"
+                          loading="eager"
+                        />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center text-[10px] text-stone-400">
+                          No photo
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-bold text-stone-900 leading-tight">
+                      {backNeckInfo?.en || order.design?.neckBack || "Standard"}
+                    </p>
+                    <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
+                      {backNeckInfo?.hi || "सामान्य बैक"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* 3. SLEEVE LENGTH */}
+                <div className="rounded-xl border border-[#ebdcd0] bg-white p-2.5 flex flex-col justify-between shadow-2xs">
+                  <div>
+                    <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
+                      Sleeve Length / बाज़ू लंबाई
+                    </p>
+                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#faf7f2] border border-stone-200 mb-2">
+                      {sleeveLengthInfo?.photo ? (
+                        <img
+                          src={sleeveLengthInfo.photo}
+                          alt={sleeveLengthInfo.en || "Sleeve Length"}
+                          className="h-full w-full object-contain"
+                          loading="eager"
+                        />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center text-[10px] text-stone-400">
+                          No photo
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-bold text-stone-900 leading-tight">
+                      {sleeveLengthInfo?.en || order.design?.sleeveLength || "Standard"}
+                    </p>
+                    <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
+                      {sleeveLengthInfo?.hi || "सामान्य बाज़ू"}
+                    </p>
+                    {sleeveLengthInfo?.length && (
+                      <p className="text-[10px] text-stone-500 mt-0.5 font-mono">
+                        {sleeveLengthInfo.length}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* 4. SLEEVE DESIGN */}
+                <div className="rounded-xl border border-[#ebdcd0] bg-white p-2.5 flex flex-col justify-between shadow-2xs">
+                  <div>
+                    <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
+                      Sleeve Style / बाज़ू स्टाइल
+                    </p>
+                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#faf7f2] border border-stone-200 mb-2">
+                      {sleeveDesignInfo?.photo ? (
+                        <img
+                          src={sleeveDesignInfo.photo}
+                          alt={sleeveDesignInfo.en || "Sleeve Design"}
+                          className="h-full w-full object-contain"
+                          loading="eager"
+                        />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center text-[10px] text-stone-400">
+                          No photo
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-bold text-stone-900 leading-tight">
+                      {sleeveDesignInfo?.en || order.design?.sleeveDesign || "Straight"}
+                    </p>
+                    <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
+                      {sleeveDesignInfo?.hi || "सादी बाज़ू"}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {order.design?.additionalInstructions && (
-                <div className="mt-2.5 p-2.5 rounded-xl bg-stone-50 border border-stone-200 text-[12px]">
-                  <span className="font-bold text-stone-700">Extra Notes / विशेष निर्देश: </span>
-                  <span className="text-stone-600">{order.design.additionalInstructions}</span>
+              {/* FIT & SPECIAL TAILOR NOTES */}
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-stone-50 border border-stone-200 text-[12px]">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-stone-700">Fitting Preference / फिटिंग:</span>
+                  <span className="font-bold text-[var(--primary)] bg-white px-2.5 py-0.5 rounded-md border border-stone-200">
+                    {order.design?.fit || "Regular"} Fit
+                  </span>
                 </div>
-              )}
+                {order.design?.additionalInstructions && (
+                  <div className="text-stone-600">
+                    <b>Tailor Instructions / विशेष निर्देश:</b> {order.design.additionalInstructions}
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* CUSTOMER REFERENCE PHOTO (IF ATTACHED) */}
+            {/* 3. CUSTOMER REFERENCE PHOTO (IF ATTACHED) */}
             {order.outfit?.uploadedPhoto && (
               <div className="receipt-section-block p-4 rounded-2xl bg-[#faf7f2]/90 border-2 border-[#ebdcd0]">
                 <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#e9ded4]">
@@ -302,17 +659,18 @@ export default function OrderReceiptModal({ order, onClose }) {
                       Customer Reference Design Photo / ग्राहक द्वारा अपलोड की गई डिज़ाइन फ़ोटो
                     </h3>
                   </div>
-                  <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                     ✓ Photo Attached / फ़ोटो संलग्न
                   </span>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center gap-4">
-                  <div className="relative max-w-[240px] w-full rounded-xl overflow-hidden border-2 border-white shadow-md bg-white">
+                  <div className="relative max-w-[220px] w-full rounded-xl overflow-hidden border-2 border-white shadow-md bg-white">
                     <img
                       src={order.outfit.uploadedPhoto}
                       alt="Customer Design Reference"
                       className="w-full h-auto max-h-[220px] object-contain mx-auto"
+                      loading="eager"
                     />
                   </div>
                   <div className="flex-1 text-[12.5px] text-stone-700 space-y-1.5 text-center sm:text-left">
@@ -332,7 +690,7 @@ export default function OrderReceiptModal({ order, onClose }) {
               </div>
             )}
 
-            {/* MEASUREMENTS SECTION (FULLY MAPPED) */}
+            {/* 4. MEASUREMENTS SECTION (FULLY MAPPED) */}
             <div className="receipt-section-block">
               <div className="flex items-center justify-between pb-1.5 border-b border-[#f0e4d8] mb-3">
                 <div className="flex items-center gap-2">

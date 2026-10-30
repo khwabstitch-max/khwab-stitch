@@ -953,7 +953,7 @@ export default function App() {
                 <div className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--primary-light)] font-bold text-[14px]">
                   {successOrder.orderId} • {successOrder.outfit.type}
                 </div>
-                {successOrder.outfit?.uploadedPhoto && (
+                {successOrder.outfit?.uploadedPhoto ? (
                   <div className="mt-4 flex items-center justify-center">
                     <div className="inline-flex items-center gap-3 p-2.5 pr-5 rounded-2xl border border-[var(--border)] bg-[#faf7f2] shadow-sm">
                       <img
@@ -963,7 +963,7 @@ export default function App() {
                       />
                       <div className="text-left">
                         <span className="text-[11px] font-bold text-emerald-700 flex items-center gap-1">
-                          ✓ Design Photo Attached / डिज़ाइन फ़ोटो संलग्न
+                          ✓ Custom Design Photo Attached / कस्टम फ़ोटो संलग्न
                         </span>
                         <span className="text-[13px] font-semibold text-[var(--text)]">
                           {successOrder.outfit.uploadedPhotoName || "Reference Photo"}
@@ -971,7 +971,33 @@ export default function App() {
                       </div>
                     </div>
                   </div>
-                )}
+                ) : successOrder.outfit?.designCode ? (
+                  <div className="mt-4 flex items-center justify-center">
+                    <div className="inline-flex items-center gap-3 p-2.5 pr-5 rounded-2xl border border-[var(--border)] bg-[#faf7f2] shadow-sm">
+                      <img
+                        src={
+                          successOrder.outfit.designCode === "K-01"
+                            ? "./images/designs/k-01.jpg"
+                            : successOrder.outfit.designCode.startsWith("B")
+                            ? "./images/blouse.jpg"
+                            : successOrder.outfit.designCode.startsWith("SU")
+                            ? "./images/suit-upper.jpg"
+                            : "./images/kurti.jpg"
+                        }
+                        className="h-14 w-14 rounded-xl object-cover border border-[#e3d7cf]"
+                        alt={`Design Code ${successOrder.outfit.designCode}`}
+                      />
+                      <div className="text-left">
+                        <span className="text-[11px] font-bold text-[var(--primary)] flex items-center gap-1 font-mono">
+                          ✓ Design Code: {successOrder.outfit.designCode}
+                        </span>
+                        <span className="text-[13px] font-semibold text-[var(--text)]">
+                          Studio Catalog Selection / कैटलॉग डिज़ाइन
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
                 <p className="mt-3 text-[14px] opacity-70">
                   Thank you! We’ve received your details and will contact you to confirm pricing and delivery /
                   धन्यवाद! आपकी जानकारी हमें मिल गई है। कीमत और डिलीवरी की पुष्टि के लिए हम आपसे संपर्क करेंगे।
