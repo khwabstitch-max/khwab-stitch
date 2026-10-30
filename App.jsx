@@ -544,11 +544,12 @@ export default function App() {
   // Helpers
   const selectOutfit = (t) => {
     if (!t) return;
-    setOutfit((current) => ({ ...current, type: t }));
+    setOutfit((current) => ({
+      ...current,
+      type: current.type === t ? "" : t,
+    }));
     setStepError("");
-    if (t !== outfit.type) {
-      setMeasurements((current) => ({ ...current, values: {} }));
-    }
+    setMeasurements((current) => ({ ...current, values: {} }));
   };
   const selectDesign = (type, value) => {
     setDesign({ ...design, [type]: value });
