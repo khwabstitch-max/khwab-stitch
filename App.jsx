@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Check, X, Heart, Search, Trash2, Download, FileText, ChevronRight, ChevronLeft, Star, Scissors } from "lucide-react";
+import { Check, X, Heart, Search, Trash2, Download, FileText, ChevronRight, ChevronLeft, Star, Scissors, MessageCircle, Copy } from "lucide-react";
 import "./styles.css";
 import StepHeader from "./components/StepHeader.jsx";
 import WelcomeStep from "./components/WelcomeStep.jsx";
@@ -121,22 +121,93 @@ const measurementConfigs = {
   ],
 };
 
-const CLOUD_BRIDGE_TOPIC = "khwab_stitch_orders_atelier_prod_v1";
+const CLOUD_BRIDGE_TOPIC = "khwab_atelier_orders_v2_sync";
 const CLOUD_BRIDGE_URL = `https://ntfy.sh/${CLOUD_BRIDGE_TOPIC}`;
+
+// Strip heavy base64 strings so storage & cloud payloads never hit quota/payload limits
+const stripPhotosFromOrder = (order, preservePhotos = false) => {
+  if (!order) return order;
+  if (preservePhotos) return order;
+  return {
+    ...order,
+    outfit: {
+      ...order.outfit,
+      uploadedPhoto: "",
+      hasUploadedPhoto: Boolean(order.outfit?.uploadedPhoto),
+    },
+    design: {
+      ...order.design,
+      frontPhoto: "",
+      backPhoto: "",
+      sleevePhoto: "",
+      hasFrontPhoto: Boolean(order.design?.frontPhoto),
+      hasBackPhoto: Boolean(order.design?.backPhoto),
+      hasSleevePhoto: Boolean(order.design?.sleevePhoto),
+    },
+  };
+};
+
+const generateOrderWhatsAppText = (o) => {
+  if (!o) return "";
+  const cust = o.customer || {};
+  const out = o.outfit || {};
+  const des = o.design || {};
+  const del = o.delivery || {};
+  const meas = o.measurements?.values || {};
+
+  const lines = [
+    "🌸 *KHWAB STITCH - CUSTOM ORDER* 🌸",
+    "━━━━━━━━━━━━━━━━━━━━━━━",
+    `📋 *Order ID:* #${o.orderId || "NEW"}`,
+    `👤 *Customer Name:* ${cust.name || "Customer"}`,
+    `📞 *WhatsApp:* +91 ${cust.whatsapp || ""}`,
+    `📍 *City/State:* ${cust.cityState || cust.city || ""}`,
+    `🏠 *Address:* ${del.address || cust.address || ""} (PIN: ${cust.pin || ""})`,
+    "━━━━━━━━━━━━━━━━━━━━━━━",
+    "👗 *OUTFIT & STYLING:*",
+    `• *Garment:* ${out.type || "Custom Outfit"} (${out.pieces || 1} Piece)`,
+    out.designCode ? `• *Design Code:* ${out.designCode}` : "",
+    out.uploadedPhotoName ? `• *Reference Photo:* ${out.uploadedPhotoName}` : "",
+    `• *Front Neck:* ${des.neckFront === "as-photo" ? "As per Photo (फ़ोटो जैसा)" : des.neckFront || "Standard"}`,
+    `• *Back Neck:* ${des.neckBack === "as-photo" ? "As per Photo (फ़ोटो जैसा)" : des.neckBack || "Standard"}`,
+    `• *Sleeves:* ${des.sleeveLength || "Standard"} · ${des.sleeveDesign === "as-photo" ? "As per Photo (फ़ोटो जैसा)" : des.sleeveDesign || "Straight"}`,
+    `• *Fit:* ${des.fit || "Regular"}`,
+    des.additionalInstructions ? `• *Notes:* ${des.additionalInstructions}` : "",
+    "━━━━━━━━━━━━━━━━━━━━━━━",
+    `📐 *MEASUREMENTS (${o.measurements?.unit || "inch"}):*`,
+  ];
+
+  const measEntries = Object.entries(meas).filter(([_, v]) => v);
+  if (measEntries.length > 0) {
+    measEntries.forEach(([k, v]) => {
+      lines.push(`• ${k}: ${v} ${o.measurements?.unit || "inch"}`);
+    });
+  } else {
+    lines.push(`• Method: ${o.measurements?.provideMethod || "Self measurement"}`);
+  }
+
+  lines.push("━━━━━━━━━━━━━━━━━━━━━━━");
+  lines.push("✨ *Khwab Stitch Atelier - Bespoke Tailoring*");
+  return lines.filter(Boolean).join("\n");
+};
 
 const syncOrderToCloud = async (order) => {
   try {
-    const lightweightOrder = {
-      ...order,
-      outfit: {
-        ...order.outfit,
-        uploadedPhoto: (order.outfit?.uploadedPhoto && order.outfit.uploadedPhoto.length < 30000) ? order.outfit.uploadedPhoto : "",
-      },
-      design: {
-        ...order.design,
-        backPhoto: (order.design?.backPhoto && order.design.backPhoto.length < 30000) ? order.design.backPhoto : "",
-      },
-    };
+    const cloudPayload = stripPhotosFromOrder(order, false);
+    const payloadStr = JSON.stringify(cloudPayload);
+    const safePayload = payloadStr.length > 3800 ? JSON.stringify({
+      orderId: order.orderId,
+      createdAt: order.createdAt,
+      customer: order.customer,
+      outfit: { type: order.outfit?.type, designCode: order.outfit?.designCode },
+      design: { neckFront: order.design?.neckFront, neckBack: order.design?.neckBack, sleeveLength: order.design?.sleeveLength, sleeveDesign: order.design?.sleeveDesign, fit: order.design?.fit },
+      measurements: order.measurements,
+      delivery: order.delivery,
+    }) : payloadStr;
+
+    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 4000) : null;
+
     await fetch(CLOUD_BRIDGE_URL, {
       method: "POST",
       headers: {
@@ -144,8 +215,10 @@ const syncOrderToCloud = async (order) => {
         "Tags": "dress,sparkles,shopping_bags",
         "Priority": "4",
       },
-      body: JSON.stringify(lightweightOrder),
+      body: safePayload,
+      signal: controller ? controller.signal : undefined,
     });
+    if (timeoutId) clearTimeout(timeoutId);
   } catch (err) {
     console.warn("Cloud sync note:", err);
   }
@@ -153,9 +226,13 @@ const syncOrderToCloud = async (order) => {
 
 const fetchCloudOrders = async () => {
   try {
+    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 4000) : null;
     const res = await fetch(`${CLOUD_BRIDGE_URL}/json?poll=1&since=all`, {
       cache: "no-store",
+      signal: controller ? controller.signal : undefined,
     });
+    if (timeoutId) clearTimeout(timeoutId);
     if (!res.ok) return [];
     const text = await res.text();
     const lines = text.trim().split("\n");
@@ -343,25 +420,23 @@ export default function App() {
     try {
       const existing = getLocalOrders();
       const updated = [order, ...existing.filter((o) => o?.orderId !== order.orderId)];
+      
+      // Multi-tier storage to guarantee localStorage never throws QuotaExceededError
       try {
         localStorage.setItem("khwab_local_orders", JSON.stringify(updated));
-      } catch (quotaErr) {
-        console.warn("Storage quota limit reached, saving lightweight details:", quotaErr);
-        const lightweight = updated.map((o, idx) => ({
-          ...o,
-          outfit: {
-            ...o.outfit,
-            uploadedPhoto: idx === 0 ? o.outfit?.uploadedPhoto : "",
-          },
-        }));
+      } catch (quotaErr1) {
+        console.warn("Storage quota limit reached, preserving photos on latest 2 orders only:", quotaErr1);
+        const lightweight = updated.map((o, idx) => stripPhotosFromOrder(o, idx < 2));
         try {
           localStorage.setItem("khwab_local_orders", JSON.stringify(lightweight));
-        } catch {
-          const textOnly = updated.map((o) => ({
-            ...o,
-            outfit: { ...o.outfit, uploadedPhoto: "" },
-          }));
-          localStorage.setItem("khwab_local_orders", JSON.stringify(textOnly));
+        } catch (quotaErr2) {
+          console.warn("Storage quota still exceeded, stripping all base64 photos to guarantee order safety:", quotaErr2);
+          const textOnly = updated.map((o) => stripPhotosFromOrder(o, false));
+          try {
+            localStorage.setItem("khwab_local_orders", JSON.stringify(textOnly));
+          } catch (fatalErr) {
+            localStorage.setItem("khwab_local_orders", JSON.stringify(textOnly.slice(0, 50)));
+          }
         }
       }
 
@@ -431,6 +506,13 @@ export default function App() {
               ...o.outfit,
               ...existing.outfit,
               uploadedPhoto: existing.outfit?.uploadedPhoto || o.outfit?.uploadedPhoto || "",
+            },
+            design: {
+              ...o.design,
+              ...existing.design,
+              frontPhoto: existing.design?.frontPhoto || o.design?.frontPhoto || "",
+              backPhoto: existing.design?.backPhoto || o.design?.backPhoto || "",
+              sleevePhoto: existing.design?.sleevePhoto || o.design?.sleevePhoto || "",
             },
           });
         }
@@ -614,13 +696,22 @@ export default function App() {
     if (!outfit.type) { alert("कृपया परिधान चुनें · Please select an outfit"); setCurrentSection(3); return; }
 
     setBusy(true);
+    const combinedCityState = customer.cityState || [customer.city, customer.state].filter(Boolean).join(", ") || customer.city || "Not specified";
+    const cleanCustomer = {
+      ...customer,
+      whatsapp: clean10,
+      pin: (customer.pin || "").replace(/\D/g, "").slice(0, 6),
+      cityState: combinedCityState,
+    };
+    setCustomer(cleanCustomer);
+
     const finalDelivery = {
       ...delivery,
       address: delivery.address || customer.address,
       landmark: delivery.landmark || customer.landmark || "",
     };
     const order = {
-      customer,
+      customer: cleanCustomer,
       outfit,
       design,
       measurements: {
@@ -1100,6 +1191,14 @@ export default function App() {
                   >
                     <Download size={17} /> Download Slip / PDF (रसीद / PDF प्राप्त करें)
                   </button>
+                  <a
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(generateOrderWhatsAppText(successOrder))}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 h-13 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[14px] flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer text-center"
+                  >
+                    <MessageCircle size={18} /> Share on WhatsApp / वॉट्सऐप पर भेजें
+                  </a>
                   <button
                     type="button"
                     onClick={() => {

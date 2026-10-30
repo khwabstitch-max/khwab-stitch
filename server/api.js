@@ -77,11 +77,20 @@ function validText(value, maxLength) {
 
 function validateOrder(order) {
   if (!order || typeof order !== "object" || Array.isArray(order)) return "Order details are missing.";
-  if (!order.customer || !validText(order.customer.name, 120)
-    || !validText(order.customer.whatsapp, 40)
-    || !validText(order.customer.cityState, 160)
-    || !validText(order.customer.pin, 20)) {
-    return "Please provide a name, WhatsApp number, city, and PIN code.";
+  const customer = order.customer || {};
+  const cityState = customer.cityState || [customer.city, customer.state].filter(Boolean).join(", ");
+  const cleanPhone = (customer.whatsapp || "").replace(/\D/g, "");
+  if (!customer.name || !validText(customer.name, 120)) {
+    return "Please provide customer name.";
+  }
+  if (!cleanPhone || cleanPhone.length < 10) {
+    return "Please provide a valid 10-digit WhatsApp number.";
+  }
+  if (!validText(cityState, 160) && !validText(customer.city, 120)) {
+    return "Please provide a city.";
+  }
+  if (!customer.pin || String(customer.pin).trim().length < 4) {
+    return "Please provide a valid PIN code.";
   }
   if (!validText(order.outfit?.type, 40) || !outfitTypes.has(order.outfit.type)) {
     return "Please select a valid outfit.";
@@ -169,8 +178,14 @@ export function createApiMiddleware({ adminPassword, databasePath } = {}) {
         const validationError = validateOrder(submittedOrder);
         if (validationError) return sendJson(response, 400, { error: validationError });
 
+        const cust = submittedOrder.customer || {};
+        const cityState = cust.cityState || [cust.city, cust.state].filter(Boolean).join(", ");
         const order = {
           ...submittedOrder,
+          customer: {
+            ...cust,
+            cityState: cityState || cust.city || "Not specified",
+          },
           orderId: `KS${Date.now().toString(36).toUpperCase()}${randomBytes(3).toString("hex").toUpperCase()}`,
           createdAt: new Date().toISOString(),
         };
