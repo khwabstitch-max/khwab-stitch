@@ -432,21 +432,78 @@ export default function OrderReceiptModal({ order, onClose }) {
               </div>
             </div>
 
-            {/* 1. OUTFIT & DESIGN CODE SHOWCASE (WITH PHOTOS) */}
+            {/* 1. SELECTED DESIGN CODE / OUTFIT SHOWCASE (SINGLE FOCUSED CARD) */}
             <div className="receipt-section-block">
               <h3 className="font-serif text-[14px] font-bold text-[var(--primary-dark)] pb-1.5 border-b border-[#f0e4d8] mb-3 flex items-center justify-between">
-                <span>👗 Selected Outfit & Design Code / चुना गया परिधान व डिज़ाइन कोड:</span>
+                <span>👗 Selected Design & Outfit / चुना गया डिज़ाइन व परिधान:</span>
                 <span className="text-[11px] font-bold text-[var(--primary)] bg-[#fbf0f4] px-2.5 py-0.5 rounded-full border border-[#f0d5df]">
                   Total: {order.outfit?.pieces || 1} Piece(s)
                 </span>
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* OUTFIT CARD (WITH PHOTO) */}
-                <div className="rounded-2xl border-2 border-[#ebdcd0] bg-white/90 p-4 flex items-center gap-4 shadow-2xs">
-                  <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden border border-stone-200 bg-white">
+              {order.outfit?.designCode ? (
+                /* ACTUAL DESIGN CODE CARD (NO REDUNDANT BASE GARMENT CARD) */
+                <div className="rounded-2xl border-2 border-[var(--primary)]/30 bg-[#fdf8f9]/90 p-4 sm:p-5 flex flex-col sm:flex-row items-center sm:items-start gap-5 shadow-2xs">
+                  <div className="relative shrink-0 w-32 h-32 sm:w-36 sm:h-36 rounded-xl overflow-hidden border-2 border-[var(--primary)]/30 bg-white">
                     <img
-                      src={outfitInfo?.photo || "./images/kurti.jpg"}
+                      src={designCodeInfo?.image || "./images/designs/k-01.jpg"}
+                      alt={designCodeInfo?.name || order.outfit.designCode}
+                      className="w-full h-full object-cover"
+                      loading="eager"
+                    />
+                    <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded bg-[var(--primary)] text-white text-[11px] font-mono font-bold shadow-xs">
+                      {order.outfit.designCode}
+                    </span>
+                    <span className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/75 text-white text-[10px] font-bold">
+                      × {order.outfit?.pieces || 1}
+                    </span>
+                  </div>
+
+                  <div className="min-w-0 flex-1 text-center sm:text-left space-y-1.5">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                      <span className="inline-block px-3 py-1 rounded-full bg-[var(--primary)] text-white text-[11px] font-mono font-bold shadow-xs">
+                        Design Code: {order.outfit.designCode}
+                      </span>
+                      {designCodeInfo?.tag && (
+                        <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10.5px] font-bold border border-amber-200">
+                          {designCodeInfo.tag}
+                        </span>
+                      )}
+                    </div>
+
+                    <h4 className="font-serif text-[17px] sm:text-[19px] font-bold text-[var(--primary-dark)] leading-tight">
+                      {designCodeInfo?.name || `Design ${order.outfit.designCode}`}
+                    </h4>
+
+                    <p className="text-[13px] font-semibold text-[var(--secondary)]">
+                      {designCodeInfo?.hi || "कैटलॉग डिज़ाइन"}
+                    </p>
+
+                    {designCodeInfo?.details && (
+                      <p className="text-[12px] text-stone-700 bg-white/80 p-2.5 rounded-xl border border-[#ece2d6] leading-relaxed">
+                        <b>Design Features / खासियत:</b> {designCodeInfo.details}
+                      </p>
+                    )}
+
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-1 text-[12px] text-stone-700">
+                      <span>Outfit: <b>{order.outfit?.type} ({outfitInfo?.hi})</b></span>
+                      <span>•</span>
+                      <span>Quantity: <b>{order.outfit?.pieces || 1} Piece(s) / पीस</b></span>
+                      {order.outfit?.refPhoto && (
+                        <>
+                          <span>•</span>
+                          <span>Reference: <b>{order.outfit.refPhoto}</b></span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* BESPOKE GARMENT CARD (WHEN NO CATALOG CODE CHOSEN) */
+                <div className="rounded-2xl border-2 border-[#ebdcd0] bg-white/90 p-4 sm:p-5 flex flex-col sm:flex-row items-center sm:items-start gap-4 shadow-2xs">
+                  <div className="relative shrink-0 w-28 h-28 rounded-xl overflow-hidden border border-stone-200 bg-white">
+                    <img
+                      src={order.outfit?.uploadedPhoto || outfitInfo?.photo || "./images/kurti.jpg"}
                       alt={order.outfit?.type || "Outfit"}
                       className="w-full h-full object-cover"
                       loading="eager"
@@ -455,79 +512,27 @@ export default function OrderReceiptModal({ order, onClose }) {
                       × {order.outfit?.pieces || 1}
                     </span>
                   </div>
-                  <div className="min-w-0 flex-1 space-y-1">
-                    <span className="inline-block px-2 py-0.5 rounded-full bg-[#fbf0e0] text-[var(--secondary)] text-[10.5px] font-bold border border-[#ebdcd0]">
-                      Base Garment / मूल परिधान
+                  <div className="min-w-0 flex-1 text-center sm:text-left space-y-1">
+                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#fbf0e0] text-[var(--secondary)] text-[11px] font-bold border border-[#ebdcd0]">
+                      Custom Bespoke Garment / कस्टम सिलाई
                     </span>
-                    <h4 className="font-serif text-[16px] sm:text-[18px] font-bold text-stone-900 leading-tight">
+                    <h4 className="font-serif text-[17px] sm:text-[19px] font-bold text-stone-900 leading-tight">
                       {order.outfit?.type || "Bespoke Outfit"}
                     </h4>
                     <p className="text-[12.5px] font-semibold text-[var(--secondary)]">
                       {outfitInfo?.hi || "सिलाई परिधान"}
                     </p>
-                    <p className="text-[11.5px] text-stone-600">
+                    <p className="text-[12px] text-stone-600">
                       Quantity: <b>{order.outfit?.pieces || 1} Piece(s) / पीस</b>
+                    </p>
+                    <p className="text-[11.5px] text-stone-500">
+                      {order.outfit?.uploadedPhoto
+                        ? "✓ Custom design photo attached below"
+                        : (order.outfit?.refPhoto || "Tailored according to selected necklines & sleeves")}
                     </p>
                   </div>
                 </div>
-
-                {/* DESIGN CODE CARD (WITH PHOTO IF SELECTED) */}
-                {order.outfit?.designCode ? (
-                  <div className="rounded-2xl border-2 border-[var(--primary)]/30 bg-[#fdf8f9]/90 p-4 flex items-center gap-4 shadow-2xs">
-                    <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden border-2 border-[var(--primary)]/30 bg-white">
-                      <img
-                        src={designCodeInfo?.image || "./images/designs/k-01.jpg"}
-                        alt={designCodeInfo?.name || order.outfit.designCode}
-                        className="w-full h-full object-cover"
-                        loading="eager"
-                      />
-                      <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-[var(--primary)] text-white text-[10px] font-mono font-bold">
-                        {order.outfit.designCode}
-                      </span>
-                    </div>
-                    <div className="min-w-0 flex-1 space-y-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="inline-block px-2 py-0.5 rounded-full bg-[var(--primary)] text-white text-[10.5px] font-mono font-bold">
-                          Design Code: {order.outfit.designCode}
-                        </span>
-                        {designCodeInfo?.tag && (
-                          <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 text-[10px] font-bold border border-amber-200 truncate">
-                            Popular
-                          </span>
-                        )}
-                      </div>
-                      <h4 className="font-serif text-[15px] sm:text-[16px] font-bold text-[var(--primary-dark)] leading-tight">
-                        {designCodeInfo?.name || `Design ${order.outfit.designCode}`}
-                      </h4>
-                      <p className="text-[12px] font-semibold text-[var(--secondary)]">
-                        {designCodeInfo?.hi || "कैटलॉग डिज़ाइन"}
-                      </p>
-                      {designCodeInfo?.details && (
-                        <p className="text-[11px] text-stone-600 line-clamp-2">
-                          {designCodeInfo.details}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="rounded-2xl border-2 border-[#ebdcd0] bg-white/90 p-4 flex items-center gap-4 shadow-2xs">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-stone-100 text-stone-500">
-                      <Scissors size={20} />
-                    </div>
-                    <div>
-                      <span className="inline-block px-2 py-0.5 rounded-full bg-stone-100 text-stone-600 text-[10.5px] font-bold">
-                        Custom Styling / कस्टम सिलाई
-                      </span>
-                      <p className="text-[13px] font-bold text-stone-800 mt-0.5">
-                        {order.outfit?.uploadedPhoto ? "Custom Design Photo Attached" : (order.outfit?.refPhoto || "Bespoke Styling")}
-                      </p>
-                      <p className="text-[11.5px] text-stone-500">
-                        Tailored according to custom reference & specifications
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
 
             {/* 2. STYLING BLUEPRINT (4 CARDS WITH REAL PHOTOS) */}
