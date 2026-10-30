@@ -190,8 +190,12 @@ export default function App() {
     };
   }, []);
 
-  // Check saved admin session on startup
+  // Load local orders immediately into state on startup
   useEffect(() => {
+    const local = getLocalOrders();
+    if (local && local.length > 0) {
+      setOrders(local);
+    }
     const savedToken = sessionStorage.getItem("khwab_admin_token");
     if (savedToken) {
       setAdminToken(savedToken);
@@ -200,7 +204,39 @@ export default function App() {
         setAdminToken("");
       });
     }
+
+    // Cross-tab and storage synchronization
+    let ch;
+    try {
+      if (window.BroadcastChannel) {
+        ch = new BroadcastChannel("khwab_orders_channel");
+        ch.onmessage = () => {
+          const updatedLocal = getLocalOrders();
+          setOrders(updatedLocal);
+        };
+      }
+    } catch {}
+
+    const onStorage = (e) => {
+      if (e.key === "khwab_local_orders") {
+        const updatedLocal = getLocalOrders();
+        setOrders(updatedLocal);
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => {
+      if (ch) ch.close();
+      window.removeEventListener("storage", onStorage);
+    };
   }, []);
+
+  // Sync orders whenever switching to admin view
+  useEffect(() => {
+    if (activeRole === "admin") {
+      const savedToken = sessionStorage.getItem("khwab_admin_token") || adminToken;
+      reloadRecords(savedToken);
+    }
+  }, [activeRole]);
 
   const getLocalOrders = () => {
     try {
@@ -213,8 +249,44 @@ export default function App() {
   const saveLocalOrder = (order) => {
     try {
       const existing = getLocalOrders();
-      const updated = [order, ...existing.filter((o) => o.orderId !== order.orderId)];
-      localStorage.setItem("khwab_local_orders", JSON.stringify(updated));
+      const updated = [order, ...existing.filter((o) => o?.orderId !== order.orderId)];
+      try {
+        localStorage.setItem("khwab_local_orders", JSON.stringify(updated));
+      } catch (quotaErr) {
+        console.warn("Storage quota limit reached, saving lightweight details:", quotaErr);
+        const lightweight = updated.map((o, idx) => ({
+          ...o,
+          outfit: {
+            ...o.outfit,
+            uploadedPhoto: idx === 0 ? o.outfit?.uploadedPhoto : "",
+          },
+        }));
+        try {
+          localStorage.setItem("khwab_local_orders", JSON.stringify(lightweight));
+        } catch {
+          const textOnly = updated.map((o) => ({
+            ...o,
+            outfit: { ...o.outfit, uploadedPhoto: "" },
+          }));
+          localStorage.setItem("khwab_local_orders", JSON.stringify(textOnly));
+        }
+      }
+
+      // Instantly update React state so admin has it right away
+      setOrders((prev) => {
+        const map = new Map();
+        [order, ...prev].forEach((o) => o?.orderId && map.set(o.orderId, o));
+        return Array.from(map.values()).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      });
+
+      // Broadcast to other open tabs/windows
+      try {
+        if (window.BroadcastChannel) {
+          const ch = new BroadcastChannel("khwab_orders_channel");
+          ch.postMessage({ type: "ORDER_CREATED", order });
+          ch.close();
+        }
+      } catch {}
     } catch (e) {
       console.warn("Could not save to localStorage:", e);
     }
@@ -228,11 +300,12 @@ export default function App() {
   }
 
   async function reloadRecords(token = adminToken) {
+    const activeTok = typeof token === "string" ? token : adminToken;
     let serverOrders = [];
-    if (token) {
+    if (activeTok) {
       try {
         const result = await apiRequest("/api/admin/orders", {
-          headers: { authorization: `Bearer ${token}` },
+          headers: { authorization: `Bearer ${activeTok}` },
           cache: "no-store",
         });
         serverOrders = result.orders || [];
@@ -260,15 +333,37 @@ export default function App() {
         throw new Error("कृपया पासवर्ड दर्ज करें · Please enter admin password.");
       }
 
-      await reloadRecords(input);
-      setAdminToken(input);
-      sessionStorage.setItem("khwab_admin_token", input);
-      const local = getLocalOrders();
-      setOrders((prev) => {
-        const map = new Map();
-        [...prev, ...local].forEach((o) => o?.orderId && map.set(o.orderId, o));
-        return Array.from(map.values()).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      });
+      let authenticated = false;
+      try {
+        const result = await apiRequest("/api/admin/orders", {
+          headers: { authorization: `Bearer ${input}` },
+          cache: "no-store",
+        });
+        authenticated = true;
+        if (result && Array.isArray(result.orders)) {
+          setOrders(result.orders);
+        }
+      } catch (err) {
+        if (err.message?.includes("401") || err.message?.includes("Incorrect")) {
+          throw new Error("Incorrect admin password / गलत पासवर्ड");
+        }
+        // On static GitHub Pages hosting (no backend server), authenticate with atelier password
+        if (input !== "Dhaniya123") {
+          throw new Error("Incorrect admin password / गलत पासवर्ड");
+        }
+        authenticated = true;
+      }
+
+      if (authenticated) {
+        setAdminToken(input);
+        sessionStorage.setItem("khwab_admin_token", input);
+        const local = getLocalOrders();
+        setOrders((prev) => {
+          const map = new Map();
+          [...local, ...prev].forEach((o) => o?.orderId && map.set(o.orderId, o));
+          return Array.from(map.values()).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        });
+      }
     } catch (error) {
       setAdminError(error.message || "Incorrect admin password / गलत पासवर्ड");
     } finally {
@@ -472,6 +567,13 @@ export default function App() {
     const local = getLocalOrders().filter((o) => o.orderId !== orderId);
     localStorage.setItem("khwab_local_orders", JSON.stringify(local));
     setOrders((prev) => prev.filter((o) => o.orderId !== orderId));
+    try {
+      if (window.BroadcastChannel) {
+        const ch = new BroadcastChannel("khwab_orders_channel");
+        ch.postMessage({ type: "ORDERS_UPDATED" });
+        ch.close();
+      }
+    } catch {}
   };
 
   const clearOrders = async () => {
@@ -487,6 +589,13 @@ export default function App() {
     }
     localStorage.removeItem("khwab_local_orders");
     setOrders([]);
+    try {
+      if (window.BroadcastChannel) {
+        const ch = new BroadcastChannel("khwab_orders_channel");
+        ch.postMessage({ type: "ORDERS_UPDATED" });
+        ch.close();
+      }
+    } catch {}
   };
 
   return (
@@ -678,7 +787,25 @@ export default function App() {
                   Thank you! We’ve received your details and will contact you to confirm pricing and delivery /
                   धन्यवाद! आपकी जानकारी हमें मिल गई है। कीमत और डिलीवरी की पुष्टि के लिए हम आपसे संपर्क करेंगे।
                 </p>
-                <div className="mt-6 flex flex-col sm:flex-row gap-3">
+
+                {/* 1-TAP WHATSAPP DISPATCH TO ATELIER */}
+                <div className="mt-5 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-center">
+                  <p className="text-[13px] font-semibold text-emerald-950 mb-2.5">
+                    📱 Direct Atelier Sync / कारीगर को तुरंत वॉट्सऐप पर ऑर्डर भेजें:
+                  </p>
+                  <a
+                    href={`https://wa.me/919876543210?text=${encodeURIComponent(
+                      `🧵 *New Order from Khwab Stitch* 🧵\n\n*Order ID:* #${successOrder.orderId}\n*Customer:* ${successOrder.customer?.name} (${successOrder.customer?.whatsapp})\n*Outfit:* ${successOrder.outfit?.type} (${successOrder.outfit?.pieces || 1} pieces)\n*Style:* Front: ${successOrder.design?.neckFront || "Standard"}, Back: ${successOrder.design?.neckBack || "Standard"}, Sleeves: ${successOrder.design?.sleeveLength || "Standard"}\n*Measurement Method:* ${successOrder.measurements?.provideMethod || "Standard"}\n*Delivery Address:* ${successOrder.delivery?.address || successOrder.customer?.address || "Address in slip"}\n\nPlease confirm my order!`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 w-full h-12 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[14px] shadow-md transition-colors"
+                  >
+                    <span>📲 Send Order to Atelier on WhatsApp / वॉट्सऐप पर भेजें</span>
+                  </a>
+                </div>
+
+                <div className="mt-5 flex flex-col sm:flex-row gap-3">
                   <button
                     type="button"
                     onClick={() => setReceiptOrder(successOrder)}
@@ -741,13 +868,6 @@ export default function App() {
             {/* FOOTER */}
             <footer className="mt-16 text-center text-[12px] text-stone-500 pb-12">
               <p>© {new Date().getFullYear()} Khwab Stitch · हमारी कारीगरी</p>
-              <button
-                type="button"
-                onClick={navigateToAdmin}
-                className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#f4ece6] hover:bg-[#ebdcd2] text-[var(--primary)] text-[12px] font-bold border border-[#dfc5b5] transition-all shadow-2xs"
-              >
-                <span>🔒 Atelier Staff Portal / कारीगर एडमिन लॉगिन</span>
-              </button>
             </footer>
           </>
         )}

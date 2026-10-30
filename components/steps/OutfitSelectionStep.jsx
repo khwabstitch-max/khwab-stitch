@@ -29,7 +29,7 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
       const img = new window.Image();
       img.onload = () => {
         try {
-          const maxDimension = 1200;
+          const maxDimension = 800;
           let width = img.width;
           let height = img.height;
 
@@ -49,7 +49,7 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
           const ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, width, height);
 
-          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.82);
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.72);
           const sizeKb = Math.round((compressedDataUrl.length * 3) / 4 / 1024);
 
           setOutfit((prev) => ({

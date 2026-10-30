@@ -39,7 +39,7 @@ export default function AdminDashboard({
   useEffect(() => {
     if (!autoRefresh || !adminToken) return;
     const interval = setInterval(() => {
-      onRefresh(false); // silent refresh
+      onRefresh(adminToken);
     }, 8000);
     return () => clearInterval(interval);
   }, [autoRefresh, adminToken, onRefresh]);
