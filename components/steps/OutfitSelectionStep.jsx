@@ -1,5 +1,7 @@
-import { useState, useRef } from "react";
-import { Check, Wand2, UploadCloud, Camera, Trash2, RefreshCw, Eye, X } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Check, Wand2, UploadCloud, Camera, Trash2, RefreshCw, Eye, X, ChevronDown, ChevronUp } from "lucide-react";
+
+import DesignCodeDropdown from "../DesignCodeDropdown.jsx";
 
 const REFERENCE_OPTIONS = [
   { value: "I have the photo (Upload Design Photo)", label: "I have the photo / मेरे पास फ़ोटो है (Upload Photo)" },
@@ -232,14 +234,9 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
           </select>
         </label>
 
-        <label className="form-field">
-          <span>Design code / डिज़ाइन कोड <small className="text-[11px] font-normal text-stone-500">(Optional / वैकल्पिक)</small></span>
-          <input
-            value={outfit.designCode}
-            onChange={(event) => setOutfit({ ...outfit, designCode: event.target.value })}
-            placeholder="e.g. K-01 / जैसे K-01"
-          />
-        </label>
+        <div className="w-full">
+          <DesignCodeDropdown outfit={outfit} setOutfit={setOutfit} onOpenZoom={(img) => setModalImage(img)} />
+        </div>
 
         {/* Reference Photo Selection */}
         <label className="form-field md:col-span-2">
