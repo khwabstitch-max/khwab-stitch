@@ -1,73 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Check, Eye, ChevronDown, ChevronUp, Sparkles, X, Lock, AlertCircle } from "lucide-react";
 
-export const CATALOG_DESIGN_CODES = [
-  // KURTI CODES (K-...)
-  {
-    code: "K-01",
-    name: "Classic Cotton Printed Kurti",
-    hi: "क्लासिक कॉटन प्रिंटेड कुर्ती",
-    outfit: "Kurti",
-    prefix: "K",
-    image: "./images/designs/k-01.jpg",
-    details: "Mandarin collar, button placket, 3/4 sleeves, straight side-slit cut",
-    tag: "Studio Signature / सर्वाधिक लोकप्रिय",
-  },
-  {
-    code: "K-02",
-    name: "Festive Embroidered Straight Kurti",
-    hi: "फ़ेस्टिव एम्ब्रॉयडर्ड स्ट्रेट कुर्ती",
-    outfit: "Kurti",
-    prefix: "K",
-    image: "./images/kurti.jpg",
-    details: "Round neck with V-slit, quarter sleeves, elegant side-slit hem",
-    tag: "Designer Choice",
-  },
-
-  // BLOUSE CODES (B-...)
-  {
-    code: "B-01",
-    name: "Royal Velvet Embroidered Blouse",
-    hi: "रॉयल वेलवेट एम्ब्रॉयडर्ड ब्लाउज़",
-    outfit: "Blouse",
-    prefix: "B",
-    image: "./images/blouse.jpg",
-    details: "Sweetheart neckline, golden zardozi embroidery, elbow sleeves, dori back",
-    tag: "Bridal & Festive / लोकप्रिय",
-  },
-  {
-    code: "B-02",
-    name: "Classic Saree Designer Choli",
-    hi: "क्लासिक साड़ी डिज़ाइनर चोली",
-    outfit: "Blouse",
-    prefix: "B",
-    image: "./images/blouse.jpg",
-    details: "Deep round back with tassels, fitted bust cup padding, clean finish",
-    tag: "Partywear",
-  },
-
-  // SUIT UPPER CODES (SU-...)
-  {
-    code: "SU-01",
-    name: "Traditional Punjabi Straight Kameez",
-    hi: "पारंपरिक पंजाबी स्ट्रेट कमीज़",
-    outfit: "Suit Upper",
-    prefix: "SU",
-    image: "./images/suit-upper.jpg",
-    details: "Boat neck with lace border, full sleeves, side chak open slits",
-    tag: "Classic Punjabi / पारंपरिक",
-  },
-  {
-    code: "SU-02",
-    name: "Festive Embroidered Silk Suit Upper",
-    hi: "फ़ेस्टिव एम्ब्रॉयडर्ड सिल्क सूट कमीज़",
-    outfit: "Suit Upper",
-    prefix: "SU",
-    image: "./images/suit-upper.jpg",
-    details: "Collar neck styling, straight fitted silhouette with side borders",
-    tag: "Festive Wear",
-  },
-];
+import { DESIGN_CODES as CATALOG_DESIGN_CODES } from "../config/fashionCatalog.js";
+export { CATALOG_DESIGN_CODES };
 
 export default function DesignCodeDropdown({
   outfit,

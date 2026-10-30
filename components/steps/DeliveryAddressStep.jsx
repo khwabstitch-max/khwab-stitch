@@ -21,57 +21,13 @@ import {
   Check,
 } from "lucide-react";
 
-// Studio photos for Necklines & Sleeves
-const FRONT_NECK_PHOTOS = {
-  round: "./images/neck_front/round.jpg",
-  vneck: "./images/neck_front/vneck.jpg",
-  boat: "./images/neck_front/boat.jpg",
-  collar: "./images/neck_front/collar.jpg",
-  square: "./images/neck_front/square.jpg",
-  sweetheart: "./images/neck_front/sweetheart.jpg",
-  high: "./images/neck_front/high.jpg",
-  mandarin: "./images/neck_front/mandarin.jpg",
-};
-
-const BACK_NECK_PHOTOS = {
-  simple: "./images/neck_back/simple.jpg",
-  "round-back": "./images/neck_back/round-back.jpg",
-  "v-back": "./images/neck_back/v-back.jpg",
-  "square-back": "./images/neck_back/square-back.jpg",
-  deep: "./images/neck_back/deep.jpg",
-  button: "./images/neck_back/button.jpg",
-  cutout: "./images/neck_back/cutout.jpg",
-  "as-photo": "./images/neck_back/as-photo.jpg",
-};
-
-const SLEEVE_LENGTH_PHOTOS = {
-  sleeveless: "./images/sleeve_lengths/sleeveless_front.jpg",
-  quarter: "./images/sleeve_lengths/quarter_front.jpg",
-  half: "./images/sleeve_lengths/half_front.jpg",
-  "three-quarter": "./images/sleeve_lengths/three_quarter_front.jpg",
-  full: "./images/sleeve_lengths/full_front.jpg",
-};
-
-const SLEEVE_DESIGN_PHOTOS = {
-  straight: "./images/sleeves/straight_front.jpg",
-  puff: "./images/sleeves/puff_front.jpg",
-  bell: "./images/sleeves/bell_front.jpg",
-  ruffle: "./images/sleeves/ruffle_front.jpg",
-  cap: "./images/sleeves/cap_front.jpg",
-  bishop: "./images/sleeves/bishop_front.jpg",
-  butterfly: "./images/sleeves/butterfly_front.jpg",
-  cold: "./images/sleeves/cold_front.jpg",
-  flutter: "./images/sleeves/flutter_front.jpg",
-  "bell-cuff": "./images/sleeves/bell_cuff_front.jpg",
-  pleated: "./images/sleeves/pleated_front.jpg",
-  "as-photo": "./images/sleeves/as_photo_front.jpg",
-};
-
-const OUTFIT_PHOTOS = {
-  Blouse: "./images/blouse.jpg",
-  Kurti: "./images/kurti.jpg",
-  "Suit Upper": "./images/suit-upper.jpg",
-};
+import {
+  FRONT_NECK_PHOTOS,
+  BACK_NECK_PHOTOS,
+  SLEEVE_LENGTH_PHOTOS,
+  SLEEVE_DESIGN_PHOTOS,
+  OUTFIT_PHOTOS,
+} from "../../config/fashionCatalog.js";
 
 export default function DeliveryAddressStep({
   customer,
@@ -125,7 +81,7 @@ export default function DeliveryAddressStep({
     design?.neckBack === "as-photo" && design?.backPhoto
       ? design.backPhoto
       : BACK_NECK_PHOTOS[design?.neckBack];
-  const sleeveLengthPhoto = SLEEVE_LENGTH_PHOTOS[design?.sleeveLength];
+  const sleeveLengthPhoto = SLEEVE_LENGTH_PHOTOS[design?.sleeveLength]?.front || SLEEVE_LENGTH_PHOTOS[design?.sleeveLength];
   const sleeveDesignPhoto =
     design?.sleeveDesign === "as-photo" && design?.sleevePhoto
       ? design.sleevePhoto

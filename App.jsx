@@ -12,114 +12,14 @@ import OrderReceiptModal from "./components/OrderReceiptModal.jsx";
 import AdminDashboard from "./components/AdminDashboard.jsx";
 import AdminLoginPage from "./components/AdminLoginPage.jsx";
 
-// SECTION DATA
-const outfitTypes = [
-  {
-    id: "Blouse",
-    en: "Blouse (Saree / Lehenga)",
-    hi: "ब्लाउज़ / चोली",
-    desc: "साड़ी और लहंगे के लिए डिज़ाइनर ब्लाउज़",
-    popular: true,
-    badge: "🔥 Most Popular · सर्वाधिक पसंदीदा",
-    image: "./images/blouse.jpg",
-  },
-  {
-    id: "Kurti",
-    en: "Kurti",
-    hi: "कुर्ती / कुर्ती टॉप",
-    desc: "स्ट्रेट, ए-लाइन व फ़ेस्टिव कुर्ती",
-    popular: false,
-    badge: "✨ Daily & Festive",
-    image: "./images/kurti.jpg",
-  },
-  {
-    id: "Suit Upper",
-    en: "Suit Upper / Kameez",
-    hi: "कमीज़ / सूट अपर",
-    desc: "सलवार सूट व पंजाबी कमीज़ अपर",
-    popular: false,
-    badge: "🌸 Classic Traditional",
-    image: "./images/suit-upper.jpg",
-  },
-];
-
-const neckFront = [
-  { id: "round", en: "Round Neck", hi: "गोल गला", hiScript: "गोल गला", grad: "from-rose-200 to-pink-300" },
-  { id: "vneck", en: "V-Neck", hi: "वी गला", hiScript: "वी गला", grad: "from-violet-200 to-purple-300" },
-  { id: "boat", en: "Boat Neck", hi: "नाव गला", hiScript: "नाव गला", grad: "from-amber-200 to-orange-300" },
-  { id: "collar", en: "Collar Neck", hi: "कॉलर वाला", hiScript: "कॉलर वाला", grad: "from-emerald-200 to-teal-300" },
-  { id: "square", en: "Square Neck", hi: "चौकोर गला", hiScript: "चौकोर गला", grad: "from-sky-200 to-blue-300" },
-  { id: "sweetheart", en: "Sweetheart", hi: "दिल वाला गला", hiScript: "दिल वाला गला", grad: "from-fuchsia-200 to-pink-300" },
-  { id: "high", en: "High Neck", hi: "बंद गला", hiScript: "बंद गला", grad: "from-slate-200 to-gray-300" },
-  { id: "mandarin", en: "Mandarin Collar", hi: "चाइनीज़ गला", hiScript: "चाइनीज़ गला", grad: "from-lime-200 to-green-300" },
-];
-const neckBack = [
-  { id: "simple", en: "Simple Back", hi: "सीधा बैक", hiScript: "सीधा बैक", grad: "from-rose-100 to-pink-200" },
-  { id: "round-back", en: "Round Back", hi: "गोल बैक", hiScript: "गोल बैक", grad: "from-purple-100 to-violet-200" },
-  { id: "v-back", en: "V-Back", hi: "वी बैक", hiScript: "वी बैक", grad: "from-amber-100 to-yellow-200" },
-  { id: "square-back", en: "Square Back", hi: "चौकोर बैक", hiScript: "चौकोर बैक", grad: "from-cyan-100 to-sky-200" },
-  { id: "deep", en: "Deep Back", hi: "गहरा बैक", hiScript: "गहरा बैक", grad: "from-red-100 to-rose-200" },
-  { id: "button", en: "Button Back", hi: "बटन वाला", hiScript: "बटन वाला", grad: "from-emerald-100 to-green-200" },
-  { id: "cutout", en: "Cut-out Back", hi: "जाली वाला", hiScript: "जाली वाला", grad: "from-orange-100 to-amber-200" },
-];
-const sleeveLengthData = [
-  { id: "sleeveless", en: "Sleeveless", hi: "बिना बाज़ू", hiScript: "बिना बाज़ू", cm: "0 cm (0\")", desc: "Length: 0 cm · Shoulder: 38 cm" },
-  { id: "quarter", en: "1/4 Sleeve", hi: "चौथाई बाज़ू", hiScript: "चौथाई बाज़ू", cm: "10 cm (4\")", desc: "Length: 10 cm · Opening: 28 cm" },
-  { id: "half", en: "1/2 Sleeve", hi: "आधी बाज़ू", hiScript: "आधी बाज़ू", cm: "20 cm (7.9\")", desc: "Length: 20 cm · Opening: 30 cm" },
-  { id: "three-quarter", en: "3/4 Sleeve", hi: "पौनी बाज़ू", hiScript: "पौनी बाज़ू", cm: "38 cm (15\")", desc: "Length: 38 cm · Opening: 24 cm" },
-  { id: "full", en: "Full Sleeve", hi: "पूरी बाज़ू", hiScript: "पूरी बाज़ू", cm: "55 cm (21.7\")", desc: "Length: 55 cm · Opening: 22 cm" },
-];
-const sleeveDesign = [
-  { id: "straight", en: "Straight Plain", hi: "सीधी बाज़ू", hiScript: "सीधी बाज़ू" },
-  { id: "puff", en: "Puff Sleeve", hi: "फूली बाज़ू", hiScript: "फूली बाज़ू" },
-  { id: "bell", en: "Bell Sleeve", hi: "घंटी बाज़ू", hiScript: "घंटी बाज़ू" },
-  { id: "ruffle", en: "Ruffle", hi: "झालर बाज़ू", hiScript: "झालर बाज़ू" },
-  { id: "cap", en: "Cap Sleeve", hi: "छोटी टोपी", hiScript: "छोटी टोपी" },
-  { id: "bishop", en: "Bishop Balloon", hi: "गुब्बारे जैसी", hiScript: "गुब्बारे जैसी" },
-  { id: "butterfly", en: "Butterfly", hi: "तितली बाज़ू", hiScript: "तितली बाज़ू" },
-  { id: "cold", en: "Cold Shoulder", hi: "कंधा खुला", hiScript: "कंधा खुला" },
-  { id: "flutter", en: "Flutter", hi: "लहर बाज़ू", hiScript: "लहर बाज़ू" },
-  { id: "bell-cuff", en: "Bell-Cuff", hi: "कफ़ वाली", hiScript: "कफ़ वाली" },
-  { id: "pleated", en: "Pleated", hi: "चुन्नट वाली", hiScript: "चुन्नट वाली" },
-];
-
-const measurementConfigs = {
-  Blouse: [
-    { key: "blouseLength", num: "1", en: "Blouse Length", hi: "ब्लाउज़ लंबाई", help: "कंधे से नीचे तक (Point 1 on sketch)" },
-    { key: "bust", num: "2", en: "Around Bust", hi: "छाती / चेस्ट", help: "छाती की पूरी गोलाई (Point 2 on sketch)" },
-    { key: "underBust", num: "3", en: "Under Bust", hi: "छाती के नीचे (ब्रा लाइन)", help: "ब्रा लाइन की गोलाई (Point 3 on sketch)" },
-    { key: "waist", num: "4", en: "Waist", hi: "कमर", help: "कमर का निचला भाग (Point 4 on sketch)" },
-    { key: "armhole", num: "5", en: "Armhole", hi: "कांख / आर्महोल", help: "कांख की पूरी गोलाई (Point 5 on sketch)" },
-    { key: "shoulder", num: "6", en: "Shoulder Width", hi: "कंधा चौड़ाई", help: "कंधे की चौड़ाई (Point 6 on sketch)" },
-    { key: "sleeveLength", num: "7", en: "Sleeve Length", hi: "बाज़ू लंबाई", help: "कंधे से आस्तीन तक (Point 7 on sketch)" },
-    { key: "frontNeck", num: "8", en: "Front Neck Depth", hi: "आगे गले की गहराई", help: "कंधे से आगे गले तक (Point 8 on sketch)" },
-    { key: "backNeck", num: "9", en: "Back Neck Depth", hi: "पीछे गले की गहराई", help: "कंधे से पीछे गले तक (Point 9 on sketch)" },
-  ],
-  Kurti: [
-    { key: "kurtiLength", num: "1", en: "Kurti Length", hi: "कुर्ती लंबाई", help: "कंधे से नीचे पूरी लंबाई (Point 1 on sketch)" },
-    { key: "bust", num: "2", en: "Around Bust", hi: "छाती / चेस्ट", help: "छाती की पूरी गोलाई (Point 2 on sketch)" },
-    { key: "waist", num: "3", en: "Around Above Waist", hi: "कमर की गोलाई", help: "नाभि के ऊपर कमर की गोलाई (Point 3 on sketch)" },
-    { key: "hip", num: "4", en: "Around Hip", hi: "हिप की गोलाई", help: "कूल्हे / हिप की पूरी गोलाई (Point 4 on sketch)" },
-    { key: "armhole", num: "5", en: "Around Armhole", hi: "आर्महोल / कांख", help: "कांख की पूरी गोलाई (Point 5 on sketch)" },
-    { key: "shoulder", num: "6", en: "Shoulder Width", hi: "कंधा चौड़ाई", help: "एक कंधे से दूसरे कंधे तक (Point 6 on sketch)" },
-    { key: "sleeveLength", num: "7", en: "Sleeve Length", hi: "बाज़ू लंबाई", help: "कंधे से आस्तीन तक (Point 7 on sketch)" },
-    { key: "bottomOpening", num: "8", en: "Around Arm / Bottom Opening", hi: "बाज़ू की मोरी / घेर", help: "बाज़ू का निचला भाग (Point 8 on sketch)" },
-    { key: "frontNeck", num: "9", en: "Front Neck Deep", hi: "आगे गले की गहराई", help: "कंधे से आगे गले की गहराई (Point 9 on sketch)" },
-    { key: "backNeck", num: "10", en: "Back Neck Deep", hi: "पीछे गले की गहराई", help: "कंधे से पीछे गले की गहराई (Point 10 on sketch)" },
-  ],
-  "Suit Upper": [
-    { key: "suitLength", num: "1", en: "Suit / Kameez Length", hi: "कमीज़ लंबाई", help: "कंधे से नीचे कुल लंबाई (Point 1 on sketch)" },
-    { key: "bust", num: "2", en: "Around Bust", hi: "छाती / चेस्ट", help: "छाती की पूरी गोलाई (Point 2 on sketch)" },
-    { key: "waist", num: "3", en: "Around Above Waist", hi: "कमर की गोलाई", help: "नाभि के ऊपर कमर की गोलाई (Point 3 on sketch)" },
-    { key: "hip", num: "4", en: "Around Hip", hi: "हिप की गोलाई", help: "कूल्हे / हिप की पूरी गोलाई (Point 4 on sketch)" },
-    { key: "armhole", num: "5", en: "Around Armhole", hi: "आर्महोल / कांख", help: "कांख की पूरी गोलाई (Point 5 on sketch)" },
-    { key: "shoulder", num: "6", en: "Shoulder Width", hi: "कंधा चौड़ाई", help: "एक कंधे से दूसरे कंधे तक (Point 6 on sketch)" },
-    { key: "sleeveLength", num: "7", en: "Sleeve Length", hi: "बाज़ू लंबाई", help: "कंधे से आस्तीन तक (Point 7 on sketch)" },
-    { key: "sideSlit", num: "8", en: "Side Slit / Chak Length", hi: "साइड चाक / चीर", help: "कमर से साइड चाक का खुला हिस्सा (Point 8)" },
-    { key: "frontNeck", num: "9", en: "Front Neck Deep", hi: "आगे गले की गहराई", help: "कंधे से आगे गले की गहराई (Point 9 on sketch)" },
-    { key: "backNeck", num: "10", en: "Back Neck Deep", hi: "पीछे गले की गहराई", help: "कंधे से पीछे गले की गहराई (Point 10 on sketch)" },
-  ],
-};
+import {
+  OUTFITS as outfitTypes,
+  FRONT_NECKLINES as neckFront,
+  BACK_NECKLINES as neckBack,
+  SLEEVE_LENGTHS as sleeveLengthData,
+  SLEEVE_DESIGNS as sleeveDesign,
+  MEASUREMENT_CONFIGS as measurementConfigs,
+} from "./config/fashionCatalog.js";
 
 const CLOUD_BRIDGE_TOPIC = "khwab_atelier_orders_v2_sync";
 const CLOUD_BRIDGE_URL = `https://ntfy.sh/${CLOUD_BRIDGE_TOPIC}`;

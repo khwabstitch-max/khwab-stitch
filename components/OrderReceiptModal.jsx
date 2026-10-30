@@ -16,132 +16,14 @@ import {
   Check,
 } from "lucide-react";
 
-// Catalog of Design Codes with Photos & Details
-const DESIGN_CODE_CATALOG = {
-  "K-01": {
-    code: "K-01",
-    name: "Classic Cotton Printed Kurti",
-    hi: "क्लासिक कॉटन प्रिंटेड कुर्ती",
-    outfit: "Kurti",
-    image: "./images/designs/k-01.jpg",
-    details: "Mandarin collar, button placket, 3/4 sleeves, straight side-slit cut",
-    tag: "Studio Signature / सर्वाधिक लोकप्रिय",
-  },
-  "K-02": {
-    code: "K-02",
-    name: "Festive Embroidered Straight Kurti",
-    hi: "फ़ेस्टिव एम्ब्रॉयडर्ड स्ट्रेट कुर्ती",
-    outfit: "Kurti",
-    image: "./images/kurti.jpg",
-    details: "Round neck with V-slit, quarter sleeves, elegant side-slit hem",
-    tag: "Designer Choice",
-  },
-  "B-01": {
-    code: "B-01",
-    name: "Royal Velvet Embroidered Blouse",
-    hi: "रॉयल वेलवेट एम्ब्रॉयडर्ड ब्लाउज़",
-    outfit: "Blouse",
-    image: "./images/blouse.jpg",
-    details: "Sweetheart neckline, golden zardozi embroidery, elbow sleeves, dori back",
-    tag: "Bridal & Festive / लोकप्रिय",
-  },
-  "B-02": {
-    code: "B-02",
-    name: "Classic Saree Designer Choli",
-    hi: "क्लासिक साड़ी डिज़ाइनर चोली",
-    outfit: "Blouse",
-    image: "./images/blouse.jpg",
-    details: "Deep round back with tassels, fitted bust cup padding, clean finish",
-    tag: "Partywear",
-  },
-  "SU-01": {
-    code: "SU-01",
-    name: "Traditional Punjabi Straight Kameez",
-    hi: "पारंपरिक पंजाबी स्ट्रेट कमीज़",
-    outfit: "Suit Upper",
-    image: "./images/suit-upper.jpg",
-    details: "Boat neck with lace border, full sleeves, side chak open slits",
-    tag: "Classic Punjabi / पारंपरिक",
-  },
-  "SU-02": {
-    code: "SU-02",
-    name: "Festive Embroidered Silk Suit Upper",
-    hi: "फ़ेस्टिव एम्ब्रॉयडर्ड सिल्क सूट कमीज़",
-    outfit: "Suit Upper",
-    image: "./images/suit-upper.jpg",
-    details: "Collar neck styling, straight fitted silhouette with side borders",
-    tag: "Festive Wear",
-  },
-};
-
-// Outfit Types Catalog
-const OUTFIT_CATALOG = {
-  Blouse: {
-    en: "Blouse",
-    hi: "ब्लाउज़ / चोली",
-    photo: "./images/blouse.jpg",
-  },
-  Kurti: {
-    en: "Kurti",
-    hi: "कुर्ती / कुर्ता",
-    photo: "./images/kurti.jpg",
-  },
-  "Suit Upper": {
-    en: "Suit Upper",
-    hi: "सूट अपर / कमीज़",
-    photo: "./images/suit-upper.jpg",
-  },
-};
-
-// Front Necklines with Photos
-const FRONT_NECK_CATALOG = {
-  round: { en: "Round Neck", hi: "गोल गला", photo: "./images/neck_front/round.jpg" },
-  vneck: { en: "V-Neck", hi: "वी गला", photo: "./images/neck_front/vneck.jpg" },
-  boat: { en: "Boat Neck", hi: "नाव (बोट) गला", photo: "./images/neck_front/boat.jpg" },
-  collar: { en: "Collar Neck", hi: "कॉलर वाला गला", photo: "./images/neck_front/collar.jpg" },
-  square: { en: "Square Neck", hi: "चौकोर गला", photo: "./images/neck_front/square.jpg" },
-  sweetheart: { en: "Sweetheart", hi: "स्वीटहार्ट (दिल वाला) गला", photo: "./images/neck_front/sweetheart.jpg" },
-  high: { en: "High Neck", hi: "बंद / हाई नेक", photo: "./images/neck_front/high.jpg" },
-  mandarin: { en: "Mandarin Collar", hi: "चाइनीज़ (मंदारिन) गला", photo: "./images/neck_front/mandarin.jpg" },
-  "as-photo": { en: "As per Photo", hi: "फ़ोटो जैसा गला", photo: "./images/neck_front/round.jpg" },
-};
-
-// Back Necklines with Photos
-const BACK_NECK_CATALOG = {
-  simple: { en: "Simple Back", hi: "सीधा / सामान्य बैक", photo: "./images/neck_back/simple.jpg" },
-  "round-back": { en: "Round Back", hi: "गोल बैक", photo: "./images/neck_back/round-back.jpg" },
-  "v-back": { en: "V-Back", hi: "वी बैक", photo: "./images/neck_back/v-back.jpg" },
-  "square-back": { en: "Square Back", hi: "चौकोर बैक", photo: "./images/neck_back/square-back.jpg" },
-  deep: { en: "Deep Back with Dori", hi: "गहरा बैक डोरी सहित", photo: "./images/neck_back/deep.jpg" },
-  button: { en: "Keyhole with Button", hi: "बटन वाला बैक", photo: "./images/neck_back/button.jpg" },
-  cutout: { en: "Cut-out Back", hi: "डिज़ाइनर कटआउट", photo: "./images/neck_back/cutout.jpg" },
-  "as-photo": { en: "As per Photo", hi: "फ़ोटो जैसा बैक", photo: "./images/neck_back/as-photo.jpg" },
-};
-
-// Sleeve Lengths with Photos
-const SLEEVE_LENGTH_CATALOG = {
-  sleeveless: { en: "Sleeveless", hi: "बिना बाज़ू", length: "0 cm (0\")", photo: "./images/sleeve_lengths/sleeveless_front.jpg" },
-  quarter: { en: "1/4 Sleeve (Quarter)", hi: "छोटी बाज़ू (चौथाई)", length: "10 cm (4\")", photo: "./images/sleeve_lengths/quarter_front.jpg" },
-  half: { en: "1/2 Sleeve (Half)", hi: "आधी बाज़ू", length: "20 cm (7.9\")", photo: "./images/sleeve_lengths/half_front.jpg" },
-  "three-quarter": { en: "3/4 Sleeve (Three-Quarter)", hi: "पौनी बाज़ू (3/4)", length: "38 cm (15\")", photo: "./images/sleeve_lengths/three_quarter_front.jpg" },
-  full: { en: "Full Sleeve", hi: "पूरी बाज़ू", length: "55 cm (21.7\")", photo: "./images/sleeve_lengths/full_front.jpg" },
-};
-
-// Sleeve Designs with Photos
-const SLEEVE_DESIGN_CATALOG = {
-  straight: { en: "Straight Plain", hi: "सादी / सीधी बाज़ू", photo: "./images/sleeves/straight_front.jpg" },
-  puff: { en: "Puff Sleeve", hi: "फूली (पफ) बाज़ू", photo: "./images/sleeves/puff_front.jpg" },
-  bell: { en: "Bell Sleeve", hi: "घंटी (बेल) बाज़ू", photo: "./images/sleeves/bell_front.jpg" },
-  ruffle: { en: "Ruffle Sleeve", hi: "झालर (रफ़ल) बाज़ू", photo: "./images/sleeves/ruffle_front.jpg" },
-  cap: { en: "Cap Sleeve", hi: "कैप बाज़ू", photo: "./images/sleeves/cap_front.jpg" },
-  bishop: { en: "Bishop Balloon", hi: "गुब्बारे (बिशप) बाज़ू", photo: "./images/sleeves/bishop_front.jpg" },
-  butterfly: { en: "Butterfly", hi: "तितली बाज़ू", photo: "./images/sleeves/butterfly_front.jpg" },
-  cold: { en: "Cold Shoulder", hi: "कंधा खुला (कट-शोल्डर)", photo: "./images/sleeves/cold_front.jpg" },
-  flutter: { en: "Flutter", hi: "लहर (फ्लटर) बाज़ू", photo: "./images/sleeves/flutter_front.jpg" },
-  "bell-cuff": { en: "Bell-Cuff", hi: "कफ़ वाली बाज़ू", photo: "./images/sleeves/bell_cuff_front.jpg" },
-  pleated: { en: "Pleated", hi: "चुन्नट (प्लीटेड) बाज़ू", photo: "./images/sleeves/pleated_front.jpg" },
-  "as-photo": { en: "As per Photo", hi: "फ़ोटो जैसी बाज़ू", photo: "./images/sleeves/as_photo_front.jpg" },
-};
+import {
+  DESIGN_CODE_MAP as DESIGN_CODE_CATALOG,
+  OUTFIT_MAP as OUTFIT_CATALOG,
+  FRONT_NECK_MAP as FRONT_NECK_CATALOG,
+  BACK_NECK_MAP as BACK_NECK_CATALOG,
+  SLEEVE_LENGTH_MAP as SLEEVE_LENGTH_CATALOG,
+  SLEEVE_DESIGN_MAP as SLEEVE_DESIGN_CATALOG,
+} from "../config/fashionCatalog.js";
 
 const MEASURE_LABELS = {
   blouseLength: "Blouse Length / ब्लाउज़ लंबाई",
