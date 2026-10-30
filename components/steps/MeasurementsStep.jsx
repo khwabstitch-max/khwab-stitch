@@ -28,8 +28,8 @@ const methodOptions = [
   },
   {
     id: "send_clothes",
-    label: "I will send my clothes / मैं अपने कपड़े भेजूंगी",
-    tag: "Send Clothes / कपड़े भेजूंगी",
+    label: "I will send my stitched sample clothes for measurement / मैं अपने सिले हुए कपड़े नापने के लिए भेजूंगी",
+    tag: "Stitched Sample Clothes / सिले कपड़े भेजूंगी",
     type: "courier",
   },
   {
@@ -56,7 +56,10 @@ export default function MeasurementsStep({
 
   const isCourier =
     currentMethod.includes("भेजूंगी") ||
+    currentMethod.includes("भेजूँगी") ||
+    currentMethod.includes("सिले") ||
     currentMethod.includes("send my clothes") ||
+    currentMethod.includes("stitched sample") ||
     currentMethod.includes("sample clothes");
 
   const isVideoCall =
@@ -108,7 +111,7 @@ export default function MeasurementsStep({
               {isSelfMeasure
                 ? `Refer to the measurement diagram to enter your exact ${outfitTitle} size / रेखाचित्र के अनुसार नाप भरें`
                 : isCourier
-                ? `You will send clothes for stitching / आप सिलाई के लिए अपने कपड़े भेजेंगे`
+                ? `You will send your stitched sample clothes for measurement / आप नाप के लिए अपने सिले हुए कपड़े भेजेंगे`
                 : `Live video call assistance with our master tailor / मास्टर दर्जी जल्दी ही आपसे वीडियो कॉल पर संपर्क करेंगे`}
             </p>
           </div>

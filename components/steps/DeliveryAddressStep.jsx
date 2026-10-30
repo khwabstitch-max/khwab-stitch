@@ -643,8 +643,8 @@ export default function DeliveryAddressStep({
             <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[12.5px]">
               {measurements?.provideMethod?.includes("वीडियो कॉल")
                 ? "📹 Master tailor will contact you shortly on WhatsApp to measure over video call / मास्टर दर्जी नाप के लिए वीडियो कॉल पर संपर्क करेंगे।"
-                : measurements?.provideMethod?.includes("भेजूंगी")
-                ? "📦 You will send your sample garment for size / आप अपना पुराना नाप का कपड़ा भेजेंगी।"
+                : measurements?.provideMethod?.includes("भेजूंगी") || measurements?.provideMethod?.includes("सिले")
+                ? "📦 You will send your stitched sample clothes for measurement / आप नापने के लिए अपने सिले हुए कपड़े भेजेंगी।"
                 : "No manual measurements entered. Click 'Edit Measurements' to fill or request tailor assistance."}
             </div>
           )}
