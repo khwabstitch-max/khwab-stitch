@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Globe, ShieldCheck } from "lucide-react";
 
 const steps = [
@@ -18,6 +18,22 @@ export default function StepHeader({
   ordersCount = null,
 }) {
   const progress = (currentSection / steps.length) * 100;
+  const clickRef = useRef({ time: 0, count: 0 });
+
+  const handleLogoClick = () => {
+    const now = Date.now();
+    if (now - clickRef.current.time < 500) {
+      clickRef.current.count += 1;
+      if (clickRef.current.count >= 3) {
+        clickRef.current = { time: 0, count: 0 };
+        if (onNavigateAdmin) onNavigateAdmin();
+        return;
+      }
+    } else {
+      clickRef.current = { time: now, count: 1 };
+    }
+    if (onNavigateCustomer) onNavigateCustomer();
+  };
 
   return (
     <header className="step-header" data-safe-area-sticky-top>
@@ -25,7 +41,7 @@ export default function StepHeader({
         {/* BRAND LOGO */}
         <div
           className="brand-lockup cursor-pointer group flex items-center gap-2.5 sm:gap-3 select-none"
-          onClick={onNavigateCustomer}
+          onClick={handleLogoClick}
           title="Khwab Stitch — Where Fabric Becomes Art"
         >
           <div className="relative flex-shrink-0">

@@ -182,11 +182,20 @@ export default function App() {
       setActiveRole(isAdminRoute ? "admin" : "customer");
     };
 
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "a") || (e.ctrlKey && e.altKey && e.key.toLowerCase() === "a")) {
+        e.preventDefault();
+        navigateToAdmin();
+      }
+    };
+
     window.addEventListener("popstate", handleUrlChange);
     window.addEventListener("hashchange", handleUrlChange);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("popstate", handleUrlChange);
       window.removeEventListener("hashchange", handleUrlChange);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
@@ -618,6 +627,7 @@ export default function App() {
               orders={orders}
               adminToken={adminToken}
               onRefresh={reloadRecords}
+              onSaveOrder={saveLocalOrder}
               onDeleteOrder={deleteOrder}
               onExportCsv={downloadOrdersCsv}
               onOpenReceipt={openReceipt}
