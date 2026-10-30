@@ -179,7 +179,17 @@ const fetchCloudOrders = async () => {
 export default function App() {
   // FORM STATE
   const [currentSection, setCurrentSection] = useState(1);
-  const [customer, setCustomer] = useState({ name: "", whatsapp: "", email: "", address: "", landmark: "", cityState: "", pin: "" });
+  const [customer, setCustomer] = useState({
+    name: "",
+    whatsapp: "",
+    email: "",
+    address: "",
+    city: "",
+    state: "",
+    pin: "",
+    landmark: "",
+    cityState: "",
+  });
   const [outfit, setOutfit] = useState({
     type: "", pieces: "1", designCode: "", refPhoto: "", specialReq: "",
     uploadedPhoto: "", uploadedPhotoName: "", uploadedPhotoSize: ""
@@ -567,8 +577,15 @@ export default function App() {
 
   const saveOrder = async () => {
     // validation
-    if (![customer.name, customer.whatsapp, customer.address, customer.cityState, customer.pin].every((value) => value && value.trim())) {
-      alert("कृपया नाम, वॉट्सऐप, पूरा पता, शहर और पिन कोड भरें · Please fill in name, WhatsApp, address, city & PIN");
+    const digitsOnly = (customer.whatsapp || "").replace(/\D/g, "");
+    const clean10 = digitsOnly.length === 12 && digitsOnly.startsWith("91") ? digitsOnly.slice(2) : digitsOnly;
+    if (clean10.length !== 10) {
+      alert("कृपया 10 अंकों का मान्य वॉट्सऐप नंबर दर्ज करें · Please enter a valid 10-digit WhatsApp number");
+      setCurrentSection(2);
+      return;
+    }
+    if (![customer.name, customer.address, customer.pin].every((value) => value && value.trim())) {
+      alert("कृपया नाम, पूरा पता और पिन कोड भरें · Please fill in name, address & PIN");
       setCurrentSection(2);
       return;
     }
@@ -621,11 +638,49 @@ export default function App() {
     event.preventDefault();
     setStepError("");
     if (currentSection === 2) {
-      const requiredCustomerFields = [customer.name, customer.whatsapp, customer.address, customer.cityState, customer.pin];
-      if (requiredCustomerFields.some((value) => !value || !value.trim())) {
-        setStepError("कृपया नाम, वॉट्सऐप, पूरा पता, शहर और पिन कोड भरें · Please fill in all required details.");
+      if (!customer.name?.trim()) {
+        setStepError("कृपया अपना पूरा नाम भरें · Please enter your full name.");
         return;
       }
+
+      // WhatsApp 10-digit validation
+      const digitsOnly = (customer.whatsapp || "").replace(/\D/g, "");
+      const clean10 = digitsOnly.length === 12 && digitsOnly.startsWith("91") ? digitsOnly.slice(2) : digitsOnly;
+      if (clean10.length !== 10) {
+        setStepError("कृपया 10 अंकों का मान्य वॉट्सऐप नंबर दर्ज करें · Please enter a valid 10-digit WhatsApp number.");
+        return;
+      }
+
+      if (!customer.address?.trim()) {
+        setStepError("कृपया पूरा डिलीवरी पता भरें · Please enter your full delivery address.");
+        return;
+      }
+
+      if (!customer.city?.trim()) {
+        setStepError("कृपया शहर चुनें या लिखें · Please select or enter your city.");
+        return;
+      }
+
+      if (!customer.state?.trim()) {
+        setStepError("कृपया राज्य चुनें · Please select your state.");
+        return;
+      }
+
+      // PIN 6-digit validation
+      const pinDigits = (customer.pin || "").replace(/\D/g, "");
+      if (pinDigits.length !== 6) {
+        setStepError("कृपया 6 अंकों का सही पिन कोड दर्ज करें · Please enter a valid 6-digit PIN code.");
+        return;
+      }
+
+      const combinedCityState = `${customer.city.trim()}, ${customer.state.trim()}`;
+      setCustomer((prev) => ({
+        ...prev,
+        whatsapp: clean10,
+        pin: pinDigits,
+        cityState: combinedCityState,
+      }));
+
       // Keep delivery address in sync with customer address
       setDelivery((prev) => ({
         ...prev,
