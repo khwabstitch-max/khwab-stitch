@@ -460,6 +460,7 @@ export default function App() {
 
   // Helpers
   const selectOutfit = (t) => {
+    if (!t) return;
     setOutfit((current) => ({ ...current, type: t }));
     setStepError("");
     if (t !== outfit.type) {

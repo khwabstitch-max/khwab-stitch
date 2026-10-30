@@ -142,7 +142,11 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
               type="button"
               key={item.id}
               aria-pressed={selected}
-              onClick={() => selectOutfit(item.id)}
+              onClick={() => {
+                if (outfit.type !== item.id) {
+                  selectOutfit(item.id);
+                }
+              }}
               className={`group relative flex flex-col overflow-hidden rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
                 selected
                   ? "border-[var(--primary)] ring-4 ring-[var(--primary)]/15 shadow-lg transform -translate-y-1"
