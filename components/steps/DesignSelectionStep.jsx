@@ -116,6 +116,7 @@ function ChoiceGroup({
   activeView = "front",
   onToggleView,
   design,
+  onTriggerBackUpload,
 }) {
   return (
     <section className="design-group mb-8">
@@ -170,11 +171,8 @@ function ChoiceGroup({
           if (groupType === "neckFront") {
             photoSrc = FRONT_NECK_PHOTOS[option.id];
           } else if (groupType === "neckBack") {
-            if (option.id === "as-photo" && design?.backPhoto) {
-              photoSrc = design.backPhoto;
-            } else {
-              photoSrc = BACK_NECK_PHOTOS[option.id];
-            }
+            // "As per Photo / फोटो जैसा Upload Photo / अपलोड करें wale mai phtot template ki tarah rako bas"
+            photoSrc = BACK_NECK_PHOTOS[option.id];
           } else if (groupType === "sleeveLength") {
             const lengthPhoto = SLEEVE_LENGTH_PHOTOS[option.id];
             photoSrc = activeView === "side" ? lengthPhoto?.side : lengthPhoto?.front;
@@ -188,7 +186,12 @@ function ChoiceGroup({
           return (
             <div
               key={option.id}
-              onClick={() => onSelect(option.id)}
+              onClick={() => {
+                onSelect(option.id);
+                if (groupType === "neckBack" && option.id === "as-photo" && !hasCustomPhoto && onTriggerBackUpload) {
+                  onTriggerBackUpload();
+                }
+              }}
               className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border-2 text-left transition-all duration-200 cursor-pointer bg-white ${
                 selected
                   ? "border-[var(--primary)] ring-3 ring-[var(--primary)]/15 shadow-md transform -translate-y-0.5"
@@ -222,11 +225,16 @@ function ChoiceGroup({
                   </span>
                 )}
 
-                {/* Custom Photo Uploaded Badge */}
+                {/* Custom Photo Uploaded Badge / Indicator */}
                 {hasCustomPhoto && (
-                  <span className="absolute top-2.5 left-2.5 flex items-center gap-1 rounded-full bg-emerald-600 px-2 py-0.5 text-[9.5px] font-bold text-white shadow-md">
-                    ✓ Custom Photo
-                  </span>
+                  <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 rounded-lg bg-white/95 px-2 py-1 shadow-md border border-emerald-300 backdrop-blur-xs">
+                    <img
+                      src={design.backPhoto}
+                      alt="Uploaded thumbnail"
+                      className="h-5 w-5 rounded object-cover border border-emerald-300"
+                    />
+                    <span className="text-[10px] font-bold text-emerald-800">✓ Attached</span>
+                  </div>
                 )}
 
                 {/* Preview / Zoom Button */}
@@ -244,30 +252,38 @@ function ChoiceGroup({
                 </button>
               </div>
 
-              {/* Card Body - Content & Base Details */}
+              {/* Card Body - Content & Details */}
               <div className="p-3 border-t border-[#f4ece3] bg-white flex flex-col justify-between flex-1">
                 <div>
                   <h4 className="font-serif text-[13.5px] font-bold text-[var(--primary-dark)] group-hover:text-[var(--primary)] transition-colors leading-tight">
                     {option.en} / {option.hiScript || option.hi}
                   </h4>
-                  {/* Base description */}
-                  <p className="text-[11px] text-[var(--text-light)] mt-1.5">
-                    {groupType === "sleeveLength" && option.cm ? (
-                      <span>Length / लंबाई: <b>{option.cm}</b></span>
-                    ) : groupType === "neckBack" && option.id === "as-photo" ? (
-                      hasCustomPhoto ? (
-                        <span className="text-emerald-700 font-bold truncate block">
+                  {groupType === "sleeveLength" && option.cm && (
+                    <p className="text-[11px] text-[var(--text-light)] mt-1.5">
+                      Length / लंबाई: <b>{option.cm}</b>
+                    </p>
+                  )}
+                  {groupType === "neckBack" && option.id === "as-photo" && (
+                    <div className="mt-2 space-y-1.5">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelect("as-photo");
+                          if (onTriggerBackUpload) onTriggerBackUpload();
+                        }}
+                        className="w-full inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--primary)] text-white text-[11px] font-bold shadow-xs hover:bg-[var(--primary-dark)] active:scale-[0.98] transition-all cursor-pointer"
+                      >
+                        <UploadCloud size={13} />
+                        <span>{hasCustomPhoto ? "Change Photo / फ़ोटो बदलें" : "Upload Photo / अपलोड करें"}</span>
+                      </button>
+                      {hasCustomPhoto && (
+                        <span className="block text-[10px] text-emerald-700 font-semibold truncate text-center">
                           ✓ {design.backPhotoName || "Photo Attached"}
                         </span>
-                      ) : (
-                        <span className="text-[var(--primary)] font-semibold flex items-center gap-1">
-                          <Camera size={12} /> Upload Photo / अपलोड करें
-                        </span>
-                      )
-                    ) : (
-                      <span>Base: Natural Cotton / शुद्ध सूती कपड़ा</span>
-                    )}
-                  </p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-2.5">
@@ -401,9 +417,22 @@ export default function DesignSelectionStep({
           </div>
 
           <div className="flex items-center gap-1.5 rounded-full bg-[#fbf5f0] px-3.5 py-1 text-[11px] font-bold text-[var(--primary)] border border-[#eedfd6]">
-            <span>100% Premium Cotton / शुद्ध सूती कपड़ा</span>
+            <span>Bespoke Tailoring / कस्टम सिलाई</span>
           </div>
         </div>
+
+        {/* Global hidden file input for back neck photo upload */}
+        <input
+          type="file"
+          ref={backFileInputRef}
+          accept="image/*"
+          onChange={(e) => {
+            if (e.target.files?.[0]) handleBackPhotoProcess(e.target.files[0]);
+            e.target.value = "";
+          }}
+          className="hidden"
+        />
+
         {/* 1. FRONT NECKLINE (STUDIO CATALOG PHOTOS) */}
         <ChoiceGroup
           title="Front neckline"
@@ -428,6 +457,7 @@ export default function DesignSelectionStep({
           onSelect={(value) => selectDesign("neckBack", value)}
           onOpenDetail={openDetail}
           design={design}
+          onTriggerBackUpload={() => backFileInputRef.current?.click()}
         />
 
         {/* CUSTOM BACK PHOTO UPLOADER (WHEN "AS PER PHOTO" IS SELECTED) */}
@@ -447,17 +477,6 @@ export default function DesignSelectionStep({
                   </p>
                 </div>
               </div>
-
-              <input
-                type="file"
-                ref={backFileInputRef}
-                accept="image/*"
-                onChange={(e) => {
-                  if (e.target.files?.[0]) handleBackPhotoProcess(e.target.files[0]);
-                  e.target.value = "";
-                }}
-                className="hidden"
-              />
 
               <button
                 type="button"
@@ -644,7 +663,7 @@ export default function DesignSelectionStep({
                     </span>
                   </div>
                   <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200 p-3 text-center text-[12px] text-stone-600">
-                    <b>Base:</b> Classic Kurti & Blouse Cut · <b>Neckline Style:</b> {detailModal.option.en}
+                    <b>Neckline Style / स्टाइल:</b> {detailModal.option.en} / {detailModal.option.hiScript || detailModal.option.hi}
                   </div>
                 </div>
               ) : detailModal.groupType === "neckBack" ? (
@@ -666,7 +685,7 @@ export default function DesignSelectionStep({
                     </span>
                   </div>
                   <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200 p-3 text-center text-[12px] text-stone-600">
-                    <b>Base:</b> Classic Kurti & Blouse Cut · <b>Back Style:</b> {detailModal.option.en}
+                    <b>Back Style / पिछला स्टाइल:</b> {detailModal.option.en} / {detailModal.option.hiScript || detailModal.option.hi}
                   </div>
                 </div>
               ) : detailModal.groupType === "sleeveLength" ? (
@@ -706,7 +725,7 @@ export default function DesignSelectionStep({
                   </div>
 
                   <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200 p-3 text-center text-[12px] text-stone-600">
-                    <b>Base:</b> Classic Kurti & Blouse Cut · <b>Sleeve Length:</b> {detailModal.option.cm}
+                    <b>Sleeve Length / लंबाई:</b> {detailModal.option.cm} · <b>Style / स्टाइल:</b> {detailModal.option.en} / {detailModal.option.hiScript || detailModal.option.hi}
                   </div>
                 </div>
               ) : detailModal.groupType === "sleeveDesign" ? (
@@ -746,7 +765,7 @@ export default function DesignSelectionStep({
                   </div>
 
                   <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200 p-3 text-center text-[12px] text-stone-600">
-                    <b>Base:</b> Natural Cotton Studio Cut · <b>Sleeve Style:</b> {detailModal.option.en} / {detailModal.option.hiScript || detailModal.option.hi}
+                    <b>Sleeve Style / बाज़ू स्टाइल:</b> {detailModal.option.en} / {detailModal.option.hiScript || detailModal.option.hi}
                   </div>
                 </div>
               ) : null}
