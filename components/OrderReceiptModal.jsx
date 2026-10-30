@@ -13,7 +13,6 @@ import {
   Tag,
   Clock,
   Ruler,
-  Eye,
   Check,
 } from "lucide-react";
 
@@ -213,11 +212,31 @@ export default function OrderReceiptModal({ order, onClose }) {
       --secondary: #9c4d68;
     }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Georgia, serif; background: #faf7f2; color: #2d2621; padding: 24px; margin: 0; }
-    .receipt-box { position: relative; max-width: 820px; margin: 0 auto; background: white; border-radius: 20px; border: 1px solid #e6dacd; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow: hidden; }
+    .receipt-box {
+      position: relative;
+      max-width: 820px;
+      margin: 0 auto;
+      background-color: #faf7f2;
+      background-image: url("data:image/svg+xml,%3Csvg width='360' height='240' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='40' y='120' transform='rotate(-28 180 120)' fill='%236b2d46' fill-opacity='0.08' font-family='Georgia, serif' font-size='22' font-weight='bold' letter-spacing='0.16em'%3EKHWAB STITCH%3C/text%3E%3Ctext x='40' y='148' transform='rotate(-28 180 120)' fill='%239c4d68' fill-opacity='0.06' font-family='sans-serif' font-size='10' font-weight='bold' letter-spacing='0.22em'%3EBESPOKE ATELIER%3C/text%3E%3C/svg%3E");
+      background-repeat: repeat;
+      border-radius: 20px;
+      border: 1px solid #e6dacd;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
     table { width: 100%; border-collapse: collapse; margin-top: 12px; }
     th, td { border: 1px solid #ece2d6; padding: 8px 12px; font-size: 13px; text-align: left; }
     th { background: #faf5f0; color: #6b2d46; font-weight: bold; }
-    .stylish-watermark { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) rotate(-32deg); font-size: 72px; font-weight: 800; color: rgba(107, 38, 54, 0.05); text-transform: uppercase; letter-spacing: 0.18em; pointer-events: none; white-space: nowrap; font-family: Georgia, serif; z-index: 0; }
+    .stylish-watermark {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 0;
+    }
     @media print {
       body { background: white !important; padding: 0 !important; margin: 0 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
       .no-print { display: none !important; }
@@ -258,13 +277,6 @@ export default function OrderReceiptModal({ order, onClose }) {
   const backNeckInfo = lookupItem(BACK_NECK_CATALOG, order.design?.neckBack, order.design?.neckBack, "बैक", "./images/neck_back/simple.jpg");
   const sleeveLengthInfo = lookupItem(SLEEVE_LENGTH_CATALOG, order.design?.sleeveLength, order.design?.sleeveLength, "बाज़ू", "./images/sleeve_lengths/full_front.jpg");
   const sleeveDesignInfo = lookupItem(SLEEVE_DESIGN_CATALOG, order.design?.sleeveDesign, order.design?.sleeveDesign, "बाज़ू स्टाइल", "./images/sleeves/straight_front.jpg");
-
-  // Determine primary showcase photo
-  const showcasePhoto =
-    order.outfit?.uploadedPhoto ||
-    designCodeInfo?.image ||
-    outfitInfo?.photo ||
-    "./images/kurti.jpg";
 
   return (
     <div className="order-receipt-overlay fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm p-3 md:p-6 overflow-y-auto flex items-start justify-center">
@@ -310,31 +322,37 @@ export default function OrderReceiptModal({ order, onClose }) {
           </div>
         </div>
 
-        {/* PRINTABLE RECEIPT CONTENT WITH STYLISH WATERMARK */}
+        {/* PRINTABLE RECEIPT CONTENT WITH ELEGANT REPEATING & CENTER WATERMARKS */}
         <div
           id="printable-receipt"
-          className="relative p-6 sm:p-8 md:p-10 text-stone-800 bg-white"
+          className="relative p-6 sm:p-8 md:p-10 text-stone-800 bg-[#faf7f2]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='360' height='240' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='40' y='120' transform='rotate(-28 180 120)' fill='%236b2d46' fill-opacity='0.08' font-family='Georgia, serif' font-size='22' font-weight='bold' letter-spacing='0.16em'%3EKHWAB STITCH%3C/text%3E%3Ctext x='40' y='148' transform='rotate(-28 180 120)' fill='%239c4d68' fill-opacity='0.06' font-family='sans-serif' font-size='10' font-weight='bold' letter-spacing='0.22em'%3EBESPOKE ATELIER%3C/text%3E%3C/svg%3E")`,
+            backgroundRepeat: "repeat",
+          }}
         >
-          {/* STYLISH WATERMARK (VISIBLE ON SCREEN AND IN PRINT/PDF) */}
+          {/* ROYAL CENTERPIECE WATERMARK SEAL (CLEARLY VISIBLE IN PRINT & PDF) */}
           <div
             aria-hidden="true"
             className="stylish-watermark pointer-events-none select-none absolute inset-0 flex items-center justify-center overflow-hidden z-0"
-            style={{ opacity: 0.045 }}
+            style={{ opacity: 0.11 }}
           >
-            <div className="text-center transform -rotate-[32deg]">
-              <div className="font-serif text-[75px] sm:text-[105px] font-extrabold tracking-[0.16em] text-[var(--primary)] uppercase whitespace-nowrap leading-none">
-                Khwab Stitch
-              </div>
-              <div className="text-[13px] sm:text-[17px] font-bold tracking-[0.35em] text-[var(--secondary)] uppercase mt-2">
-                Where Fabric Becomes Art · Bespoke Atelier
+            <div className="text-center transform -rotate-[30deg]">
+              <div className="inline-block border-y-4 border-[var(--primary)] py-4 px-8">
+                <div className="font-serif text-[65px] sm:text-[95px] font-extrabold tracking-[0.18em] text-[var(--primary)] uppercase whitespace-nowrap leading-none">
+                  Khwab Stitch
+                </div>
+                <div className="text-[13px] sm:text-[18px] font-bold tracking-[0.35em] text-[var(--secondary)] uppercase mt-2">
+                  Where Fabric Becomes Art · Bespoke Atelier
+                </div>
               </div>
             </div>
           </div>
 
-          {/* ALL CONTENT POSITIONED ABOVE WATERMARK */}
+          {/* ALL CONTENT POSITIONED ABOVE WATERMARK WITH TRANSLUCENT CARDS */}
           <div className="relative z-10 space-y-6">
             {/* HEADER */}
-            <div className="receipt-section-block flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-6 border-b-2 border-[#ebdcd0]">
+            <div className="receipt-section-block flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-6 border-b-2 border-[#ebdcd0] bg-white/90 p-4 rounded-2xl border border-[#ebdcd0] shadow-2xs">
               <div>
                 <div className="flex items-center gap-3">
                   <img
@@ -372,7 +390,7 @@ export default function OrderReceiptModal({ order, onClose }) {
             </div>
 
             {/* CUSTOMER & DELIVERY INFO GRID */}
-            <div className="receipt-section-block grid sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-[#faf7f2]/90 border border-[#ebdcd0]">
+            <div className="receipt-section-block grid sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-white/90 border border-[#ebdcd0] shadow-2xs">
               {/* Customer Details */}
               <div>
                 <h3 className="font-serif text-[13px] font-bold text-[var(--primary)] uppercase tracking-wider mb-2">
@@ -407,91 +425,108 @@ export default function OrderReceiptModal({ order, onClose }) {
                 <p className="text-[12.5px] font-bold text-stone-800 mt-0.5">
                   {order.customer?.cityState || `${order.customer?.city || ""}, ${order.customer?.state || ""}`} — <b>PIN: {order.customer?.pin}</b>
                 </p>
-                <div className="mt-2 inline-flex items-center gap-1 rounded-md bg-white border border-[#e2d5c8] px-2 py-0.5 text-[11px] font-bold text-stone-700">
+                <div className="mt-2 inline-flex items-center gap-1 rounded-md bg-stone-50 border border-[#e2d5c8] px-2 py-0.5 text-[11px] font-bold text-stone-700">
                   <Clock size={12} />
                   <span>{order.delivery?.deliveryType || "Standard Delivery · 7-10 Days"}</span>
                 </div>
               </div>
             </div>
 
-            {/* 1. FEATURED SELECTED OUTFIT & DESIGN CODE SHOWCASE (WITH PHOTO) */}
+            {/* 1. OUTFIT & DESIGN CODE SHOWCASE (WITH PHOTOS) */}
             <div className="receipt-section-block">
               <h3 className="font-serif text-[14px] font-bold text-[var(--primary-dark)] pb-1.5 border-b border-[#f0e4d8] mb-3 flex items-center justify-between">
                 <span>👗 Selected Outfit & Design Code / चुना गया परिधान व डिज़ाइन कोड:</span>
                 <span className="text-[11px] font-bold text-[var(--primary)] bg-[#fbf0f4] px-2.5 py-0.5 rounded-full border border-[#f0d5df]">
-                  {order.outfit?.pieces || 1} Piece(s)
+                  Total: {order.outfit?.pieces || 1} Piece(s)
                 </span>
               </h3>
 
-              <div className="rounded-2xl border-2 border-[#ebdcd0] bg-[#faf7f2]/90 p-4 sm:p-5">
-                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
-                  {/* DESIGN CODE / OUTFIT PHOTO PREVIEW */}
-                  <div className="relative shrink-0 w-36 h-36 sm:w-40 sm:h-40 rounded-2xl overflow-hidden border-2 border-white shadow-md bg-white">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* OUTFIT CARD (WITH PHOTO) */}
+                <div className="rounded-2xl border-2 border-[#ebdcd0] bg-white/90 p-4 flex items-center gap-4 shadow-2xs">
+                  <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden border border-stone-200 bg-white">
                     <img
-                      src={showcasePhoto}
-                      alt={designCodeInfo?.name || order.outfit?.type || "Selected Design"}
+                      src={outfitInfo?.photo || "./images/kurti.jpg"}
+                      alt={order.outfit?.type || "Outfit"}
                       className="w-full h-full object-cover"
                       loading="eager"
                     />
-                    {order.outfit?.designCode && (
-                      <span className="absolute top-2 left-2 px-2.5 py-1 rounded-lg bg-[var(--primary)] text-white text-[11px] font-mono font-extrabold shadow-sm">
-                        {order.outfit.designCode}
-                      </span>
-                    )}
-                    <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-black/70 text-white text-[10px] font-bold">
+                    <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/75 text-white text-[9.5px] font-bold">
                       × {order.outfit?.pieces || 1}
                     </span>
                   </div>
-
-                  {/* DESIGN CODE DETAILS & SPECIFICATIONS */}
-                  <div className="flex-1 text-center sm:text-left space-y-2">
-                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                      {order.outfit?.designCode ? (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[var(--primary)] text-white text-[12px] font-mono font-bold shadow-xs">
-                          <Tag size={12} />
-                          <span>Design Code: {order.outfit.designCode}</span>
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[var(--secondary)] text-white text-[12px] font-bold shadow-xs">
-                          <Scissors size={12} />
-                          <span>Custom Bespoke Design / विशेष कारीगरी</span>
-                        </span>
-                      )}
-
-                      {designCodeInfo?.tag && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-[#fbf0e0] text-[var(--secondary)] text-[11px] font-bold border border-[#ebdcd0]">
-                          {designCodeInfo.tag}
-                        </span>
-                      )}
-                    </div>
-
-                    <h4 className="font-serif text-[18px] sm:text-[20px] font-bold text-[var(--primary-dark)] leading-tight">
-                      {designCodeInfo?.name || order.outfit?.type || "Bespoke Garment"}
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <span className="inline-block px-2 py-0.5 rounded-full bg-[#fbf0e0] text-[var(--secondary)] text-[10.5px] font-bold border border-[#ebdcd0]">
+                      Base Garment / मूल परिधान
+                    </span>
+                    <h4 className="font-serif text-[16px] sm:text-[18px] font-bold text-stone-900 leading-tight">
+                      {order.outfit?.type || "Bespoke Outfit"}
                     </h4>
-
-                    <p className="text-[13px] font-semibold text-[var(--secondary)]">
-                      {designCodeInfo?.hi || outfitInfo?.hi || "ख़्वाब स्टिच विशेष परिधान"}
+                    <p className="text-[12.5px] font-semibold text-[var(--secondary)]">
+                      {outfitInfo?.hi || "सिलाई परिधान"}
                     </p>
+                    <p className="text-[11.5px] text-stone-600">
+                      Quantity: <b>{order.outfit?.pieces || 1} Piece(s) / पीस</b>
+                    </p>
+                  </div>
+                </div>
 
-                    {designCodeInfo?.details && (
-                      <p className="text-[12px] text-stone-700 bg-white/90 p-2.5 rounded-xl border border-[#ece2d6] leading-relaxed">
-                        <b>Design Features / खासियत:</b> {designCodeInfo.details}
+                {/* DESIGN CODE CARD (WITH PHOTO IF SELECTED) */}
+                {order.outfit?.designCode ? (
+                  <div className="rounded-2xl border-2 border-[var(--primary)]/30 bg-[#fdf8f9]/90 p-4 flex items-center gap-4 shadow-2xs">
+                    <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden border-2 border-[var(--primary)]/30 bg-white">
+                      <img
+                        src={designCodeInfo?.image || "./images/designs/k-01.jpg"}
+                        alt={designCodeInfo?.name || order.outfit.designCode}
+                        className="w-full h-full object-cover"
+                        loading="eager"
+                      />
+                      <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-[var(--primary)] text-white text-[10px] font-mono font-bold">
+                        {order.outfit.designCode}
+                      </span>
+                    </div>
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="inline-block px-2 py-0.5 rounded-full bg-[var(--primary)] text-white text-[10.5px] font-mono font-bold">
+                          Design Code: {order.outfit.designCode}
+                        </span>
+                        {designCodeInfo?.tag && (
+                          <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 text-[10px] font-bold border border-amber-200 truncate">
+                            Popular
+                          </span>
+                        )}
+                      </div>
+                      <h4 className="font-serif text-[15px] sm:text-[16px] font-bold text-[var(--primary-dark)] leading-tight">
+                        {designCodeInfo?.name || `Design ${order.outfit.designCode}`}
+                      </h4>
+                      <p className="text-[12px] font-semibold text-[var(--secondary)]">
+                        {designCodeInfo?.hi || "कैटलॉग डिज़ाइन"}
                       </p>
-                    )}
-
-                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-1 text-[12px] text-stone-700">
-                      <span>Outfit Type: <b>{order.outfit?.type} ({outfitInfo?.hi})</b></span>
-                      <span>•</span>
-                      <span>Quantity: <b>{order.outfit?.pieces || 1} Piece(s)</b></span>
-                      {order.outfit?.refPhoto && (
-                        <>
-                          <span>•</span>
-                          <span>Reference: <b>{order.outfit.refPhoto}</b></span>
-                        </>
+                      {designCodeInfo?.details && (
+                        <p className="text-[11px] text-stone-600 line-clamp-2">
+                          {designCodeInfo.details}
+                        </p>
                       )}
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="rounded-2xl border-2 border-[#ebdcd0] bg-white/90 p-4 flex items-center gap-4 shadow-2xs">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-stone-100 text-stone-500">
+                      <Scissors size={20} />
+                    </div>
+                    <div>
+                      <span className="inline-block px-2 py-0.5 rounded-full bg-stone-100 text-stone-600 text-[10.5px] font-bold">
+                        Custom Styling / कस्टम सिलाई
+                      </span>
+                      <p className="text-[13px] font-bold text-stone-800 mt-0.5">
+                        {order.outfit?.uploadedPhoto ? "Custom Design Photo Attached" : (order.outfit?.refPhoto || "Bespoke Styling")}
+                      </p>
+                      <p className="text-[11.5px] text-stone-500">
+                        Tailored according to custom reference & specifications
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -499,17 +534,17 @@ export default function OrderReceiptModal({ order, onClose }) {
             <div className="receipt-section-block">
               <h3 className="font-serif text-[14px] font-bold text-[var(--primary-dark)] pb-1.5 border-b border-[#f0e4d8] mb-3 flex items-center justify-between">
                 <span>✂️ Necklines & Sleeves Styling Blueprint / गले व बाज़ू का चुना गया स्टाइल:</span>
-                <span className="text-[11px] font-semibold text-stone-500">Photos with Specifications</span>
+                <span className="text-[11px] font-semibold text-stone-500">Every Selection with Photo</span>
               </h3>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {/* 1. FRONT NECK */}
-                <div className="rounded-xl border border-[#ebdcd0] bg-white p-2.5 flex flex-col justify-between shadow-2xs">
+                <div className="rounded-xl border border-[#ebdcd0] bg-white/90 p-2.5 flex flex-col justify-between shadow-2xs">
                   <div>
                     <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
                       Front Neck / आगे गला
                     </p>
-                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#faf7f2] border border-stone-200 mb-2">
+                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
                       {frontNeckInfo?.photo ? (
                         <img
                           src={frontNeckInfo.photo}
@@ -535,12 +570,12 @@ export default function OrderReceiptModal({ order, onClose }) {
                 </div>
 
                 {/* 2. BACK NECK */}
-                <div className="rounded-xl border border-[#ebdcd0] bg-white p-2.5 flex flex-col justify-between shadow-2xs">
+                <div className="rounded-xl border border-[#ebdcd0] bg-white/90 p-2.5 flex flex-col justify-between shadow-2xs">
                   <div>
                     <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
                       Back Neck / पीछे गला
                     </p>
-                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#faf7f2] border border-stone-200 mb-2">
+                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
                       {backNeckInfo?.photo ? (
                         <img
                           src={backNeckInfo.photo}
@@ -566,12 +601,12 @@ export default function OrderReceiptModal({ order, onClose }) {
                 </div>
 
                 {/* 3. SLEEVE LENGTH */}
-                <div className="rounded-xl border border-[#ebdcd0] bg-white p-2.5 flex flex-col justify-between shadow-2xs">
+                <div className="rounded-xl border border-[#ebdcd0] bg-white/90 p-2.5 flex flex-col justify-between shadow-2xs">
                   <div>
                     <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
                       Sleeve Length / बाज़ू लंबाई
                     </p>
-                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#faf7f2] border border-stone-200 mb-2">
+                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
                       {sleeveLengthInfo?.photo ? (
                         <img
                           src={sleeveLengthInfo.photo}
@@ -602,12 +637,12 @@ export default function OrderReceiptModal({ order, onClose }) {
                 </div>
 
                 {/* 4. SLEEVE DESIGN */}
-                <div className="rounded-xl border border-[#ebdcd0] bg-white p-2.5 flex flex-col justify-between shadow-2xs">
+                <div className="rounded-xl border border-[#ebdcd0] bg-white/90 p-2.5 flex flex-col justify-between shadow-2xs">
                   <div>
                     <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
                       Sleeve Style / बाज़ू स्टाइल
                     </p>
-                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#faf7f2] border border-stone-200 mb-2">
+                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
                       {sleeveDesignInfo?.photo ? (
                         <img
                           src={sleeveDesignInfo.photo}
@@ -634,10 +669,10 @@ export default function OrderReceiptModal({ order, onClose }) {
               </div>
 
               {/* FIT & SPECIAL TAILOR NOTES */}
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-stone-50 border border-stone-200 text-[12px]">
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-white/90 border border-stone-200 text-[12px] shadow-2xs">
                 <div className="flex items-center gap-1.5">
                   <span className="font-bold text-stone-700">Fitting Preference / फिटिंग:</span>
-                  <span className="font-bold text-[var(--primary)] bg-white px-2.5 py-0.5 rounded-md border border-stone-200">
+                  <span className="font-bold text-[var(--primary)] bg-stone-50 px-2.5 py-0.5 rounded-md border border-stone-200">
                     {order.design?.fit || "Regular"} Fit
                   </span>
                 </div>
@@ -651,7 +686,7 @@ export default function OrderReceiptModal({ order, onClose }) {
 
             {/* 3. CUSTOMER REFERENCE PHOTO (IF ATTACHED) */}
             {order.outfit?.uploadedPhoto && (
-              <div className="receipt-section-block p-4 rounded-2xl bg-[#faf7f2]/90 border-2 border-[#ebdcd0]">
+              <div className="receipt-section-block p-4 rounded-2xl bg-white/90 border-2 border-[#ebdcd0] shadow-2xs">
                 <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#e9ded4]">
                   <div className="flex items-center gap-2">
                     <Sparkles size={16} className="text-[var(--primary)]" />
@@ -705,7 +740,7 @@ export default function OrderReceiptModal({ order, onClose }) {
               </div>
 
               {order.measurements?.values && Object.keys(order.measurements.values).length > 0 ? (
-                <div className="overflow-x-auto rounded-xl border border-[#ece2d6]">
+                <div className="overflow-x-auto rounded-xl border border-[#ece2d6] bg-white/90 shadow-2xs">
                   <table className="w-full text-left text-[12.5px] border-collapse">
                     <thead>
                       <tr className="bg-[#faf5f0] text-[var(--primary-dark)] border-b border-[#ece2d6]">
@@ -720,7 +755,7 @@ export default function OrderReceiptModal({ order, onClose }) {
                         return (
                           <tr
                             key={key}
-                            className={`border-b border-[#f2eae2] ${idx % 2 === 0 ? "bg-white" : "bg-[#fdfbf9]"}`}
+                            className={`border-b border-[#f2eae2] ${idx % 2 === 0 ? "bg-white/80" : "bg-[#fdfbf9]/80"}`}
                           >
                             <td className="py-2 px-3 font-medium text-stone-800">
                               {label}
@@ -735,7 +770,7 @@ export default function OrderReceiptModal({ order, onClose }) {
                   </table>
                 </div>
               ) : (order.measurements?.provideMethod?.includes("भेजूंगी") || order.measurements?.provideMethod?.includes("सिले")) ? (
-                <div className="p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 text-amber-900">
+                <div className="p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 text-amber-900 shadow-2xs">
                   <div className="flex items-center gap-2 font-bold text-[13px]">
                     <span>📦</span>
                     <span>Sending Stitched Sample Clothes / मैं अपने सिले हुए कपड़े नापने के लिए भेजूंगी</span>
@@ -750,7 +785,7 @@ export default function OrderReceiptModal({ order, onClose }) {
                   )}
                 </div>
               ) : order.measurements?.provideMethod?.includes("वीडियो कॉल") ? (
-                <div className="p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-900">
+                <div className="p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-900 shadow-2xs">
                   <div className="flex items-center gap-2 font-bold text-[13px]">
                     <span>📹</span>
                     <span>Measurements on Video Call / वीडियो कॉल द्वारा नाप</span>
@@ -760,14 +795,14 @@ export default function OrderReceiptModal({ order, onClose }) {
                   </p>
                 </div>
               ) : (
-                <p className="text-[12px] text-stone-500 italic p-3 bg-stone-50 rounded-lg">
+                <p className="text-[12px] text-stone-500 italic p-3 bg-white/90 rounded-lg border border-stone-200">
                   No individual measurements recorded / कोई अलग से नाप दर्ज नहीं है।
                 </p>
               )}
             </div>
 
             {/* FOOTER */}
-            <div className="receipt-section-block pt-4 border-t-2 border-[#ebdcd0] text-center text-[12px] text-stone-500">
+            <div className="receipt-section-block pt-4 border-t-2 border-[#ebdcd0] text-center text-[12px] text-stone-500 bg-white/80 p-4 rounded-2xl border border-[#ebdcd0]">
               <p className="font-serif font-bold text-[var(--primary)] text-[13.5px]">
                 Thank you for choosing Khwab Stitch! / ख़्वाब स्टिच चुनने के लिए धन्यवाद!
               </p>
