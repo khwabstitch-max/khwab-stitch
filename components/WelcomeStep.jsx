@@ -1,14 +1,14 @@
 import React from "react";
-import { ArrowRight, Sparkles, Scissors, ShieldCheck } from "lucide-react";
+import { ArrowRight, Sparkles, Scissors, Camera } from "lucide-react";
 
 export default function WelcomeStep({ onStart }) {
   return (
-    <section className="welcome-layout max-w-[620px] mx-auto text-center py-6 sm:py-10">
+    <section className="welcome-layout max-w-[620px] mx-auto text-center py-5 sm:py-8">
       {/* ATELIER LOGO EMBLEM */}
       <div className="mb-4 flex flex-col items-center">
         <div className="relative group">
           <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-[#c4994d] via-[#d69680] to-[#6b2636] opacity-60 blur-md transition-all duration-300" />
-          <div className="relative h-24 w-24 sm:h-32 sm:w-32 overflow-hidden rounded-full border-4 border-[#fff7f0] bg-[#fffaf5] shadow-xl">
+          <div className="relative h-22 w-22 sm:h-28 sm:w-28 overflow-hidden rounded-full border-4 border-[#fff7f0] bg-[#fffaf5] shadow-xl">
             <img
               src="./images/khwabstitch_logo.jpg"
               alt="Khwab Stitch Logo"
@@ -26,41 +26,68 @@ export default function WelcomeStep({ onStart }) {
         </div>
       </div>
 
-      {/* CONCISE HEADINGS & TAGLINE */}
+      {/* HEADINGS */}
       <div className="welcome-copy pt-1 pb-2">
-        <h1 className="welcome-title text-[32px] sm:text-[42px] font-serif font-bold text-[var(--primary-dark)] leading-tight">
+        <h1 className="welcome-title text-[30px] sm:text-[38px] font-serif font-bold text-[var(--primary-dark)] leading-tight">
           Welcome to <em className="italic text-[var(--secondary)]">Khwab Stitch</em>
-          <span className="block text-[18px] sm:text-[22px] font-normal text-stone-700 mt-1">
+          <span className="block text-[17px] sm:text-[20px] font-normal text-stone-700 mt-1">
             ख़्वाब स्टिच में आपका स्वागत है!
           </span>
         </h1>
 
-        <p className="mt-3 text-[13.5px] sm:text-[15px] text-stone-600 max-w-[480px] mx-auto leading-relaxed">
-          Custom-tailored Blouses, Kurtis & Suits handcrafted for the perfect fit /
-          आपकी पसंद और सटीक नाप के अनुसार ख़ूबसूरत बुटीक सिलाई।
-        </p>
+        {/* 3 HIGHLIGHT CARDS REQUESTED BY USER */}
+        <div className="mt-6 mb-6 space-y-3 max-w-[540px] mx-auto text-left">
+          {/* POINT 1 */}
+          <div className="flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-[#fffcf9] border border-[#ebdcd0] shadow-2xs hover:shadow-xs transition-shadow">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#fbeae5] text-[var(--primary)] shadow-2xs">
+              <Scissors size={20} />
+            </div>
+            <div>
+              <p className="text-[13.5px] sm:text-[14px] font-bold text-stone-900 leading-snug">
+                Share your details and preferences for a custom-stitched blouse, kurti, or suit
+              </p>
+              <p className="text-[12.5px] sm:text-[13px] text-stone-600 mt-0.5 leading-snug">
+                अपने पसंदीदा ब्लाउज़, कुर्ती या सूट की कस्टम सिलाई के लिए अपनी पसंद साझा करें।
+              </p>
+            </div>
+          </div>
 
-        {/* 3 QUICK FEATURE PILLS */}
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-[12px] font-semibold text-stone-700">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fbf5f0] border border-[#ebdcd0]">
-            <Scissors size={12} className="text-[var(--primary)]" />
-            <span>Custom Styling / मनपसंद डिज़ाइन</span>
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fbf5f0] border border-[#ebdcd0]">
-            <Sparkles size={12} className="text-[var(--primary)]" />
-            <span>Perfect Fit / सटीक नाप</span>
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fbf5f0] border border-[#ebdcd0]">
-            <ShieldCheck size={12} className="text-[var(--primary)]" />
-            <span>Doorstep Delivery / होम डिलीवरी</span>
-          </span>
+          {/* POINT 2 */}
+          <div className="flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-[#fffcf9] border border-[#ebdcd0] shadow-2xs hover:shadow-xs transition-shadow">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#fbf0e0] text-[var(--secondary)] shadow-2xs">
+              <Camera size={20} />
+            </div>
+            <div>
+              <p className="text-[13.5px] sm:text-[14px] font-bold text-stone-900 leading-snug">
+                Provide accurate details and keep your design or reference photo ready
+              </p>
+              <p className="text-[12.5px] sm:text-[13px] text-stone-600 mt-0.5 leading-snug">
+                सही जानकारी भरें और अपना चुना हुआ डिज़ाइन या रेफ़रेंस फ़ोटो तैयार रखें।
+              </p>
+            </div>
+          </div>
+
+          {/* POINT 3 */}
+          <div className="flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-[#fffcf9] border border-[#ebdcd0] shadow-2xs hover:shadow-xs transition-shadow">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f8eef2] text-[#8e2e4b] shadow-2xs">
+              <Sparkles size={20} />
+            </div>
+            <div>
+              <p className="text-[13.5px] sm:text-[14px] font-bold text-stone-900 leading-snug">
+                Our master tailors handcraft each piece with care
+              </p>
+              <p className="text-[12.5px] sm:text-[13px] text-stone-600 mt-0.5 leading-snug">
+                हमारे मास्टर दर्जी प्यार और हुनर से आपका परिधान तैयार करेंगे।
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* PRIMARY CTA BUTTON */}
-        <div className="welcome-actions mt-7">
+        <div className="welcome-actions mt-6">
           <button
             type="button"
-            className="welcome-primary h-13 px-8 text-[14px] shadow-lg hover:shadow-xl transition-all"
+            className="welcome-primary h-13 px-8 text-[14px] shadow-lg hover:shadow-xl transition-all cursor-pointer"
             onClick={onStart}
           >
             <span>Start Your Order / ऑर्डर शुरू करें</span>
