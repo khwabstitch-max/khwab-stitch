@@ -138,6 +138,7 @@ export default function AdminDashboard({
   const [importTab, setImportTab] = useState("whatsapp"); // 'whatsapp' | 'manual'
   const [whatsappText, setWhatsappText] = useState("");
   const [manualForm, setManualForm] = useState({
+    orderId: "",
     name: "",
     whatsapp: "",
     outfit: "Blouse",
@@ -202,7 +203,7 @@ export default function AdminDashboard({
       return;
     }
 
-    const orderId = `KS${Date.now().toString(36).toUpperCase()}`;
+    const orderId = manualForm.orderId?.trim() ? manualForm.orderId.trim().toUpperCase() : `KS${Date.now().toString(36).toUpperCase()}`;
     const newOrder = {
       orderId,
       status: "New",
@@ -249,6 +250,7 @@ export default function AdminDashboard({
     if (onSaveOrder) {
       onSaveOrder(newOrder);
       setManualForm({
+        orderId: "",
         name: "",
         whatsapp: "",
         outfit: "Blouse",
@@ -861,6 +863,21 @@ export default function AdminDashboard({
             ) : (
               /* TAB 2: MANUAL ENTRY */
               <form onSubmit={handleManualSubmit} className="space-y-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-stone-700 mb-1">
+                    Order ID / ऑर्डर आईडी (Optional · Slip / PDF se daalein)
+                  </label>
+                  <input
+                    type="text"
+                    value={manualForm.orderId}
+                    onChange={(e) =>
+                      setManualForm({ ...manualForm, orderId: e.target.value })
+                    }
+                    placeholder="e.g. KS-XXXXXX (or leave blank to auto-generate)"
+                    className="w-full rounded-lg border border-stone-300 p-2 text-[12.5px] font-mono outline-none focus:border-[var(--primary)]"
+                  />
+                </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-stone-700 mb-1">

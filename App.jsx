@@ -122,6 +122,60 @@ const measurementConfigs = {
   ],
 };
 
+const CLOUD_BRIDGE_TOPIC = "khwab_stitch_orders_atelier_prod_v1";
+const CLOUD_BRIDGE_URL = `https://ntfy.sh/${CLOUD_BRIDGE_TOPIC}`;
+
+const syncOrderToCloud = async (order) => {
+  try {
+    const lightweightOrder = {
+      ...order,
+      outfit: {
+        ...order.outfit,
+        uploadedPhoto: (order.outfit?.uploadedPhoto && order.outfit.uploadedPhoto.length < 30000) ? order.outfit.uploadedPhoto : "",
+      },
+    };
+    await fetch(CLOUD_BRIDGE_URL, {
+      method: "POST",
+      headers: {
+        "Title": `Order #${order.orderId || "NEW"} - ${order.customer?.name || "Customer"} (${order.outfit?.type || "Custom Outfit"})`,
+        "Tags": "dress,sparkles,shopping_bags",
+        "Priority": "4",
+      },
+      body: JSON.stringify(lightweightOrder),
+    });
+  } catch (err) {
+    console.warn("Cloud sync note:", err);
+  }
+};
+
+const fetchCloudOrders = async () => {
+  try {
+    const res = await fetch(`${CLOUD_BRIDGE_URL}/json?poll=1&since=all`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const text = await res.text();
+    const lines = text.trim().split("\n");
+    const cloudOrders = [];
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      try {
+        const item = JSON.parse(line);
+        if (item.event === "message" && item.message) {
+          const parsedOrder = JSON.parse(item.message);
+          if (parsedOrder && parsedOrder.orderId) {
+            cloudOrders.push(parsedOrder);
+          }
+        }
+      } catch {}
+    }
+    return cloudOrders;
+  } catch (e) {
+    console.warn("Could not fetch cloud orders:", e);
+    return [];
+  }
+};
+
 export default function App() {
   // FORM STATE
   const [currentSection, setCurrentSection] = useState(1);
@@ -288,8 +342,9 @@ export default function App() {
         return Array.from(map.values()).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       });
 
-      // Broadcast to other open tabs/windows
+      // Broadcast to other open tabs/windows and cloud sync
       try {
+        syncOrderToCloud(order);
         if (window.BroadcastChannel) {
           const ch = new BroadcastChannel("khwab_orders_channel");
           ch.postMessage({ type: "ORDER_CREATED", order });
@@ -322,15 +377,43 @@ export default function App() {
         if (err.message?.includes("401") || err.message?.includes("password")) {
           throw err;
         }
-        console.warn("Server orders fetch failed (fallback to local):", err);
+        console.warn("Server orders fetch failed (fallback to local & cloud):", err);
       }
     }
+
+    // Fetch cloud synced orders across devices
+    const cloudOrders = await fetchCloudOrders();
     const localOrders = getLocalOrders();
+
     const map = new Map();
-    [...serverOrders, ...localOrders].forEach((o) => {
-      if (o?.orderId) map.set(o.orderId, o);
+    // Merge cloud, server, and local orders. Keep richest data if order already exists.
+    [...cloudOrders, ...serverOrders, ...localOrders].forEach((o) => {
+      if (o?.orderId) {
+        const existing = map.get(o.orderId);
+        if (!existing) {
+          map.set(o.orderId, o);
+        } else {
+          map.set(o.orderId, {
+            ...o,
+            ...existing,
+            status: existing.status || o.status || "New",
+            outfit: {
+              ...o.outfit,
+              ...existing.outfit,
+              uploadedPhoto: existing.outfit?.uploadedPhoto || o.outfit?.uploadedPhoto || "",
+            },
+          });
+        }
+      }
     });
-    setOrders(Array.from(map.values()).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+
+    const combined = Array.from(map.values()).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    try {
+      localStorage.setItem("khwab_local_orders", JSON.stringify(combined));
+    } catch {}
+
+    setOrders(combined);
+    return combined;
   }
 
   const handleAdminLoginSubmit = async (passwordInput) => {
@@ -519,12 +602,14 @@ export default function App() {
       });
       const savedOrder = { ...order, orderId: result.orderId };
       saveLocalOrder(savedOrder);
+      syncOrderToCloud(savedOrder);
       setSuccessOrder(savedOrder);
     } catch (e) {
-      console.warn("API request failed, saving order locally for Netlify:", e);
+      console.warn("API request failed, saving order locally & syncing to cloud:", e);
       const fallbackId = `KS${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
       const savedOrder = { ...order, orderId: fallbackId };
       saveLocalOrder(savedOrder);
+      syncOrderToCloud(savedOrder);
       setSuccessOrder(savedOrder);
     } finally {
       setBusy(false);
