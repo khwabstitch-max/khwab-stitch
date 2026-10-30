@@ -224,7 +224,7 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
           {phoneLength > 0 && !isPhoneValid && (
             <p className="text-[11px] font-semibold text-amber-700 mt-1 flex items-center gap-1">
               <AlertCircle size={12} />
-              <span>कृपया पूरे 10 अंकों का मोबाइल नंबर दर्ज करें ({10 - phoneLength} अंक बाकी)।</span>
+              <span>Please enter 10 digits ({10 - phoneLength} left) / कृपया 10 अंकों का नंबर दर्ज करें ({10 - phoneLength} अंक बाकी)।</span>
             </p>
           )}
         </label>

@@ -164,11 +164,16 @@ export default function DesignCodeDropdown({
           </span>
         </div>
 
-        <div className="flex items-center gap-2.5 rounded-xl border-2 border-dashed border-[#e6dcd3] bg-[#faf6f2] p-3 text-stone-600 text-[12.5px]">
-          <AlertCircle size={17} className="text-amber-700 shrink-0" />
-          <span>
-            <b>कृपया पहले ऊपर परिधान चुनें</b> (ब्लाउज़, कुर्ती या सूट कमीज़)। आपके चुने हुए परिधान के अनुसार ही यहाँ <b>(B-, K-, SU-)</b> कोड दिखाई देंगे।
-          </span>
+        <div className="flex items-start gap-2.5 rounded-xl border-2 border-dashed border-[#e6dcd3] bg-[#faf6f2] p-3 text-stone-600 text-[12.5px] leading-relaxed">
+          <AlertCircle size={17} className="text-amber-700 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="text-stone-800">
+              <b>Please select an outfit above first</b> (Blouse, Kurti, or Suit Kameez). Matching <b>(B-, K-, SU-)</b> codes will appear here based on your selection.
+            </p>
+            <p className="text-[12px] text-stone-600">
+              <b>कृपया पहले ऊपर परिधान चुनें</b> (ब्लाउज़, कुर्ती या सूट कमीज़)। आपके चुने हुए परिधान के अनुसार ही यहाँ <b>(B-, K-, SU-)</b> कोड दिखाई देंगे।
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -360,7 +365,7 @@ export default function DesignCodeDropdown({
               })
             ) : (
               <p className="text-center text-stone-500 text-[12px] py-4">
-                No catalog items found for {outfit.type}.
+                No catalog items found for {outfit.type} / कोई कैटलॉग डिज़ाइन कोड नहीं मिला।
               </p>
             )}
           </div>
@@ -368,7 +373,7 @@ export default function DesignCodeDropdown({
           {/* MANUAL CODE ENTRY */}
           <div className="pt-2 border-t border-stone-100">
             <span className="block text-[11px] font-bold text-stone-600 mb-1">
-              Or enter custom code (must start with {expectedPrefix}-):
+              Or enter custom code (must start with {expectedPrefix}-) / या कस्टम कोड दर्ज करें:
             </span>
             <div className="flex items-center gap-2">
               <input
