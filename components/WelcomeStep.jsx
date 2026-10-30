@@ -1,54 +1,70 @@
-import { ArrowRight } from "lucide-react";
+import React from "react";
+import { ArrowRight, Sparkles, Scissors, ShieldCheck } from "lucide-react";
 
 export default function WelcomeStep({ onStart }) {
   return (
-    <section className="welcome-layout">
-      {/* GRAND ATELIER LOGO CENTERPIECE */}
-      <div className="mb-4 sm:mb-6 flex flex-col items-center">
+    <section className="welcome-layout max-w-[620px] mx-auto text-center py-6 sm:py-10">
+      {/* ATELIER LOGO EMBLEM */}
+      <div className="mb-4 flex flex-col items-center">
         <div className="relative group">
-          <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-[#c4994d] via-[#d69680] to-[#6b2636] opacity-60 blur-md transition-all duration-300 group-hover:opacity-90 group-hover:blur-lg" />
-          <div className="relative h-28 w-28 sm:h-36 sm:w-36 md:h-44 md:w-44 overflow-hidden rounded-full border-4 border-[#fff7f0] bg-[#fffaf5] shadow-xl transition-transform duration-300 group-hover:scale-105">
+          <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-[#c4994d] via-[#d69680] to-[#6b2636] opacity-60 blur-md transition-all duration-300" />
+          <div className="relative h-24 w-24 sm:h-32 sm:w-32 overflow-hidden rounded-full border-4 border-[#fff7f0] bg-[#fffaf5] shadow-xl">
             <img
               src="./images/khwabstitch_logo.jpg"
-              alt="Khwab Stitch — Where Fabric Becomes Art"
+              alt="Khwab Stitch Logo"
               className="h-full w-full object-cover"
             />
           </div>
         </div>
 
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-2.5 flex items-center gap-2">
           <span className="h-px w-6 sm:w-10 bg-[#dfc7b8]" />
-          <span className="text-[10.5px] sm:text-[12px] font-bold tracking-[0.22em] uppercase text-[var(--secondary)]">
+          <span className="text-[10px] sm:text-[11.5px] font-bold tracking-[0.22em] uppercase text-[var(--secondary)]">
             Where Fabric Becomes Art
           </span>
           <span className="h-px w-6 sm:w-10 bg-[#dfc7b8]" />
         </div>
       </div>
 
-      <div className="welcome-copy">
-        <h1 className="welcome-title">
-          <span className="welcome-title__english" lang="en">
-            Welcome to<br /><em>Khwab Stitch</em>
-          </span>
-          <span className="welcome-title__hindi" lang="hi">
-            ख्वाब स्टिच में आपका स्वागत है!
+      {/* CONCISE HEADINGS & TAGLINE */}
+      <div className="welcome-copy pt-1 pb-2">
+        <h1 className="welcome-title text-[32px] sm:text-[42px] font-serif font-bold text-[var(--primary-dark)] leading-tight">
+          Welcome to <em className="italic text-[var(--secondary)]">Khwab Stitch</em>
+          <span className="block text-[18px] sm:text-[22px] font-normal text-stone-700 mt-1">
+            ख़्वाब स्टिच में आपका स्वागत है!
           </span>
         </h1>
-        <div className="welcome-description space-y-3">
-          <p>
-            Share your details and preferences for a custom-stitched blouse, kurti, or suit / अपने पसंदीदा ब्लाउज़, कुर्ती या सूट की कस्टम सिलाई के लिए अपनी पसंद साझा करें।
-          </p>
-          <p>
-            Provide accurate details and keep your design or reference photo ready / सही जानकारी भरें और अपना चुना हुआ डिज़ाइन या रेफ़रेंस फ़ोटो तैयार रखें।
-          </p>
-          <p>
-            Our master tailors handcraft each piece with care / हमारे मास्टर दर्जी प्यार और हुनर से आपका परिधान तैयार करेंगे।
-          </p>
+
+        <p className="mt-3 text-[13.5px] sm:text-[15px] text-stone-600 max-w-[480px] mx-auto leading-relaxed">
+          Custom-tailored Blouses, Kurtis & Suits handcrafted for the perfect fit /
+          आपकी पसंद और सटीक नाप के अनुसार ख़ूबसूरत बुटीक सिलाई।
+        </p>
+
+        {/* 3 QUICK FEATURE PILLS */}
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-[12px] font-semibold text-stone-700">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fbf5f0] border border-[#ebdcd0]">
+            <Scissors size={12} className="text-[var(--primary)]" />
+            <span>Custom Styling / मनपसंद डिज़ाइन</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fbf5f0] border border-[#ebdcd0]">
+            <Sparkles size={12} className="text-[var(--primary)]" />
+            <span>Perfect Fit / सटीक नाप</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fbf5f0] border border-[#ebdcd0]">
+            <ShieldCheck size={12} className="text-[var(--primary)]" />
+            <span>Doorstep Delivery / होम डिलीवरी</span>
+          </span>
         </div>
-        <div className="welcome-actions">
-          <button type="button" className="welcome-primary" onClick={onStart}>
-            <span>Start your order / ऑर्डर शुरू करें</span>
-            <ArrowRight size={18} />
+
+        {/* PRIMARY CTA BUTTON */}
+        <div className="welcome-actions mt-7">
+          <button
+            type="button"
+            className="welcome-primary h-13 px-8 text-[14px] shadow-lg hover:shadow-xl transition-all"
+            onClick={onStart}
+          >
+            <span>Start Your Order / ऑर्डर शुरू करें</span>
+            <ArrowRight size={17} />
           </button>
         </div>
       </div>
