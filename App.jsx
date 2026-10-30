@@ -82,6 +82,7 @@ const sleeveDesign = [
   { id: "flutter", en: "Flutter", hi: "लहर बाज़ू", hiScript: "लहर बाज़ू" },
   { id: "bell-cuff", en: "Bell-Cuff", hi: "कफ़ वाली", hiScript: "कफ़ वाली" },
   { id: "pleated", en: "Pleated", hi: "चुन्नट वाली", hiScript: "चुन्नट वाली" },
+  { id: "as-photo", en: "As per Photo", hi: "फोटो जैसा", hiScript: "फोटो जैसा" },
 ];
 
 const measurementConfigs = {
@@ -208,6 +209,9 @@ export default function App() {
     backPhoto: "",
     backPhotoName: "",
     backPhotoSize: "",
+    sleevePhoto: "",
+    sleevePhotoName: "",
+    sleevePhotoSize: "",
   });
   const [measurements, setMeasurements] = useState({
     unit: "inch",
@@ -1129,6 +1133,9 @@ export default function App() {
                         backPhoto: "",
                         backPhotoName: "",
                         backPhotoSize: "",
+                        sleevePhoto: "",
+                        sleevePhotoName: "",
+                        sleevePhotoSize: "",
                       });
                       setMeasurements({
                         unit: "inch",

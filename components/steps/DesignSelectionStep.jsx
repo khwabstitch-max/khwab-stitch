@@ -63,11 +63,11 @@ const SLEEVE_DESIGN_PHOTOS = {
   },
   puff: {
     front: "./images/sleeves/puff_front.jpg",
-    side: "./images/sleeves/puff_front.jpg",
+    side: "./images/sleeves/puff_side.jpg",
   },
   bell: {
     front: "./images/sleeves/bell_front.jpg",
-    side: "./images/sleeves/bell_front.jpg",
+    side: "./images/sleeves/bell_side.jpg",
   },
   ruffle: {
     front: "./images/sleeves/ruffle_front.jpg",
@@ -91,15 +91,19 @@ const SLEEVE_DESIGN_PHOTOS = {
   },
   flutter: {
     front: "./images/sleeves/flutter_front.jpg",
-    side: "./images/sleeves/flutter_front.jpg",
+    side: "./images/sleeves/flutter_side.jpg",
   },
   "bell-cuff": {
     front: "./images/sleeves/bell_cuff_front.jpg",
-    side: "./images/sleeves/bell_cuff_front.jpg",
+    side: "./images/sleeves/bell_cuff_side.jpg",
   },
   pleated: {
     front: "./images/sleeves/pleated_front.jpg",
-    side: "./images/sleeves/pleated_front.jpg",
+    side: "./images/sleeves/pleated_side.jpg",
+  },
+  "as-photo": {
+    front: "./images/sleeves/as_photo_front.jpg",
+    side: "./images/sleeves/as_photo_side.jpg",
   },
 };
 
@@ -117,6 +121,7 @@ function ChoiceGroup({
   onToggleView,
   design,
   onTriggerBackUpload,
+  onTriggerSleeveUpload,
 }) {
   return (
     <section className="design-group mb-8">
@@ -181,7 +186,9 @@ function ChoiceGroup({
             photoSrc = activeView === "side" ? (sleeve?.side || sleeve?.front) : (sleeve?.front || sleeve?.side);
           }
 
-          const hasCustomPhoto = groupType === "neckBack" && option.id === "as-photo" && Boolean(design?.backPhoto);
+          const hasCustomPhoto =
+            (groupType === "neckBack" && option.id === "as-photo" && Boolean(design?.backPhoto)) ||
+            (groupType === "sleeveDesign" && option.id === "as-photo" && Boolean(design?.sleevePhoto));
 
           return (
             <div
@@ -190,6 +197,8 @@ function ChoiceGroup({
                 onSelect(option.id);
                 if (groupType === "neckBack" && option.id === "as-photo" && !hasCustomPhoto && onTriggerBackUpload) {
                   onTriggerBackUpload();
+                } else if (groupType === "sleeveDesign" && option.id === "as-photo" && !hasCustomPhoto && onTriggerSleeveUpload) {
+                  onTriggerSleeveUpload();
                 }
               }}
               className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border-2 text-left transition-all duration-200 cursor-pointer bg-white ${
@@ -229,7 +238,7 @@ function ChoiceGroup({
                 {hasCustomPhoto && (
                   <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 rounded-lg bg-white/95 px-2 py-1 shadow-md border border-emerald-300 backdrop-blur-xs">
                     <img
-                      src={design.backPhoto}
+                      src={groupType === "neckBack" ? design.backPhoto : design.sleevePhoto}
                       alt="Uploaded thumbnail"
                       className="h-5 w-5 rounded object-cover border border-emerald-300"
                     />
@@ -284,6 +293,27 @@ function ChoiceGroup({
                       )}
                     </div>
                   )}
+                  {groupType === "sleeveDesign" && option.id === "as-photo" && (
+                    <div className="mt-2 space-y-1.5">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelect("as-photo");
+                          if (onTriggerSleeveUpload) onTriggerSleeveUpload();
+                        }}
+                        className="w-full inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--primary)] text-white text-[11px] font-bold shadow-xs hover:bg-[var(--primary-dark)] active:scale-[0.98] transition-all cursor-pointer"
+                      >
+                        <UploadCloud size={13} />
+                        <span>{hasCustomPhoto ? "Change Photo / फ़ोटो बदलें" : "Upload Photo / अपलोड करें"}</span>
+                      </button>
+                      {hasCustomPhoto && (
+                        <span className="block text-[10px] text-emerald-700 font-semibold truncate text-center">
+                          ✓ {design.sleevePhotoName || "Photo Attached"}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-2.5">
@@ -320,6 +350,7 @@ export default function DesignSelectionStep({
   const [sleeveDesignView, setSleeveDesignView] = useState("side");
   const [detailModal, setDetailModal] = useState(null);
   const backFileInputRef = useRef(null);
+  const sleeveFileInputRef = useRef(null);
 
   const handleBackPhotoProcess = (file) => {
     if (!file) return;
@@ -391,6 +422,76 @@ export default function DesignSelectionStep({
     }));
   };
 
+  const handleSleevePhotoProcess = (file) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      alert("Please choose an image file (JPG, PNG, WEBP) / कृपया इमेज फ़ाइल ही चुनें।");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new window.Image();
+      img.onload = () => {
+        try {
+          const maxDimension = 900;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxDimension || height > maxDimension) {
+            if (width > height) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            } else {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
+            }
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.75);
+          const sizeKb = Math.round((compressedDataUrl.length * 3) / 4 / 1024);
+
+          setDesign((prev) => ({
+            ...prev,
+            sleeveDesign: "as-photo",
+            sleevePhoto: compressedDataUrl,
+            sleevePhotoName: file.name,
+            sleevePhotoSize: `${sizeKb} KB`,
+          }));
+        } catch (err) {
+          console.error("Sleeve photo processing error:", err);
+          setDesign((prev) => ({
+            ...prev,
+            sleeveDesign: "as-photo",
+            sleevePhoto: e.target.result,
+            sleevePhotoName: file.name,
+            sleevePhotoSize: `${Math.round(file.size / 1024)} KB`,
+          }));
+        }
+      };
+      img.onerror = () => {
+        alert("Could not load image / इमेज लोड नहीं हो सकी, कृपया दूसरी फ़ोटो आज़माएं।");
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveSleevePhoto = () => {
+    setDesign((prev) => ({
+      ...prev,
+      sleevePhoto: "",
+      sleevePhotoName: "",
+      sleevePhotoSize: "",
+    }));
+  };
+
   const openDetail = (option, groupType) => {
     setDetailModal({ option, groupType });
   };
@@ -428,6 +529,18 @@ export default function DesignSelectionStep({
           accept="image/*"
           onChange={(e) => {
             if (e.target.files?.[0]) handleBackPhotoProcess(e.target.files[0]);
+            e.target.value = "";
+          }}
+          className="hidden"
+        />
+
+        {/* Global hidden file input for sleeve custom photo upload */}
+        <input
+          type="file"
+          ref={sleeveFileInputRef}
+          accept="image/*"
+          onChange={(e) => {
+            if (e.target.files?.[0]) handleSleevePhotoProcess(e.target.files[0]);
             e.target.value = "";
           }}
           className="hidden"
@@ -582,7 +695,103 @@ export default function DesignSelectionStep({
           supportsViews={true}
           activeView={sleeveDesignView}
           onToggleView={setSleeveDesignView}
+          design={design}
+          onTriggerSleeveUpload={() => sleeveFileInputRef.current?.click()}
         />
+
+        {/* CUSTOM SLEEVE PHOTO UPLOADER (WHEN "AS PER PHOTO" IS SELECTED) */}
+        {design.sleeveDesign === "as-photo" && (
+          <div className="mt-2 mb-8 rounded-2xl border-2 border-dashed border-[var(--primary)]/45 bg-[#fffbf7] p-4 sm:p-5 shadow-xs transition-all">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#eeddd0] pb-3 mb-3.5">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--primary)] text-white text-[14px] shadow-2xs">
+                  <Camera size={17} />
+                </span>
+                <div>
+                  <h4 className="font-serif text-[14px] sm:text-[15px] font-bold text-[var(--primary-dark)]">
+                    Upload Sleeve Design Photo / बाज़ू का फ़ोटो अपलोड करें
+                  </h4>
+                  <p className="text-[12px] text-[var(--text-light)]">
+                    Upload your reference photo (from Pinterest, Instagram, or phone) / अपनी पसंद का फ़ोटो चुनें
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => sleeveFileInputRef.current?.click()}
+                className="w-full sm:w-auto h-9 px-4 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white text-[12px] font-bold flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+              >
+                <UploadCloud size={15} />
+                <span>{design.sleevePhoto ? "Change Photo / फ़ोटो बदलें" : "Upload Photo / फ़ोटो चुनें"}</span>
+              </button>
+            </div>
+
+            {design.sleevePhoto ? (
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 rounded-xl bg-white p-3.5 border border-[#eedfd6] shadow-2xs">
+                <div className="relative group shrink-0">
+                  <img
+                    src={design.sleevePhoto}
+                    alt="Uploaded Sleeve Design"
+                    className="h-20 w-20 rounded-xl object-contain border border-[#ebdcd0] bg-[#faf7f2] shadow-2xs cursor-zoom-in"
+                    onClick={() => onPreview && onPreview("Custom Sleeve Design Photo / बाज़ू डिज़ाइन", design.sleevePhoto, design.sleevePhotoName)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => onPreview && onPreview("Custom Sleeve Design Photo / बाज़ू डिज़ाइन", design.sleevePhoto, design.sleevePhotoName)}
+                    className="absolute bottom-1 right-1 h-5 w-5 rounded-full bg-black/75 text-white flex items-center justify-center text-[10px] shadow-sm"
+                    title="Enlarge / बड़ा देखें"
+                  >
+                    <Eye size={11} />
+                  </button>
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2 py-0.5 rounded-md flex items-center gap-1">
+                      <Check size={12} strokeWidth={3} /> Photo Ready / फ़ोटो संलग्न है
+                    </span>
+                    {design.sleevePhotoSize && (
+                      <span className="text-[11px] text-stone-500 font-medium">({design.sleevePhotoSize})</span>
+                    )}
+                  </div>
+                  <p className="font-bold text-[13px] text-stone-900 truncate mt-1">
+                    {design.sleevePhotoName || "custom-sleeve.jpg"}
+                  </p>
+                  <p className="text-[11.5px] text-stone-500 mt-0.5">
+                    Our master tailor will stitch the sleeves exactly according to this photo.
+                    / मास्टर दर्जी ठीक इसी फ़ोटो के अनुसार आपकी बाज़ू तैयार करेंगे।
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleRemoveSleevePhoto}
+                  className="w-full sm:w-auto text-[12px] text-red-600 hover:text-red-700 font-bold flex items-center justify-center gap-1 p-2 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                  title="Remove Photo / फ़ोटो हटाएं"
+                >
+                  <Trash2 size={14} />
+                  <span>Remove / हटाएं</span>
+                </button>
+              </div>
+            ) : (
+              <div
+                onClick={() => sleeveFileInputRef.current?.click()}
+                className="flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed border-[#e0d2c5] bg-white hover:bg-[#fffdfa] hover:border-[var(--primary)] transition-all cursor-pointer text-center group"
+              >
+                <div className="h-12 w-12 rounded-full bg-[#fcf5ef] text-[var(--primary)] flex items-center justify-center mb-2 shadow-2xs group-hover:scale-105 transition-transform">
+                  <UploadCloud size={24} />
+                </div>
+                <p className="text-[13.5px] font-bold text-[var(--primary-dark)]">
+                  Click here to browse & upload sleeve photo / बाज़ू का फ़ोटो अपलोड करने के लिए क्लिक करें
+                </p>
+                <p className="text-[11.5px] text-[var(--text-light)] mt-1">
+                  Supports JPG, PNG, WEBP (Max 10 MB) · Automatic size optimization
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Additional Fitting and Notes */}
         <div className="mt-8 pt-6 border-t border-[#f0e7df] grid gap-5 md:grid-cols-2">
@@ -739,7 +948,10 @@ export default function DesignSelectionStep({
                     <div className="rounded-2xl border border-[#e8ded2] bg-[#fbf9f6] p-3 text-center">
                       <div className="aspect-[4/3] w-full mb-2 overflow-hidden rounded-xl bg-white border border-[#ece3d9] flex items-center justify-center">
                         <img
-                          src={SLEEVE_DESIGN_PHOTOS[detailModal.option.id]?.front || SLEEVE_DESIGN_PHOTOS[detailModal.option.id]?.side}
+                          src={
+                            (detailModal.option.id === "as-photo" && design?.sleevePhoto) ||
+                            (SLEEVE_DESIGN_PHOTOS[detailModal.option.id]?.front || SLEEVE_DESIGN_PHOTOS[detailModal.option.id]?.side)
+                          }
                           alt="Front View"
                           className="h-full w-full object-contain"
                         />
@@ -753,7 +965,10 @@ export default function DesignSelectionStep({
                     <div className="rounded-2xl border border-[#e8ded2] bg-[#fbf9f6] p-3 text-center">
                       <div className="aspect-[4/3] w-full mb-2 overflow-hidden rounded-xl bg-white border border-[#ece3d9] flex items-center justify-center">
                         <img
-                          src={SLEEVE_DESIGN_PHOTOS[detailModal.option.id]?.side || SLEEVE_DESIGN_PHOTOS[detailModal.option.id]?.front}
+                          src={
+                            (detailModal.option.id === "as-photo" && design?.sleevePhoto) ||
+                            (SLEEVE_DESIGN_PHOTOS[detailModal.option.id]?.side || SLEEVE_DESIGN_PHOTOS[detailModal.option.id]?.front)
+                          }
                           alt="Side View"
                           className="h-full w-full object-contain"
                         />

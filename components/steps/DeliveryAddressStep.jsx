@@ -64,6 +64,7 @@ const SLEEVE_DESIGN_PHOTOS = {
   flutter: "./images/sleeves/flutter_front.jpg",
   "bell-cuff": "./images/sleeves/bell_cuff_front.jpg",
   pleated: "./images/sleeves/pleated_front.jpg",
+  "as-photo": "./images/sleeves/as_photo_front.jpg",
 };
 
 const OUTFIT_PHOTOS = {
@@ -122,7 +123,10 @@ export default function DeliveryAddressStep({
       ? design.backPhoto
       : BACK_NECK_PHOTOS[design?.neckBack];
   const sleeveLengthPhoto = SLEEVE_LENGTH_PHOTOS[design?.sleeveLength];
-  const sleeveDesignPhoto = SLEEVE_DESIGN_PHOTOS[design?.sleeveDesign];
+  const sleeveDesignPhoto =
+    design?.sleeveDesign === "as-photo" && design?.sleevePhoto
+      ? design.sleevePhoto
+      : SLEEVE_DESIGN_PHOTOS[design?.sleeveDesign];
   const outfitPhoto = outfit?.uploadedPhoto || OUTFIT_PHOTOS[outfit?.type] || "./images/kurti.jpg";
 
   // Active measurement fields
@@ -416,6 +420,11 @@ export default function DeliveryAddressStep({
                   ? `${selectedSleeveDesign.en} / ${selectedSleeveDesign.hiScript || selectedSleeveDesign.hi}`
                   : design?.sleeveDesign || "Straight / सीधी"}
               </p>
+              {design?.sleeveDesign === "as-photo" && design?.sleevePhoto && (
+                <p className="text-[11px] text-emerald-700 font-bold mt-0.5 truncate">
+                  ✓ Photo Attached / फ़ोटो संलग्न है
+                </p>
+              )}
             </div>
           </div>
         </div>

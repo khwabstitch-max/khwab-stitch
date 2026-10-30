@@ -139,6 +139,7 @@ const SLEEVE_DESIGN_CATALOG = {
   flutter: { en: "Flutter", hi: "लहर (फ्लटर) बाज़ू", photo: "./images/sleeves/flutter_front.jpg" },
   "bell-cuff": { en: "Bell-Cuff", hi: "कफ़ वाली बाज़ू", photo: "./images/sleeves/bell_cuff_front.jpg" },
   pleated: { en: "Pleated", hi: "चुन्नट (प्लीटेड) बाज़ू", photo: "./images/sleeves/pleated_front.jpg" },
+  "as-photo": { en: "As per Photo", hi: "फ़ोटो जैसी बाज़ू", photo: "./images/sleeves/as_photo_front.jpg" },
 };
 
 const MEASURE_LABELS = {
@@ -650,10 +651,10 @@ export default function OrderReceiptModal({ order, onClose }) {
                       Sleeve Style / बाज़ू स्टाइल
                     </p>
                     <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
-                      {sleeveDesignInfo?.photo ? (
+                      {(order.design?.sleeveDesign === "as-photo" && order.design?.sleevePhoto) || sleeveDesignInfo?.photo ? (
                         <img
-                          src={sleeveDesignInfo.photo}
-                          alt={sleeveDesignInfo.en || "Sleeve Design"}
+                          src={(order.design?.sleeveDesign === "as-photo" && order.design?.sleevePhoto) || sleeveDesignInfo.photo}
+                          alt={sleeveDesignInfo?.en || "Sleeve Design"}
                           className="h-full w-full object-contain"
                           loading="eager"
                         />
@@ -669,7 +670,9 @@ export default function OrderReceiptModal({ order, onClose }) {
                       {sleeveDesignInfo?.en || order.design?.sleeveDesign || "Straight"}
                     </p>
                     <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
-                      {sleeveDesignInfo?.hi || "सादी बाज़ू"}
+                      {order.design?.sleeveDesign === "as-photo" && order.design?.sleevePhoto
+                        ? "✓ कस्टम फ़ोटो संलग्न"
+                        : sleeveDesignInfo?.hi || "सादी बाज़ू"}
                     </p>
                   </div>
                 </div>
