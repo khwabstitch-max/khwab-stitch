@@ -287,17 +287,6 @@ export default function DesignArt({ type, id, view = "front", className = "" }) 
     const isSide = view === "side";
 
     // Check if we have cropped studio photo for this sleeve
-    const photoMap = {
-      straight: "./images/sleeves/straight_side.jpg",
-      puff: "./images/sleeves/puff_front.jpg",
-      bell: "./images/sleeves/bell_front.jpg",
-      ruffle: "./images/sleeves/ruffle_side.jpg",
-      bishop: "./images/sleeves/bishop_side.jpg",
-      cap: "./images/sleeves/cap_side.jpg",
-      butterfly: "./images/sleeves/butterfly_side.jpg",
-      cold: "./images/sleeves/cold_side.jpg",
-    };
-
     // If viewing side and photo exists, or viewing front, let's render either real studio photo or tailored vector illustration!
     return (
       <div className="relative w-full h-full overflow-hidden rounded-xl bg-[#faf7f2] flex items-center justify-center">

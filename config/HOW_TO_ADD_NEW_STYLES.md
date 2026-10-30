@@ -1,7 +1,7 @@
 # Khwab Stitch — How to Add New Outfits, Designs & Sleeves
 ### नया परिधान, डिज़ाइन कोड, गला या बाज़ू कैसे जोड़ें
 
-Khwab Stitch का पूरा कैटलॉग अब **एक ही केंद्रीय फ़ाइल (`data/fashionCatalog.js`)** से नियंत्रित होता है। भविष्य में जब भी आपको कोई नया आइटम जोड़ना हो, तो आपको किसी भी कंपोनेंट या कोड में बदलाव करने की आवश्यकता नहीं होगी। केवल फ़ोटो संबंधित फ़ोल्डर में डालें और `data/fashionCatalog.js` में एक लाइन जोड़ें।
+Khwab Stitch का पूरा कैटलॉग अब **एक ही केंद्रीय फ़ाइल (`config/fashionCatalog.js`)** से नियंत्रित होता है। भविष्य में जब भी आपको कोई नया आइटम जोड़ना हो, तो आपको किसी भी कंपोनेंट या कोड में बदलाव करने की आवश्यकता नहीं होगी। केवल फ़ोटो संबंधित फ़ोल्डर में डालें और `config/fashionCatalog.js` में एक लाइन जोड़ें।
 
 ---
 
@@ -24,7 +24,7 @@ Khwab Stitch का पूरा कैटलॉग अब **एक ही क�
 
 ### 1. नया परिधान जोड़ना (Add a New Outfit, e.g. Lehenga Choli):
 1. फ़ोटो को `public/images/outfits/04_lehenga.jpg` में रखें।
-2. `data/fashionCatalog.js` में `OUTFITS` ऐरे के अंदर जोड़ें:
+2. `config/fashionCatalog.js` में `OUTFITS` ऐरे के अंदर जोड़ें:
 ```javascript
 {
   id: "Lehenga",
@@ -42,7 +42,7 @@ Khwab Stitch का पूरा कैटलॉग अब **एक ही क�
 
 ### 2. नया डिज़ाइन कोड जोड़ना (Add a New Design Code, e.g. K-03):
 1. फ़ोटो को `public/images/design_codes/K-03.jpg` में रखें।
-2. `data/fashionCatalog.js` में `DESIGN_CODES` ऐरे के अंदर जोड़ें:
+2. `config/fashionCatalog.js` में `DESIGN_CODES` ऐरे के अंदर जोड़ें:
 ```javascript
 {
   code: "K-03",
@@ -60,7 +60,7 @@ Khwab Stitch का पूरा कैटलॉग अब **एक ही क�
 
 ### 3. नया बाज़ू डिज़ाइन जोड़ना (Add a New Sleeve Design):
 1. फ़ोटो को `public/images/sleeve_designs/12_umbrella_front.jpg` और `12_umbrella_side.jpg` में रखें।
-2. `data/fashionCatalog.js` में `SLEEVE_DESIGNS` ऐरे के अंदर जोड़ें:
+2. `config/fashionCatalog.js` में `SLEEVE_DESIGNS` ऐरे के अंदर जोड़ें:
 ```javascript
 {
   id: "umbrella",

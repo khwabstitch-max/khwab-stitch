@@ -154,13 +154,13 @@ export default function OrderReceiptModal({ order, onClose }) {
   const landmark = order.delivery?.landmark || order.customer?.landmark || "";
 
   // Lookups for selected outfit and styling
-  const outfitInfo = lookupItem(OUTFIT_CATALOG, order.outfit?.type, order.outfit?.type, "परिधान", "./images/kurti.jpg");
+  const outfitInfo = lookupItem(OUTFIT_CATALOG, order.outfit?.type, order.outfit?.type, "परिधान", "./images/outfits/02_kurti.jpg");
   const designCodeInfo = order.outfit?.designCode ? DESIGN_CODE_CATALOG[order.outfit.designCode] : null;
 
-  const frontNeckInfo = lookupItem(FRONT_NECK_CATALOG, order.design?.neckFront, order.design?.neckFront, "गला", "./images/neck_front/round.jpg");
-  const backNeckInfo = lookupItem(BACK_NECK_CATALOG, order.design?.neckBack, order.design?.neckBack, "बैक", "./images/neck_back/simple.jpg");
-  const sleeveLengthInfo = lookupItem(SLEEVE_LENGTH_CATALOG, order.design?.sleeveLength, order.design?.sleeveLength, "बाज़ू", "./images/sleeve_lengths/full_front.jpg");
-  const sleeveDesignInfo = lookupItem(SLEEVE_DESIGN_CATALOG, order.design?.sleeveDesign, order.design?.sleeveDesign, "बाज़ू स्टाइल", "./images/sleeves/straight_front.jpg");
+  const frontNeckInfo = lookupItem(FRONT_NECK_CATALOG, order.design?.neckFront, order.design?.neckFront, "गला", "./images/neck_front/01_round.jpg");
+  const backNeckInfo = lookupItem(BACK_NECK_CATALOG, order.design?.neckBack, order.design?.neckBack, "बैक", "./images/neck_back/01_simple.jpg");
+  const sleeveLengthInfo = lookupItem(SLEEVE_LENGTH_CATALOG, order.design?.sleeveLength, order.design?.sleeveLength, "बाज़ू", "./images/sleeve_lengths/05_full_front.jpg");
+  const sleeveDesignInfo = lookupItem(SLEEVE_DESIGN_CATALOG, order.design?.sleeveDesign, order.design?.sleeveDesign, "बाज़ू स्टाइल", "./images/sleeve_designs/01_straight_front.jpg");
 
   return (
     <div className="order-receipt-overlay fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm p-3 md:p-6 overflow-y-auto flex items-start justify-center">
@@ -330,7 +330,7 @@ export default function OrderReceiptModal({ order, onClose }) {
                 <div className="rounded-2xl border-2 border-[var(--primary)]/30 bg-[#fdf8f9]/90 p-4 sm:p-5 flex flex-col sm:flex-row items-center sm:items-start gap-5 shadow-2xs">
                   <div className="relative shrink-0 w-32 h-32 sm:w-36 sm:h-36 rounded-xl overflow-hidden border-2 border-[var(--primary)]/30 bg-white">
                     <img
-                      src={designCodeInfo?.image || "./images/designs/k-01.jpg"}
+                      src={designCodeInfo?.image || "./images/design_codes/K-01.jpg"}
                       alt={designCodeInfo?.name || order.outfit.designCode}
                       className="w-full h-full object-cover"
                       loading="eager"
@@ -387,7 +387,7 @@ export default function OrderReceiptModal({ order, onClose }) {
                 <div className="rounded-2xl border-2 border-[#ebdcd0] bg-white/90 p-4 sm:p-5 flex flex-col sm:flex-row items-center sm:items-start gap-4 shadow-2xs">
                   <div className="relative shrink-0 w-28 h-28 rounded-xl overflow-hidden border border-stone-200 bg-white">
                     <img
-                      src={order.outfit?.uploadedPhoto || outfitInfo?.photo || "./images/kurti.jpg"}
+                      src={order.outfit?.uploadedPhoto || outfitInfo?.photo || "./images/outfits/02_kurti.jpg"}
                       alt={order.outfit?.type || "Outfit"}
                       className="w-full h-full object-cover"
                       loading="eager"

@@ -19,6 +19,8 @@ import {
   SLEEVE_LENGTHS as sleeveLengthData,
   SLEEVE_DESIGNS as sleeveDesign,
   MEASUREMENT_CONFIGS as measurementConfigs,
+  OUTFIT_PHOTOS,
+  DESIGN_CODE_PHOTOS,
 } from "./config/fashionCatalog.js";
 
 const CLOUD_BRIDGE_TOPIC = "khwab_atelier_orders_v2_sync";
@@ -1055,13 +1057,9 @@ export default function App() {
                     <div className="inline-flex items-center gap-3 p-2.5 pr-5 rounded-2xl border border-[var(--border)] bg-[#faf7f2] shadow-sm">
                       <img
                         src={
-                          successOrder.outfit.designCode === "K-01"
-                            ? "./images/designs/k-01.jpg"
-                            : successOrder.outfit.designCode.startsWith("B")
-                            ? "./images/blouse.jpg"
-                            : successOrder.outfit.designCode.startsWith("SU")
-                            ? "./images/suit-upper.jpg"
-                            : "./images/kurti.jpg"
+                          DESIGN_CODE_PHOTOS[successOrder.outfit.designCode] ||
+                          OUTFIT_PHOTOS[successOrder.outfit.type] ||
+                          "./images/outfits/02_kurti.jpg"
                         }
                         className="h-14 w-14 rounded-xl object-cover border border-[#e3d7cf]"
                         alt={`Design Code ${successOrder.outfit.designCode}`}

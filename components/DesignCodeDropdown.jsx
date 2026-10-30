@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Check, Eye, ChevronDown, ChevronUp, Sparkles, X, Lock, AlertCircle } from "lucide-react";
 
-import { DESIGN_CODES as CATALOG_DESIGN_CODES } from "../config/fashionCatalog.js";
+import { DESIGN_CODES as CATALOG_DESIGN_CODES, OUTFITS } from "../config/fashionCatalog.js";
 export { CATALOG_DESIGN_CODES };
 
 export default function DesignCodeDropdown({
@@ -28,10 +28,9 @@ export default function DesignCodeDropdown({
     if (!outfit?.type || !outfit?.designCode) return;
 
     const code = outfit.designCode.toUpperCase();
-    let isValid = false;
-    if (outfit.type === "Kurti" && code.startsWith("K")) isValid = true;
-    if (outfit.type === "Blouse" && code.startsWith("B")) isValid = true;
-    if (outfit.type === "Suit Upper" && code.startsWith("SU")) isValid = true;
+    const currentOutfit = OUTFITS.find((o) => o.id === outfit?.type);
+    const expectedPrefix = currentOutfit?.designCodePrefix || "";
+    const isValid = expectedPrefix ? code.startsWith(expectedPrefix) : true;
 
     if (!isValid) {
       setOutfit((prev) => ({ ...prev, designCode: "" }));
@@ -39,23 +38,12 @@ export default function DesignCodeDropdown({
   }, [outfit?.type]);
 
   // Determine expected prefix based on selected outfit
-  const expectedPrefix =
-    outfit?.type === "Kurti"
-      ? "K"
-      : outfit?.type === "Blouse"
-      ? "B"
-      : outfit?.type === "Suit Upper"
-      ? "SU"
-      : "";
+  const currentOutfit = OUTFITS.find((o) => o.id === outfit?.type);
+  const expectedPrefix = currentOutfit?.designCodePrefix || "";
 
-  const prefixLabel =
-    outfit?.type === "Kurti"
-      ? "K- Codes for Kurti / कुर्ती के लिए K- कोड"
-      : outfit?.type === "Blouse"
-      ? "B- Codes for Blouse / ब्लाउज़ के लिए B- कोड"
-      : outfit?.type === "Suit Upper"
-      ? "SU- Codes for Suit Upper / सूट के लिए SU- कोड"
-      : "";
+  const prefixLabel = currentOutfit
+    ? `${expectedPrefix}- Codes for ${currentOutfit.en} / ${currentOutfit.hi} के लिए ${expectedPrefix}- कोड`
+    : "";
 
   // Filter catalog items to only show codes matching the chosen outfit
   const visibleCodes = outfit?.type

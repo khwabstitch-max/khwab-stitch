@@ -86,7 +86,7 @@ export default function DeliveryAddressStep({
     design?.sleeveDesign === "as-photo" && design?.sleevePhoto
       ? design.sleevePhoto
       : SLEEVE_DESIGN_PHOTOS[design?.sleeveDesign];
-  const outfitPhoto = outfit?.uploadedPhoto || OUTFIT_PHOTOS[outfit?.type] || "./images/kurti.jpg";
+  const outfitPhoto = outfit?.uploadedPhoto || OUTFIT_PHOTOS[outfit?.type] || "./images/outfits/02_kurti.jpg";
 
   // Active measurement fields
   const activeMeasurementFields = outfit?.type ? measurementConfigs[outfit.type] || [] : [];
@@ -192,17 +192,21 @@ export default function DeliveryAddressStep({
                   <Tag size={12} />
                   <span>Design Code: {outfit.designCode}</span>
                 </span>
-                {outfit.designCode === "K-01" && (
+                {outfit.designCode && (
                   <button
                     type="button"
                     onClick={() =>
                       openLightbox &&
-                      openLightbox("Design Code K-01", "./images/designs/k-01.jpg", "Peach Floral Classic Kurti")
+                      openLightbox(
+                        `Design Code ${outfit.designCode}`,
+                        DESIGN_CODE_PHOTOS[outfit.designCode] || "./images/design_codes/K-01.jpg",
+                        "Studio Catalog Selection / कैटलॉग डिज़ाइन"
+                      )
                     }
                     className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--primary)] hover:underline"
                   >
                     <Eye size={12} />
-                    <span>View K-01 Photo / फ़ोटो देखें</span>
+                    <span>View {outfit.designCode} Photo / फ़ोटो देखें</span>
                   </button>
                 )}
               </div>
