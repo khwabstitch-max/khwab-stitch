@@ -1,22 +1,25 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
-import { createApiMiddleware } from "./server/api.js";
 
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), "");
-  const adminPassword = process.env.ADMIN_PASSWORD || env.ADMIN_PASSWORD;
-  const databasePath = process.env.DB_PATH || env.DB_PATH;
-
+export default defineConfig(({ command, mode }) => {
   return {
     base: "/khwab-stitch/",
     plugins: [
       react(),
-      {
+      command === "serve" && {
         name: "khwab-stitch-orders-api",
-        configureServer(server) {
-          server.middlewares.use(createApiMiddleware({ adminPassword, databasePath }));
+        async configureServer(server) {
+          const env = loadEnv(mode, process.cwd(), "");
+          const adminPassword = process.env.ADMIN_PASSWORD || env.ADMIN_PASSWORD;
+          const databasePath = process.env.DB_PATH || env.DB_PATH;
+          try {
+            const { createApiMiddleware } = await import("./server/api.js");
+            server.middlewares.use(createApiMiddleware({ adminPassword, databasePath }));
+          } catch (error) {
+            console.warn("Dev API middleware disabled:", error.message);
+          }
         },
       },
-    ],
+    ].filter(Boolean),
   };
 });
