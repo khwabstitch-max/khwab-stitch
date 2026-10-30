@@ -586,11 +586,9 @@ export default function App() {
       design,
       measurements: {
         ...measurements,
-        values: Object.fromEntries(
-          showMeasurements()
-            .filter(({ key }) => measurements.values[key])
-            .map(({ key }) => [key, measurements.values[key]]),
-        ),
+        values: {
+          ...(measurements?.values || {}),
+        },
       },
       delivery: finalDelivery,
       createdAt: new Date().toISOString(),
@@ -605,6 +603,7 @@ export default function App() {
       saveLocalOrder(savedOrder);
       syncOrderToCloud(savedOrder);
       setSuccessOrder(savedOrder);
+      setReceiptOrder(savedOrder);
     } catch (e) {
       console.warn("API request failed, saving order locally & syncing to cloud:", e);
       const fallbackId = `KS${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
@@ -612,6 +611,7 @@ export default function App() {
       saveLocalOrder(savedOrder);
       syncOrderToCloud(savedOrder);
       setSuccessOrder(savedOrder);
+      setReceiptOrder(savedOrder);
     } finally {
       setBusy(false);
     }
@@ -922,31 +922,14 @@ export default function App() {
                   धन्यवाद! आपकी जानकारी हमें मिल गई है। कीमत और डिलीवरी की पुष्टि के लिए हम आपसे संपर्क करेंगे।
                 </p>
 
-                {/* 1-TAP WHATSAPP DISPATCH TO ATELIER */}
-                <div className="mt-5 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-center">
-                  <p className="text-[13px] font-semibold text-emerald-950 mb-2.5">
-                    📱 Direct Atelier Sync / कारीगर को तुरंत वॉट्सऐप पर ऑर्डर भेजें:
-                  </p>
-                  <a
-                    href={`https://wa.me/919876543210?text=${encodeURIComponent(
-                      `🧵 *New Order from Khwab Stitch* 🧵\n\n*Order ID:* #${successOrder.orderId}\n*Customer:* ${successOrder.customer?.name} (${successOrder.customer?.whatsapp})\n*Outfit:* ${successOrder.outfit?.type} (${successOrder.outfit?.pieces || 1} pieces)\n*Style:* Front: ${successOrder.design?.neckFront || "Standard"}, Back: ${successOrder.design?.neckBack || "Standard"}, Sleeves: ${successOrder.design?.sleeveLength || "Standard"}\n*Measurement Method:* ${successOrder.measurements?.provideMethod || "Standard"}\n*Delivery Address:* ${successOrder.delivery?.address || successOrder.customer?.address || "Address in slip"}\n\nPlease confirm my order!`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 w-full h-12 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[14px] shadow-md transition-colors"
-                  >
-                    <span>📲 Send Order to Atelier on WhatsApp / वॉट्सऐप पर भेजें</span>
-                  </a>
-                </div>
-
-                <div className="mt-5 flex flex-col sm:flex-row gap-3">
+                <div className="mt-6 flex flex-col sm:flex-row gap-3">
                   <button
                     type="button"
                     onClick={() => setReceiptOrder(successOrder)}
-                    className="flex-1 h-12 rounded-full text-white font-bold text-[13.5px] flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-opacity"
+                    className="flex-1 h-13 rounded-full text-white font-bold text-[14px] flex items-center justify-center gap-2 shadow-lg hover:opacity-95 transition-all cursor-pointer"
                     style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
                   >
-                    <Download size={16} /> Download Slip / PDF (रसीद / PDF प्राप्त करें)
+                    <Download size={17} /> Download Slip / PDF (रसीद / PDF प्राप्त करें)
                   </button>
                   <button
                     type="button"
