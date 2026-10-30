@@ -410,6 +410,12 @@ export default function DeliveryAddressStep({
               </p>
             )}
 
+            {outfit?.refPhoto && !outfit?.uploadedPhoto && (
+              <p className="text-[12px] text-stone-700 font-semibold flex items-center gap-1.5 pt-0.5">
+                <span>Reference / रेफ़रेंस: <b>{outfit.refPhoto}</b></span>
+              </p>
+            )}
+
             {outfit?.specialReq && (
               <p className="text-[12px] text-stone-600 italic bg-white p-2 rounded-lg border border-stone-200 mt-1">
                 Note: "{outfit.specialReq}"

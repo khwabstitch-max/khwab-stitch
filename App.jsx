@@ -181,7 +181,7 @@ export default function App() {
   const [currentSection, setCurrentSection] = useState(1);
   const [customer, setCustomer] = useState({ name: "", whatsapp: "", email: "", address: "", landmark: "", cityState: "", pin: "" });
   const [outfit, setOutfit] = useState({
-    type: "", pieces: "1", designCode: "", refPhoto: "As per design selection", specialReq: "",
+    type: "", pieces: "1", designCode: "", refPhoto: "", specialReq: "",
     uploadedPhoto: "", uploadedPhotoName: "", uploadedPhotoSize: ""
   });
   const [design, setDesign] = useState({ neckFront: "", neckBack: "", sleeveLength: "", sleeveDesign: "", fit: "Regular", additionalInstructions: "" });
@@ -966,7 +966,7 @@ export default function App() {
                         type: "",
                         pieces: "1",
                         designCode: "",
-                        refPhoto: "As per design selection",
+                        refPhoto: "",
                         specialReq: "",
                         uploadedPhoto: "",
                         uploadedPhotoName: "",

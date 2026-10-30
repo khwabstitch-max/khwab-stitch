@@ -4,11 +4,10 @@ import { Check, Wand2, UploadCloud, Camera, Trash2, RefreshCw, Eye, X, ChevronDo
 import DesignCodeDropdown from "../DesignCodeDropdown.jsx";
 
 const REFERENCE_OPTIONS = [
-  { value: "I have the photo (Upload Design Photo)", label: "I have the photo / मेरे पास फ़ोटो है (Upload Photo)" },
-  { value: "As per design selection", label: "Design selection / अगले स्टेप में डिज़ाइन चुनूँगी" },
-  { value: "WhatsApp karungi", label: "Send on WhatsApp / फ़ोटो वॉट्सऐप पर भेजूँगी" },
-  { value: "Mujhe guidance chahiye", label: "Need guidance / मास्टर जी से सलाह चाहिए" },
-  { value: "No reference", label: "No reference photo / कोई रेफ़रेंस फ़ोटो नहीं" },
+  { value: "Upload Design Photo", label: "📸 I have a photo (Upload Photo) / मेरे पास डिज़ाइन फ़ोटो है" },
+  { value: "Send on WhatsApp", label: "💬 Will send on WhatsApp / फ़ोटो वॉट्सऐप पर भेजूँगी" },
+  { value: "Need guidance", label: "🧵 Need tailor guidance / मास्टर जी से सलाह चाहिए" },
+  { value: "No reference photo", label: "✨ No reference photo / कोई रेफ़रेंस फ़ोटो नहीं है" },
 ];
 
 export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, selectOutfit, selectionError }) {
@@ -56,7 +55,7 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
 
           setOutfit((prev) => ({
             ...prev,
-            refPhoto: "I have the photo (Upload Design Photo)",
+            refPhoto: "Upload Design Photo",
             uploadedPhoto: compressedDataUrl,
             uploadedPhotoName: file.name,
             uploadedPhotoSize: `${sizeKb} KB`,
@@ -65,7 +64,7 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
           console.error("Image processing error:", err);
           setOutfit((prev) => ({
             ...prev,
-            refPhoto: "I have the photo (Upload Design Photo)",
+            refPhoto: "Upload Design Photo",
             uploadedPhoto: e.target.result,
             uploadedPhotoName: file.name,
             uploadedPhotoSize: `${Math.round(file.size / 1024)} KB`,
@@ -115,11 +114,14 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
       uploadedPhoto: "",
       uploadedPhotoName: "",
       uploadedPhotoSize: "",
-      refPhoto: "As per design selection",
+      refPhoto: "",
     }));
   };
 
-  const isUploadMode = outfit.refPhoto === "I have the photo (Upload Design Photo)" || !!outfit.uploadedPhoto;
+  const isUploadMode =
+    outfit.refPhoto === "Upload Design Photo" ||
+    outfit.refPhoto === "I have the photo (Upload Design Photo)" ||
+    !!outfit.uploadedPhoto;
 
   return (
     <section className="step-card rounded-[28px] border bg-white p-6 md:p-8">
@@ -247,16 +249,19 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
             )}
           </div>
           <select
-            value={outfit.refPhoto}
+            value={outfit.refPhoto || ""}
             onChange={(event) => {
               const val = event.target.value;
               setOutfit({ ...outfit, refPhoto: val });
-              if (val === "I have the photo (Upload Design Photo)" && !outfit.uploadedPhoto) {
+              if (val === "Upload Design Photo" && !outfit.uploadedPhoto) {
                 setTimeout(() => fileInputRef.current?.click(), 100);
               }
             }}
-            className="font-medium"
+            className="font-medium bg-white"
           >
+            <option value="">
+              Select Reference Option / रेफ़रेंस विकल्प चुनें (वैकल्पिक)...
+            </option>
             {REFERENCE_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
@@ -383,7 +388,7 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
               <button
                 type="button"
                 onClick={() => {
-                  setOutfit((prev) => ({ ...prev, refPhoto: "I have the photo (Upload Design Photo)" }));
+                  setOutfit((prev) => ({ ...prev, refPhoto: "Upload Design Photo" }));
                   setTimeout(() => fileInputRef.current?.click(), 100);
                 }}
                 className="font-bold text-[var(--primary)] hover:underline inline-flex items-center gap-1"
