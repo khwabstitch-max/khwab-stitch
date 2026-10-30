@@ -201,6 +201,7 @@ export default function App() {
     values: {},
   });
   const [delivery, setDelivery] = useState({ address: "", landmark: "", deliveryType: "Standard · 7–10 days" });
+  const [editingFromReview, setEditingFromReview] = useState(false);
   const [orders, setOrders] = useState([]);
   const [busy, setBusy] = useState(false);
   const [successOrder, setSuccessOrder] = useState(null);
@@ -554,12 +555,14 @@ export default function App() {
   // Helpers
   const selectOutfit = (t) => {
     if (!t) return;
-    setOutfit((current) => ({
-      ...current,
-      type: current.type === t ? "" : t,
-    }));
+    setOutfit((current) => {
+      if (current.type === t) return current;
+      return {
+        ...current,
+        type: t,
+      };
+    });
     setStepError("");
-    setMeasurements((current) => ({ ...current, values: {} }));
   };
   const selectDesign = (type, value) => {
     setDesign({ ...design, [type]: value });
@@ -634,59 +637,80 @@ export default function App() {
     }
   };
 
+  const validateAndSyncCustomer = () => {
+    if (!customer.name?.trim()) {
+      setStepError("कृपया अपना पूरा नाम भरें · Please enter your full name.");
+      return false;
+    }
+
+    // WhatsApp 10-digit validation
+    const digitsOnly = (customer.whatsapp || "").replace(/\D/g, "");
+    const clean10 = digitsOnly.length === 12 && digitsOnly.startsWith("91") ? digitsOnly.slice(2) : digitsOnly;
+    if (clean10.length !== 10) {
+      setStepError("कृपया 10 अंकों का मान्य वॉट्सऐप नंबर दर्ज करें · Please enter a valid 10-digit WhatsApp number.");
+      return false;
+    }
+
+    if (!customer.address?.trim()) {
+      setStepError("कृपया पूरा डिलीवरी पता भरें · Please enter your full delivery address.");
+      return false;
+    }
+
+    if (!customer.city?.trim()) {
+      setStepError("कृपया शहर चुनें या लिखें · Please select or enter your city.");
+      return false;
+    }
+
+    if (!customer.state?.trim()) {
+      setStepError("कृपया राज्य चुनें · Please select your state.");
+      return false;
+    }
+
+    // PIN 6-digit validation
+    const pinDigits = (customer.pin || "").replace(/\D/g, "");
+    if (pinDigits.length !== 6) {
+      setStepError("कृपया 6 अंकों का सही पिन कोड दर्ज करें · Please enter a valid 6-digit PIN code.");
+      return false;
+    }
+
+    const combinedCityState = `${customer.city.trim()}, ${customer.state.trim()}`;
+    setCustomer((prev) => ({
+      ...prev,
+      whatsapp: clean10,
+      pin: pinDigits,
+      cityState: combinedCityState,
+    }));
+
+    // Keep delivery address strictly in sync with customer address
+    setDelivery((prev) => ({
+      ...prev,
+      address: customer.address.trim(),
+      landmark: customer.landmark ? customer.landmark.trim() : prev.landmark,
+    }));
+
+    return true;
+  };
+
+  const saveAndReturnToReview = () => {
+    setStepError("");
+    if (currentSection === 2) {
+      if (!validateAndSyncCustomer()) return;
+    } else if (currentSection === 3) {
+      if (!outfit.type) {
+        setStepError("कृपया आगे बढ़ने से पहले परिधान चुनें · Please choose an outfit before continuing.");
+        return;
+      }
+    }
+    setEditingFromReview(false);
+    setCurrentSection(6);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const handleStepSubmit = (event) => {
     event.preventDefault();
     setStepError("");
     if (currentSection === 2) {
-      if (!customer.name?.trim()) {
-        setStepError("कृपया अपना पूरा नाम भरें · Please enter your full name.");
-        return;
-      }
-
-      // WhatsApp 10-digit validation
-      const digitsOnly = (customer.whatsapp || "").replace(/\D/g, "");
-      const clean10 = digitsOnly.length === 12 && digitsOnly.startsWith("91") ? digitsOnly.slice(2) : digitsOnly;
-      if (clean10.length !== 10) {
-        setStepError("कृपया 10 अंकों का मान्य वॉट्सऐप नंबर दर्ज करें · Please enter a valid 10-digit WhatsApp number.");
-        return;
-      }
-
-      if (!customer.address?.trim()) {
-        setStepError("कृपया पूरा डिलीवरी पता भरें · Please enter your full delivery address.");
-        return;
-      }
-
-      if (!customer.city?.trim()) {
-        setStepError("कृपया शहर चुनें या लिखें · Please select or enter your city.");
-        return;
-      }
-
-      if (!customer.state?.trim()) {
-        setStepError("कृपया राज्य चुनें · Please select your state.");
-        return;
-      }
-
-      // PIN 6-digit validation
-      const pinDigits = (customer.pin || "").replace(/\D/g, "");
-      if (pinDigits.length !== 6) {
-        setStepError("कृपया 6 अंकों का सही पिन कोड दर्ज करें · Please enter a valid 6-digit PIN code.");
-        return;
-      }
-
-      const combinedCityState = `${customer.city.trim()}, ${customer.state.trim()}`;
-      setCustomer((prev) => ({
-        ...prev,
-        whatsapp: clean10,
-        pin: pinDigits,
-        cityState: combinedCityState,
-      }));
-
-      // Keep delivery address in sync with customer address
-      setDelivery((prev) => ({
-        ...prev,
-        address: prev.address || customer.address,
-        landmark: prev.landmark || customer.landmark || "",
-      }));
+      if (!validateAndSyncCustomer()) return;
     }
     if (currentSection === 3 && !outfit.type) {
       setStepError("कृपया आगे बढ़ने से पहले परिधान चुनें · Please choose an outfit before continuing.");
@@ -700,6 +724,14 @@ export default function App() {
       saveOrder();
       return;
     }
+
+    if (editingFromReview) {
+      setEditingFromReview(false);
+      setCurrentSection(6);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
     setCurrentSection((section) => Math.min(6, section + 1));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -759,6 +791,16 @@ export default function App() {
         onNavigateAdmin={navigateToAdmin}
         onJumpToSection={(sec) => {
           setStepError("");
+          if (sec === 6) {
+            if (currentSection === 2 && !validateAndSyncCustomer()) return;
+            if (currentSection === 3 && !outfit.type) {
+              setStepError("कृपया आगे बढ़ने से पहले परिधान चुनें · Please choose an outfit before continuing.");
+              return;
+            }
+            setEditingFromReview(false);
+          } else if (currentSection === 6) {
+            setEditingFromReview(true);
+          }
           setCurrentSection(sec);
           window.scrollTo({ top: 0, behavior: "smooth" });
         }}
@@ -796,6 +838,35 @@ export default function App() {
           <>
             {currentSection === 1 && !successOrder && (
               <WelcomeStep onStart={() => setCurrentSection(2)} />
+            )}
+
+            {/* EDITING MODE ALERT BANNER WHEN EDITING FROM STEP 6 */}
+            {editingFromReview && currentSection < 6 && (
+              <div className="mt-4 mb-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border-2 border-amber-300 bg-amber-50/95 px-4 sm:px-5 py-3.5 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white font-bold text-base shadow-xs">
+                    ✏️
+                  </span>
+                  <div>
+                    <p className="text-[13.5px] font-bold text-amber-950 flex flex-wrap items-center gap-2">
+                      <span>Editing Step 0{currentSection} / बदलाव मोड</span>
+                      <span className="text-[11px] font-normal text-amber-900 bg-amber-200/90 px-2.5 py-0.5 rounded-full">
+                        Other details are safely preserved / बाकी सभी नाप व जानकारी सुरक्षित हैं
+                      </span>
+                    </p>
+                    <p className="text-[12px] text-amber-800 mt-0.5">
+                      Change only what you want to modify, then click Save & Return to go straight back to Step 6.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={saveAndReturnToReview}
+                  className="w-full sm:w-auto shrink-0 h-10 px-5 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white text-[13px] font-bold flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all cursor-pointer whitespace-nowrap"
+                >
+                  <Check size={16} /> Save & Return / सहेजें और लौटें (Step 6)
+                </button>
+              </div>
             )}
 
             {/* FORM SECTIONS 2-6 */}
@@ -858,6 +929,9 @@ export default function App() {
                     setMeasurements={setMeasurements}
                     onJumpToSection={(sec) => {
                       setStepError("");
+                      if (sec < 6) {
+                        setEditingFromReview(true);
+                      }
                       setCurrentSection(sec);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
@@ -899,6 +973,12 @@ export default function App() {
                         type="button"
                         onClick={() => {
                           setStepError("");
+                          if (currentSection === 2 && !validateAndSyncCustomer()) return;
+                          if (currentSection === 3 && !outfit.type) {
+                            setStepError("कृपया आगे बढ़ने से पहले परिधान चुनें · Please choose an outfit before continuing.");
+                            return;
+                          }
+                          setEditingFromReview(false);
                           setCurrentSection(6);
                           window.scrollTo({ top: 0, behavior: "smooth" });
                         }}
@@ -910,13 +990,25 @@ export default function App() {
                         <span className="sm:hidden">सारांश</span>
                       </button>
 
-                      <button
-                        type="submit"
-                        className="flex-[1.5] h-12 rounded-full text-white font-bold text-[13.5px] sm:text-[14px] flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-opacity cursor-pointer"
-                        style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
-                      >
-                        Next / आगे बढ़ें <ChevronRight size={17} />
-                      </button>
+                      {editingFromReview ? (
+                        <button
+                          type="button"
+                          onClick={saveAndReturnToReview}
+                          className="flex-[1.5] h-12 rounded-full text-white font-bold text-[13px] sm:text-[14px] flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-opacity cursor-pointer"
+                          style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
+                        >
+                          <Check size={17} />
+                          <span>Save & Return / सहेजें और लौटें</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="submit"
+                          className="flex-[1.5] h-12 rounded-full text-white font-bold text-[13.5px] sm:text-[14px] flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-opacity cursor-pointer"
+                          style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
+                        >
+                          Next / आगे बढ़ें <ChevronRight size={17} />
+                        </button>
+                      )}
                     </>
                   ) : (
                     <button

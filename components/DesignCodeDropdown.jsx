@@ -88,25 +88,18 @@ export default function DesignCodeDropdown({
     return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
 
-  // Auto-clear invalid design code if outfit is unselected or changed to another type
+  // Auto-clear invalid design code ONLY if a different incompatible outfit type is selected
   useEffect(() => {
-    if (!outfit?.type) {
-      if (outfit?.designCode) {
-        setOutfit((prev) => ({ ...prev, designCode: "" }));
-      }
-      return;
-    }
+    if (!outfit?.type || !outfit?.designCode) return;
 
-    if (outfit?.designCode) {
-      const code = outfit.designCode.toUpperCase();
-      let isValid = false;
-      if (outfit.type === "Kurti" && code.startsWith("K")) isValid = true;
-      if (outfit.type === "Blouse" && code.startsWith("B")) isValid = true;
-      if (outfit.type === "Suit Upper" && code.startsWith("SU")) isValid = true;
+    const code = outfit.designCode.toUpperCase();
+    let isValid = false;
+    if (outfit.type === "Kurti" && code.startsWith("K")) isValid = true;
+    if (outfit.type === "Blouse" && code.startsWith("B")) isValid = true;
+    if (outfit.type === "Suit Upper" && code.startsWith("SU")) isValid = true;
 
-      if (!isValid) {
-        setOutfit((prev) => ({ ...prev, designCode: "" }));
-      }
+    if (!isValid) {
+      setOutfit((prev) => ({ ...prev, designCode: "" }));
     }
   }, [outfit?.type]);
 
