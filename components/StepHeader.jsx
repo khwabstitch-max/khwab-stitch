@@ -30,7 +30,7 @@ export default function StepHeader({
         >
           <div className="relative flex-shrink-0">
             <img
-              src="/images/khwabstitch_logo.jpg"
+              src="./images/khwabstitch_logo.jpg"
               alt="Khwab Stitch Logo"
               className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-[#dfc5b5] shadow-xs transition-transform duration-200 group-hover:scale-105"
             />

@@ -70,7 +70,7 @@ export default function MeasurementsStep({
   // Selected outfit label & sketch info
   const outfitTitle = outfit.type || "Outfit";
   const isBlouse = outfit.type === "Blouse";
-  const kurtiSketchImg = "/images/measurement_guide_kurti.png";
+  const kurtiSketchImg = "./images/measurement_guide_kurti.png";
 
   const handleMethodChange = (event) => {
     const selected = event.target.value;

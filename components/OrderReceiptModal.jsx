@@ -105,7 +105,7 @@ export default function OrderReceiptModal({ order, onClose }) {
             <div>
               <div className="flex items-center gap-3">
                 <img
-                  src="/images/khwabstitch_logo.jpg"
+                  src="./images/khwabstitch_logo.jpg"
                   alt="Khwab Stitch Logo"
                   className="h-14 w-14 rounded-full object-cover border-2 border-[#dfc5b5] shadow-xs flex-shrink-0"
                 />

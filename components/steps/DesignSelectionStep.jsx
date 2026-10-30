@@ -4,53 +4,53 @@ import DesignArt from "../DesignArt.jsx";
 
 // Studio photos for Front Necklines (from Khwab Stitch Catalog)
 const FRONT_NECK_PHOTOS = {
-  round: "/images/neck_front/round.jpg",
-  vneck: "/images/neck_front/vneck.jpg",
-  boat: "/images/neck_front/boat.jpg",
-  collar: "/images/neck_front/collar.jpg",
-  square: "/images/neck_front/square.jpg",
-  sweetheart: "/images/neck_front/sweetheart.jpg",
-  high: "/images/neck_front/high.jpg",
-  mandarin: "/images/neck_front/mandarin.jpg",
+  round: "./images/neck_front/round.jpg",
+  vneck: "./images/neck_front/vneck.jpg",
+  boat: "./images/neck_front/boat.jpg",
+  collar: "./images/neck_front/collar.jpg",
+  square: "./images/neck_front/square.jpg",
+  sweetheart: "./images/neck_front/sweetheart.jpg",
+  high: "./images/neck_front/high.jpg",
+  mandarin: "./images/neck_front/mandarin.jpg",
 };
 
 // Studio photos for Back Necklines (from Khwab Stitch Catalog)
 const BACK_NECK_PHOTOS = {
-  simple: "/images/neck_back/simple.jpg",
-  "round-back": "/images/neck_back/round-back.jpg",
-  "v-back": "/images/neck_back/v-back.jpg",
-  "square-back": "/images/neck_back/square-back.jpg",
-  deep: "/images/neck_back/deep.jpg",
-  button: "/images/neck_back/button.jpg",
-  cutout: "/images/neck_back/cutout.jpg",
-  "as-photo": "/images/neck_back/as-photo.jpg",
+  simple: "./images/neck_back/simple.jpg",
+  "round-back": "./images/neck_back/round-back.jpg",
+  "v-back": "./images/neck_back/v-back.jpg",
+  "square-back": "./images/neck_back/square-back.jpg",
+  deep: "./images/neck_back/deep.jpg",
+  button: "./images/neck_back/button.jpg",
+  cutout: "./images/neck_back/cutout.jpg",
+  "as-photo": "./images/neck_back/as-photo.jpg",
 };
 
 // Studio photos for Sleeve Lengths (Front View & Side View from Catalog)
 const SLEEVE_LENGTH_PHOTOS = {
   sleeveless: {
-    front: "/images/sleeve_lengths/sleeveless_front.jpg",
-    side: "/images/sleeve_lengths/sleeveless_side.jpg",
+    front: "./images/sleeve_lengths/sleeveless_front.jpg",
+    side: "./images/sleeve_lengths/sleeveless_side.jpg",
     measurements: "Length: 0 cm (0\") · Shoulder: 38 cm",
   },
   quarter: {
-    front: "/images/sleeve_lengths/quarter_front.jpg",
-    side: "/images/sleeve_lengths/quarter_side.jpg",
+    front: "./images/sleeve_lengths/quarter_front.jpg",
+    side: "./images/sleeve_lengths/quarter_side.jpg",
     measurements: "Length: 10 cm (4\") · Opening: 28 cm",
   },
   half: {
-    front: "/images/sleeve_lengths/half_front.jpg",
-    side: "/images/sleeve_lengths/half_side.jpg",
+    front: "./images/sleeve_lengths/half_front.jpg",
+    side: "./images/sleeve_lengths/half_side.jpg",
     measurements: "Length: 20 cm (7.9\") · Opening: 30 cm",
   },
   "three-quarter": {
-    front: "/images/sleeve_lengths/three_quarter_front.jpg",
-    side: "/images/sleeve_lengths/three_quarter_side.jpg",
+    front: "./images/sleeve_lengths/three_quarter_front.jpg",
+    side: "./images/sleeve_lengths/three_quarter_side.jpg",
     measurements: "Length: 38 cm (15\") · Opening: 24 cm",
   },
   full: {
-    front: "/images/sleeve_lengths/full_front.jpg",
-    side: "/images/sleeve_lengths/full_side.jpg",
+    front: "./images/sleeve_lengths/full_front.jpg",
+    side: "./images/sleeve_lengths/full_side.jpg",
     measurements: "Length: 55 cm (21.7\") · Opening: 22 cm",
   },
 };
@@ -58,48 +58,48 @@ const SLEEVE_LENGTH_PHOTOS = {
 // Studio photos for Sleeve Designs (Front View & Side View from Studio Catalogs)
 const SLEEVE_DESIGN_PHOTOS = {
   straight: {
-    front: "/images/sleeves/straight_front.jpg",
-    side: "/images/sleeves/straight_side.jpg",
+    front: "./images/sleeves/straight_front.jpg",
+    side: "./images/sleeves/straight_side.jpg",
   },
   puff: {
-    front: "/images/sleeves/puff_front.jpg",
-    side: "/images/sleeves/puff_front.jpg",
+    front: "./images/sleeves/puff_front.jpg",
+    side: "./images/sleeves/puff_front.jpg",
   },
   bell: {
-    front: "/images/sleeves/bell_front.jpg",
-    side: "/images/sleeves/bell_front.jpg",
+    front: "./images/sleeves/bell_front.jpg",
+    side: "./images/sleeves/bell_front.jpg",
   },
   ruffle: {
-    front: "/images/sleeves/ruffle_front.jpg",
-    side: "/images/sleeves/ruffle_side.jpg",
+    front: "./images/sleeves/ruffle_front.jpg",
+    side: "./images/sleeves/ruffle_side.jpg",
   },
   cap: {
-    front: "/images/sleeves/cap_front.jpg",
-    side: "/images/sleeves/cap_side.jpg",
+    front: "./images/sleeves/cap_front.jpg",
+    side: "./images/sleeves/cap_side.jpg",
   },
   bishop: {
-    front: "/images/sleeves/bishop_front.jpg",
-    side: "/images/sleeves/bishop_side.jpg",
+    front: "./images/sleeves/bishop_front.jpg",
+    side: "./images/sleeves/bishop_side.jpg",
   },
   butterfly: {
-    front: "/images/sleeves/butterfly_front.jpg",
-    side: "/images/sleeves/butterfly_side.jpg",
+    front: "./images/sleeves/butterfly_front.jpg",
+    side: "./images/sleeves/butterfly_side.jpg",
   },
   cold: {
-    front: "/images/sleeves/cold_front.jpg",
-    side: "/images/sleeves/cold_side.jpg",
+    front: "./images/sleeves/cold_front.jpg",
+    side: "./images/sleeves/cold_side.jpg",
   },
   flutter: {
-    front: "/images/sleeves/flutter_front.jpg",
-    side: "/images/sleeves/flutter_front.jpg",
+    front: "./images/sleeves/flutter_front.jpg",
+    side: "./images/sleeves/flutter_front.jpg",
   },
   "bell-cuff": {
-    front: "/images/sleeves/bell_cuff_front.jpg",
-    side: "/images/sleeves/bell_cuff_front.jpg",
+    front: "./images/sleeves/bell_cuff_front.jpg",
+    side: "./images/sleeves/bell_cuff_front.jpg",
   },
   pleated: {
-    front: "/images/sleeves/pleated_front.jpg",
-    side: "/images/sleeves/pleated_front.jpg",
+    front: "./images/sleeves/pleated_front.jpg",
+    side: "./images/sleeves/pleated_front.jpg",
   },
 };
 

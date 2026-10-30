@@ -9,7 +9,7 @@ export default function WelcomeStep({ onStart }) {
           <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-[#c4994d] via-[#d69680] to-[#6b2636] opacity-60 blur-md transition-all duration-300 group-hover:opacity-90 group-hover:blur-lg" />
           <div className="relative h-28 w-28 sm:h-36 sm:w-36 md:h-44 md:w-44 overflow-hidden rounded-full border-4 border-[#fff7f0] bg-[#fffaf5] shadow-xl transition-transform duration-300 group-hover:scale-105">
             <img
-              src="/images/khwabstitch_logo.jpg"
+              src="./images/khwabstitch_logo.jpg"
               alt="Khwab Stitch — Where Fabric Becomes Art"
               className="h-full w-full object-cover"
             />

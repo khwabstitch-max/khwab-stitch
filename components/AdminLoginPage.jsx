@@ -22,7 +22,7 @@ export default function AdminLoginPage({
         <div className="relative mx-auto mb-5 h-20 w-20 sm:h-24 sm:w-24">
           <div className="absolute -inset-1 rounded-full bg-gradient-to-tr from-[#c4994d] via-[#d69680] to-[#6b2636] opacity-70 blur-sm" />
           <img
-            src="/images/khwabstitch_logo.jpg"
+            src="./images/khwabstitch_logo.jpg"
             alt="Khwab Stitch Logo"
             className="relative h-full w-full rounded-full object-cover border-2 border-[#fff6ee] shadow-md"
           />

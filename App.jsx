@@ -21,7 +21,7 @@ const outfitTypes = [
     desc: "साड़ी और लहंगे के लिए डिज़ाइनर ब्लाउज़",
     popular: true,
     badge: "🔥 Most Popular · सर्वाधिक पसंदीदा",
-    image: "/images/blouse.jpg",
+    image: "./images/blouse.jpg",
   },
   {
     id: "Kurti",
@@ -30,7 +30,7 @@ const outfitTypes = [
     desc: "स्ट्रेट, ए-लाइन व फ़ेस्टिव कुर्ती",
     popular: false,
     badge: "✨ Daily & Festive",
-    image: "/images/kurti.jpg",
+    image: "./images/kurti.jpg",
   },
   {
     id: "Suit Upper",
@@ -39,7 +39,7 @@ const outfitTypes = [
     desc: "सलवार सूट व पंजाबी कमीज़ अपर",
     popular: false,
     badge: "🌸 Classic Traditional",
-    image: "/images/suit-upper.jpg",
+    image: "./images/suit-upper.jpg",
   },
 ];
 
@@ -643,7 +643,7 @@ export default function App() {
               >
                 <div className="relative mx-auto h-20 w-20">
                   <img
-                    src="/images/khwabstitch_logo.jpg"
+                    src="./images/khwabstitch_logo.jpg"
                     alt="Khwab Stitch Logo"
                     className="h-20 w-20 rounded-full object-cover border-2 border-[#dfc5b5] shadow-md"
                   />

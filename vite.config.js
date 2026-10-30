@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
   const databasePath = process.env.DB_PATH || env.DB_PATH;
 
   return {
+    base: "./",
     plugins: [
       react(),
       {
