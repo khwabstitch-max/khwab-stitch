@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Check, X, Heart, Search, Trash2, Download, FileText, ChevronRight, ChevronLeft, Star, Scissors } from "lucide-react";
+import { Check, X, Heart, Search, Trash2, Download, FileText, ChevronRight, ChevronLeft, Star, Scissors, Eye } from "lucide-react";
 import "./styles.css";
 import StepHeader from "./components/StepHeader.jsx";
 import WelcomeStep from "./components/WelcomeStep.jsx";
@@ -701,6 +701,11 @@ export default function App() {
         activeMode={activeRole}
         onNavigateCustomer={navigateToCustomer}
         onNavigateAdmin={navigateToAdmin}
+        onJumpToSection={(sec) => {
+          setStepError("");
+          setCurrentSection(sec);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
         ordersCount={orders.length}
       />
 
@@ -782,7 +787,7 @@ export default function App() {
                   />
                 )}
 
-                {/* SECTION 6 DELIVERY */}
+                {/* SECTION 6 DELIVERY & ORDER AT A GLANCE */}
                 {currentSection === 6 && (
                   <DeliveryAddressStep
                     customer={customer}
@@ -790,8 +795,23 @@ export default function App() {
                     delivery={delivery}
                     setDelivery={setDelivery}
                     outfit={outfit}
+                    setOutfit={setOutfit}
                     design={design}
+                    setDesign={setDesign}
                     measurements={measurements}
+                    setMeasurements={setMeasurements}
+                    onJumpToSection={(sec) => {
+                      setStepError("");
+                      setCurrentSection(sec);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    outfitTypes={outfitTypes}
+                    neckFront={neckFront}
+                    neckBack={neckBack}
+                    sleeveLengthData={sleeveLengthData}
+                    sleeveDesign={sleeveDesign}
+                    measurementConfigs={measurementConfigs}
+                    openLightbox={openLightbox}
                   />
                 )}
 
@@ -812,19 +832,36 @@ export default function App() {
                       setCurrentSection((s) => Math.max(2, s - 1));
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="flex-1 h-12 rounded-full border border-[#ded2c4] bg-white font-bold text-[13.5px] sm:text-[14px] text-stone-700 flex items-center justify-center gap-1.5 disabled:opacity-40 hover:bg-stone-50 transition-colors shadow-2xs"
+                    className="flex-1 h-12 rounded-full border border-[#ded2c4] bg-white font-bold text-[13.5px] sm:text-[14px] text-stone-700 flex items-center justify-center gap-1.5 disabled:opacity-40 hover:bg-stone-50 transition-colors shadow-2xs cursor-pointer"
                   >
                     <ChevronLeft size={17} /> Back / पीछे
                   </button>
 
                   {currentSection < 6 ? (
-                    <button
-                      type="submit"
-                      className="flex-[1.5] h-12 rounded-full text-white font-bold text-[13.5px] sm:text-[14px] flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-opacity"
-                      style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
-                    >
-                      Next / आगे बढ़ें <ChevronRight size={17} />
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStepError("");
+                          setCurrentSection(6);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        className="h-12 px-3.5 sm:px-4 rounded-full border border-[var(--primary)]/30 bg-[#fffbf7] text-[var(--primary)] font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 shadow-2xs hover:bg-[var(--primary)] hover:text-white transition-all cursor-pointer"
+                        title="Skip straight to Order Review / सीधे संपूर्ण सारांश पर जाएँ"
+                      >
+                        <Eye size={15} />
+                        <span className="hidden sm:inline">Review / सारांश (Step 6)</span>
+                        <span className="sm:hidden">सारांश</span>
+                      </button>
+
+                      <button
+                        type="submit"
+                        className="flex-[1.5] h-12 rounded-full text-white font-bold text-[13.5px] sm:text-[14px] flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-opacity cursor-pointer"
+                        style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
+                      >
+                        Next / आगे बढ़ें <ChevronRight size={17} />
+                      </button>
+                    </>
                   ) : (
                     <button
                       type="submit"

@@ -15,6 +15,7 @@ export default function StepHeader({
   activeMode = "customer",
   onNavigateCustomer,
   onNavigateAdmin,
+  onJumpToSection,
   ordersCount = null,
 }) {
   const progress = (currentSection / steps.length) * 100;
@@ -106,12 +107,15 @@ export default function StepHeader({
             {steps.map((step, index) => {
               const number = index + 1;
               return (
-                <span
+                <button
+                  type="button"
                   key={step.en}
-                  className={`step-progress__step${
+                  onClick={() => onJumpToSection && onJumpToSection(number)}
+                  className={`step-progress__step cursor-pointer text-left bg-transparent border-0 p-0 transition-opacity hover:opacity-80${
                     number === currentSection ? " is-current" : ""
                   }${number < currentSection ? " is-complete" : ""}`}
                   aria-current={number === currentSection ? "step" : undefined}
+                  title={`Jump to Step ${number}: ${step.en} / ${step.hi}`}
                 >
                   <i>{number < currentSection ? "✓" : number}</i>
                   <small>
@@ -119,7 +123,7 @@ export default function StepHeader({
                       {step.en} / {step.hi}
                     </span>
                   </small>
-                </span>
+                </button>
               );
             })}
           </nav>
