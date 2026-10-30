@@ -61,7 +61,6 @@ const neckBack = [
   { id: "deep", en: "Deep Back", hi: "गहरा बैक", hiScript: "गहरा बैक", grad: "from-red-100 to-rose-200" },
   { id: "button", en: "Button Back", hi: "बटन वाला", hiScript: "बटन वाला", grad: "from-emerald-100 to-green-200" },
   { id: "cutout", en: "Cut-out Back", hi: "जाली वाला", hiScript: "जाली वाला", grad: "from-orange-100 to-amber-200" },
-  { id: "as-photo", en: "As per Photo", hi: "फोटो जैसा", hiScript: "फोटो जैसा", grad: "from-zinc-100 to-stone-200" },
 ];
 const sleeveLengthData = [
   { id: "sleeveless", en: "Sleeveless", hi: "बिना बाज़ू", hiScript: "बिना बाज़ू", cm: "0 cm (0\")", desc: "Length: 0 cm · Shoulder: 38 cm" },
@@ -82,7 +81,6 @@ const sleeveDesign = [
   { id: "flutter", en: "Flutter", hi: "लहर बाज़ू", hiScript: "लहर बाज़ू" },
   { id: "bell-cuff", en: "Bell-Cuff", hi: "कफ़ वाली", hiScript: "कफ़ वाली" },
   { id: "pleated", en: "Pleated", hi: "चुन्नट वाली", hiScript: "चुन्नट वाली" },
-  { id: "as-photo", en: "As per Photo", hi: "फोटो जैसा", hiScript: "फोटो जैसा" },
 ];
 
 const measurementConfigs = {
@@ -206,6 +204,9 @@ export default function App() {
     sleeveDesign: "",
     fit: "Regular",
     additionalInstructions: "",
+    frontPhoto: "",
+    frontPhotoName: "",
+    frontPhotoSize: "",
     backPhoto: "",
     backPhotoName: "",
     backPhotoSize: "",
@@ -1130,6 +1131,9 @@ export default function App() {
                         sleeveDesign: "",
                         fit: "Regular",
                         additionalInstructions: "",
+                        frontPhoto: "",
+                        frontPhotoName: "",
+                        frontPhotoSize: "",
                         backPhoto: "",
                         backPhotoName: "",
                         backPhotoSize: "",

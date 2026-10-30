@@ -103,6 +103,7 @@ const FRONT_NECK_CATALOG = {
   sweetheart: { en: "Sweetheart", hi: "स्वीटहार्ट (दिल वाला) गला", photo: "./images/neck_front/sweetheart.jpg" },
   high: { en: "High Neck", hi: "बंद / हाई नेक", photo: "./images/neck_front/high.jpg" },
   mandarin: { en: "Mandarin Collar", hi: "चाइनीज़ (मंदारिन) गला", photo: "./images/neck_front/mandarin.jpg" },
+  "as-photo": { en: "As per Photo", hi: "फ़ोटो जैसा गला", photo: "./images/neck_front/round.jpg" },
 };
 
 // Back Necklines with Photos
@@ -551,10 +552,10 @@ export default function OrderReceiptModal({ order, onClose }) {
                       Front Neck / आगे गला
                     </p>
                     <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
-                      {frontNeckInfo?.photo ? (
+                      {(order.design?.neckFront === "as-photo" && order.design?.frontPhoto) || frontNeckInfo?.photo ? (
                         <img
-                          src={frontNeckInfo.photo}
-                          alt={frontNeckInfo.en || "Front Neck"}
+                          src={(order.design?.neckFront === "as-photo" && order.design?.frontPhoto) || frontNeckInfo.photo}
+                          alt={frontNeckInfo?.en || "Front Neck"}
                           className="h-full w-full object-contain"
                           loading="eager"
                         />
@@ -567,10 +568,14 @@ export default function OrderReceiptModal({ order, onClose }) {
                   </div>
                   <div>
                     <p className="text-[12px] font-bold text-stone-900 leading-tight">
-                      {frontNeckInfo?.en || order.design?.neckFront || "Standard"}
+                      {order.design?.neckFront === "as-photo"
+                        ? "As per Photo"
+                        : frontNeckInfo?.en || order.design?.neckFront || "Standard"}
                     </p>
                     <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
-                      {frontNeckInfo?.hi || "सामान्य गला"}
+                      {order.design?.neckFront === "as-photo" && order.design?.frontPhoto
+                        ? "✓ कस्टम फ़ोटो संलग्न"
+                        : frontNeckInfo?.hi || "सामान्य गला"}
                     </p>
                   </div>
                 </div>
@@ -598,7 +603,9 @@ export default function OrderReceiptModal({ order, onClose }) {
                   </div>
                   <div>
                     <p className="text-[12px] font-bold text-stone-900 leading-tight">
-                      {backNeckInfo?.en || order.design?.neckBack || "Standard"}
+                      {order.design?.neckBack === "as-photo"
+                        ? "As per Photo"
+                        : backNeckInfo?.en || order.design?.neckBack || "Standard"}
                     </p>
                     <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
                       {order.design?.neckBack === "as-photo" && order.design?.backPhoto
@@ -667,7 +674,9 @@ export default function OrderReceiptModal({ order, onClose }) {
                   </div>
                   <div>
                     <p className="text-[12px] font-bold text-stone-900 leading-tight">
-                      {sleeveDesignInfo?.en || order.design?.sleeveDesign || "Straight"}
+                      {order.design?.sleeveDesign === "as-photo"
+                        ? "As per Photo"
+                        : sleeveDesignInfo?.en || order.design?.sleeveDesign || "Straight"}
                     </p>
                     <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
                       {order.design?.sleeveDesign === "as-photo" && order.design?.sleevePhoto

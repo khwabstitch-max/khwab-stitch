@@ -117,7 +117,10 @@ export default function DeliveryAddressStep({
   const selectedSleeveDesign = sleeveDesign.find((s) => s.id === design?.sleeveDesign);
 
   // Photo lookups
-  const frontNeckPhoto = FRONT_NECK_PHOTOS[design?.neckFront];
+  const frontNeckPhoto =
+    design?.neckFront === "as-photo" && design?.frontPhoto
+      ? design.frontPhoto
+      : FRONT_NECK_PHOTOS[design?.neckFront];
   const backNeckPhoto =
     design?.neckBack === "as-photo" && design?.backPhoto
       ? design.backPhoto
@@ -319,10 +322,17 @@ export default function DeliveryAddressStep({
             </div>
             <div>
               <p className="text-[12.5px] font-bold text-stone-900 leading-tight">
-                {selectedFrontNeck
+                {design?.neckFront === "as-photo"
+                  ? "As per Photo / फोटो जैसा"
+                  : selectedFrontNeck
                   ? `${selectedFrontNeck.en} / ${selectedFrontNeck.hiScript || selectedFrontNeck.hi}`
                   : design?.neckFront || "Standard / सामान्य"}
               </p>
+              {design?.neckFront === "as-photo" && design?.frontPhoto && (
+                <p className="text-[11px] text-emerald-700 font-bold mt-0.5 truncate">
+                  ✓ Photo Attached / फ़ोटो संलग्न है
+                </p>
+              )}
             </div>
           </div>
 
@@ -348,7 +358,9 @@ export default function DeliveryAddressStep({
             </div>
             <div>
               <p className="text-[12.5px] font-bold text-stone-900 leading-tight">
-                {selectedBackNeck
+                {design?.neckBack === "as-photo"
+                  ? "As per Photo / फोटो जैसा"
+                  : selectedBackNeck
                   ? `${selectedBackNeck.en} / ${selectedBackNeck.hiScript || selectedBackNeck.hi}`
                   : design?.neckBack || "Standard / सामान्य"}
               </p>
@@ -416,7 +428,9 @@ export default function DeliveryAddressStep({
             </div>
             <div>
               <p className="text-[12.5px] font-bold text-stone-900 leading-tight">
-                {selectedSleeveDesign
+                {design?.sleeveDesign === "as-photo"
+                  ? "As per Photo / फोटो जैसा"
+                  : selectedSleeveDesign
                   ? `${selectedSleeveDesign.en} / ${selectedSleeveDesign.hiScript || selectedSleeveDesign.hi}`
                   : design?.sleeveDesign || "Straight / सीधी"}
               </p>

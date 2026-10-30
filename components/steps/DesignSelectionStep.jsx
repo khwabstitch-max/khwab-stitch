@@ -119,12 +119,9 @@ function ChoiceGroup({
   supportsViews = false,
   activeView = "front",
   onToggleView,
-  design,
-  onTriggerBackUpload,
-  onTriggerSleeveUpload,
 }) {
   return (
-    <section className="design-group mb-8">
+    <section className="design-group mb-2">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-2 border-b border-[#f0e7df]">
         <div className="flex items-center gap-2.5">
           <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--primary-light)] text-[var(--primary)] text-[14px]">
@@ -176,7 +173,6 @@ function ChoiceGroup({
           if (groupType === "neckFront") {
             photoSrc = FRONT_NECK_PHOTOS[option.id];
           } else if (groupType === "neckBack") {
-            // "As per Photo / फोटो जैसा Upload Photo / अपलोड करें wale mai phtot template ki tarah rako bas"
             photoSrc = BACK_NECK_PHOTOS[option.id];
           } else if (groupType === "sleeveLength") {
             const lengthPhoto = SLEEVE_LENGTH_PHOTOS[option.id];
@@ -186,21 +182,10 @@ function ChoiceGroup({
             photoSrc = activeView === "side" ? (sleeve?.side || sleeve?.front) : (sleeve?.front || sleeve?.side);
           }
 
-          const hasCustomPhoto =
-            (groupType === "neckBack" && option.id === "as-photo" && Boolean(design?.backPhoto)) ||
-            (groupType === "sleeveDesign" && option.id === "as-photo" && Boolean(design?.sleevePhoto));
-
           return (
             <div
               key={option.id}
-              onClick={() => {
-                onSelect(option.id);
-                if (groupType === "neckBack" && option.id === "as-photo" && !hasCustomPhoto && onTriggerBackUpload) {
-                  onTriggerBackUpload();
-                } else if (groupType === "sleeveDesign" && option.id === "as-photo" && !hasCustomPhoto && onTriggerSleeveUpload) {
-                  onTriggerSleeveUpload();
-                }
-              }}
+              onClick={() => onSelect(option.id)}
               className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border-2 text-left transition-all duration-200 cursor-pointer bg-white ${
                 selected
                   ? "border-[var(--primary)] ring-3 ring-[var(--primary)]/15 shadow-md transform -translate-y-0.5"
@@ -234,18 +219,6 @@ function ChoiceGroup({
                   </span>
                 )}
 
-                {/* Custom Photo Uploaded Badge / Indicator */}
-                {hasCustomPhoto && (
-                  <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 rounded-lg bg-white/95 px-2 py-1 shadow-md border border-emerald-300 backdrop-blur-xs">
-                    <img
-                      src={groupType === "neckBack" ? design.backPhoto : design.sleevePhoto}
-                      alt="Uploaded thumbnail"
-                      className="h-5 w-5 rounded object-cover border border-emerald-300"
-                    />
-                    <span className="text-[10px] font-bold text-emerald-800">✓ Attached</span>
-                  </div>
-                )}
-
                 {/* Preview / Zoom Button */}
                 <button
                   type="button"
@@ -272,48 +245,6 @@ function ChoiceGroup({
                       Length / लंबाई: <b>{option.cm}</b>
                     </p>
                   )}
-                  {groupType === "neckBack" && option.id === "as-photo" && (
-                    <div className="mt-2 space-y-1.5">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSelect("as-photo");
-                          if (onTriggerBackUpload) onTriggerBackUpload();
-                        }}
-                        className="w-full inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--primary)] text-white text-[11px] font-bold shadow-xs hover:bg-[var(--primary-dark)] active:scale-[0.98] transition-all cursor-pointer"
-                      >
-                        <UploadCloud size={13} />
-                        <span>{hasCustomPhoto ? "Change Photo / फ़ोटो बदलें" : "Upload Photo / अपलोड करें"}</span>
-                      </button>
-                      {hasCustomPhoto && (
-                        <span className="block text-[10px] text-emerald-700 font-semibold truncate text-center">
-                          ✓ {design.backPhotoName || "Photo Attached"}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                  {groupType === "sleeveDesign" && option.id === "as-photo" && (
-                    <div className="mt-2 space-y-1.5">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSelect("as-photo");
-                          if (onTriggerSleeveUpload) onTriggerSleeveUpload();
-                        }}
-                        className="w-full inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--primary)] text-white text-[11px] font-bold shadow-xs hover:bg-[var(--primary-dark)] active:scale-[0.98] transition-all cursor-pointer"
-                      >
-                        <UploadCloud size={13} />
-                        <span>{hasCustomPhoto ? "Change Photo / फ़ोटो बदलें" : "Upload Photo / अपलोड करें"}</span>
-                      </button>
-                      {hasCustomPhoto && (
-                        <span className="block text-[10px] text-emerald-700 font-semibold truncate text-center">
-                          ✓ {design.sleevePhotoName || "Photo Attached"}
-                        </span>
-                      )}
-                    </div>
-                  )}
                 </div>
 
                 <div className="mt-2.5">
@@ -336,6 +267,261 @@ function ChoiceGroup({
   );
 }
 
+// Sleek, compact "As per Photo / फोटो जैसा" component with Left title & Right upload button
+function AsPerPhotoRow({
+  groupType,
+  titleEn,
+  titleHi,
+  designValue,
+  photo,
+  photoName,
+  photoSize,
+  onSelect,
+  onProcessFile,
+  onRemove,
+  onPreview,
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const fileInputRef = useRef(null);
+  const isUploaded = Boolean(photo);
+  const isSelected = designValue === "as-photo";
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      onProcessFile(file);
+      setIsExpanded(true);
+    }
+    e.target.value = "";
+  };
+
+  return (
+    <div className="mt-2.5 mb-8">
+      {/* Hidden File Input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+      />
+
+      {isUploaded ? (
+        /* 1. UPLOADED & ATTACHED STATE (CLEAN COMPACT PREVIEW & TAILOR NOTE) */
+        <div
+          onClick={onSelect}
+          className={`relative overflow-hidden rounded-2xl border-2 transition-all duration-200 cursor-pointer ${
+            isSelected
+              ? "border-[var(--primary)] bg-white ring-3 ring-[var(--primary)]/15 shadow-sm"
+              : "border-[#ded1c4] bg-[#fdfbf9] hover:border-[var(--primary)]/60"
+          }`}
+        >
+          {/* Header Row */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 sm:px-4 sm:py-2.5 border-b border-[#f0e6dc] bg-[#fcf9f5]">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--primary)] text-white text-[13px] shadow-2xs">
+                <Camera size={14} />
+              </span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h4 className="font-serif text-[14px] font-bold text-[var(--primary-dark)]">
+                  As per Photo / फोटो जैसा
+                </h4>
+                <span className="inline-block rounded-md bg-[#f5ede4] px-2 py-0.5 text-[10.5px] font-bold text-[var(--primary)] border border-[#ebdcd0]">
+                  {titleEn} / {titleHi}
+                </span>
+                {isSelected ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2.5 py-0.5 text-[10px] font-bold text-white shadow-2xs">
+                    <Check size={11} strokeWidth={3} /> Selected / चयनित
+                  </span>
+                ) : (
+                  <span className="text-[11px] font-bold text-stone-500">
+                    (Click to select / चुनने के लिए क्लिक करें)
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  fileInputRef.current?.click();
+                }}
+                className="h-8 px-3.5 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white text-[11px] font-bold inline-flex items-center gap-1 shadow-2xs transition-colors cursor-pointer"
+              >
+                <UploadCloud size={13} />
+                <span>Change Photo / फ़ोटो बदलें</span>
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove();
+                }}
+                className="h-8 px-3 rounded-full text-red-600 hover:text-red-700 hover:bg-red-50 text-[11px] font-bold inline-flex items-center gap-1 transition-colors cursor-pointer"
+                title="Remove Photo / फ़ोटो हटाएं"
+              >
+                <Trash2 size={13} />
+                <span>Remove / हटाएं</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Body Content */}
+          <div className="p-3.5 sm:p-4 bg-white flex flex-col sm:flex-row items-start sm:items-center gap-3.5">
+            <div className="relative group shrink-0">
+              <img
+                src={photo}
+                alt={`Custom ${titleEn}`}
+                className="h-16 w-16 sm:h-18 sm:w-18 rounded-xl object-contain border border-[#ebdcd0] bg-[#faf7f2] shadow-2xs cursor-zoom-in"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPreview && onPreview(`Custom ${titleEn} Photo / ${titleHi}`, photo, photoName);
+                }}
+              />
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPreview && onPreview(`Custom ${titleEn} Photo / ${titleHi}`, photo, photoName);
+                }}
+                className="absolute bottom-1 right-1 h-5 w-5 rounded-full bg-black/75 text-white flex items-center justify-center text-[10px] shadow-sm"
+                title="Enlarge / बड़ा देखें"
+              >
+                <Eye size={11} />
+              </button>
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2 py-0.5 rounded-md flex items-center gap-1">
+                  <Check size={12} strokeWidth={3} /> Photo Ready / फ़ोटो संलग्न है
+                </span>
+                {photoSize && (
+                  <span className="text-[11px] text-stone-500 font-medium">({photoSize})</span>
+                )}
+              </div>
+              <p className="font-bold text-[13px] text-stone-900 truncate mt-1">
+                {photoName || `custom-${groupType}.jpg`}
+              </p>
+              <p className="text-[11.5px] text-stone-500 mt-0.5 leading-relaxed">
+                Our master tailor will stitch the {titleEn.toLowerCase()} exactly according to this photo.
+                / मास्टर दर्जी ठीक इसी फ़ोटो के अनुसार आपका {titleHi} तैयार करेंगे।
+              </p>
+            </div>
+
+            {!isSelected && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelect();
+                }}
+                className="w-full sm:w-auto h-8.5 px-4 rounded-xl bg-stone-100 hover:bg-[var(--primary)] text-stone-700 hover:text-white text-[11.5px] font-bold transition-all cursor-pointer"
+              >
+                Select This / यह चुनें
+              </button>
+            )}
+          </div>
+        </div>
+      ) : isExpanded ? (
+        /* 2. EXPANDED DROPZONE (WHEN OPENED TO BROWSE) */
+        <div className="relative overflow-hidden rounded-2xl border-2 border-dashed border-[var(--primary)]/45 bg-[#fffbf7] p-3.5 sm:p-4 shadow-xs transition-all">
+          <div className="flex items-center justify-between gap-3 border-b border-[#eeddd0] pb-2.5 mb-3">
+            <div className="flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--primary)] text-white text-[12px]">
+                <Camera size={14} />
+              </span>
+              <h4 className="font-serif text-[14px] font-bold text-[var(--primary-dark)]">
+                As per Photo / फोटो जैसा
+              </h4>
+              <span className="inline-block rounded-md bg-[#f5ede4] px-2 py-0.5 text-[10.5px] font-bold text-[var(--primary)] border border-[#ebdcd0]">
+                {titleEn} / {titleHi}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsExpanded(false)}
+              className="text-[11.5px] text-stone-500 hover:text-stone-800 font-bold px-2 py-1 rounded hover:bg-stone-100 cursor-pointer"
+            >
+              ✕ Close / बंद करें
+            </button>
+          </div>
+
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center justify-center gap-3.5 p-3.5 sm:p-4 rounded-xl border border-dashed border-[#d9c4b3] bg-white hover:bg-[#fffdfa] hover:border-[var(--primary)] transition-all cursor-pointer text-center group"
+          >
+            <div className="h-9 w-9 rounded-full bg-[#fcf5ef] text-[var(--primary)] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+              <UploadCloud size={18} />
+            </div>
+            <div className="text-left">
+              <p className="text-[12.5px] font-bold text-[var(--primary-dark)]">
+                Click here to browse & upload reference photo for {titleEn} / अपने {titleHi} का फ़ोटो चुनने के लिए क्लिक करें
+              </p>
+              <p className="text-[11px] text-[var(--text-light)]">
+                Supports JPG, PNG, WEBP (Max 10 MB) · Automatic size optimization
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* 3. SLEEK COMPACT DEFAULT ROW (LOW HEIGHT AS REQUESTED) */
+        <div
+          onClick={() => {
+            setIsExpanded(true);
+            fileInputRef.current?.click();
+          }}
+          className={`group relative overflow-hidden rounded-2xl border transition-all duration-200 cursor-pointer ${
+            isSelected
+              ? "border-[var(--primary)] bg-white ring-2 ring-[var(--primary)]/15 shadow-sm"
+              : "border-[#e6dad0] bg-[#fdfbf9] hover:border-[var(--primary)]/60 hover:bg-[#fffdfa] hover:shadow-2xs"
+          }`}
+        >
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 sm:px-4 sm:py-2.5">
+            {/* Left: As per Photo / फोटो जैसा with section title */}
+            <div className="flex items-center gap-3">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--primary-light)]/80 text-[var(--primary)] text-[14px] shrink-0 group-hover:scale-105 transition-transform">
+                <Camera size={16} />
+              </span>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h4 className="font-serif text-[14px] font-bold text-[var(--primary-dark)]">
+                    As per Photo / फोटो जैसा
+                  </h4>
+                  <span className="inline-block rounded-md bg-[#f5ede4] px-2 py-0.5 text-[10.5px] font-bold text-[var(--primary)] border border-[#ebdcd0]">
+                    {titleEn} / {titleHi}
+                  </span>
+                </div>
+                <p className="text-[11.5px] text-[var(--text-light)] mt-0.5">
+                  Upload reference photo for {titleEn} / अपने {titleHi} का फ़ोटो अपलोड करें
+                </p>
+              </div>
+            </div>
+
+            {/* Right: Upload Photo / फ़ोटो चुनें button */}
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsExpanded(true);
+                  fileInputRef.current?.click();
+                }}
+                className="w-full sm:w-auto h-8.5 px-4 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white text-[11.5px] font-bold flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+              >
+                <UploadCloud size={14} />
+                <span>Upload Photo / फ़ोटो चुनें</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function DesignSelectionStep({
   design,
   setDesign,
@@ -349,10 +535,9 @@ export default function DesignSelectionStep({
   const [sleeveLengthView, setSleeveLengthView] = useState("front");
   const [sleeveDesignView, setSleeveDesignView] = useState("side");
   const [detailModal, setDetailModal] = useState(null);
-  const backFileInputRef = useRef(null);
-  const sleeveFileInputRef = useRef(null);
 
-  const handleBackPhotoProcess = (file) => {
+  // Unified image compressor & state setter for custom reference photos
+  const handlePhotoProcess = (groupType, file) => {
     if (!file) return;
     if (!file.type.startsWith("image/")) {
       alert("Please choose an image file (JPG, PNG, WEBP) / कृपया इमेज फ़ाइल ही चुनें।");
@@ -387,21 +572,29 @@ export default function DesignSelectionStep({
           const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.75);
           const sizeKb = Math.round((compressedDataUrl.length * 3) / 4 / 1024);
 
+          const photoField = groupType === "neckFront" ? "frontPhoto" : groupType === "neckBack" ? "backPhoto" : "sleevePhoto";
+          const nameField = groupType === "neckFront" ? "frontPhotoName" : groupType === "neckBack" ? "backPhotoName" : "sleevePhotoName";
+          const sizeField = groupType === "neckFront" ? "frontPhotoSize" : groupType === "neckBack" ? "backPhotoSize" : "sleevePhotoSize";
+
           setDesign((prev) => ({
             ...prev,
-            neckBack: "as-photo",
-            backPhoto: compressedDataUrl,
-            backPhotoName: file.name,
-            backPhotoSize: `${sizeKb} KB`,
+            [groupType]: "as-photo",
+            [photoField]: compressedDataUrl,
+            [nameField]: file.name,
+            [sizeField]: `${sizeKb} KB`,
           }));
         } catch (err) {
-          console.error("Back photo processing error:", err);
+          console.error("Photo processing error:", err);
+          const photoField = groupType === "neckFront" ? "frontPhoto" : groupType === "neckBack" ? "backPhoto" : "sleevePhoto";
+          const nameField = groupType === "neckFront" ? "frontPhotoName" : groupType === "neckBack" ? "backPhotoName" : "sleevePhotoName";
+          const sizeField = groupType === "neckFront" ? "frontPhotoSize" : groupType === "neckBack" ? "backPhotoSize" : "sleevePhotoSize";
+
           setDesign((prev) => ({
             ...prev,
-            neckBack: "as-photo",
-            backPhoto: e.target.result,
-            backPhotoName: file.name,
-            backPhotoSize: `${Math.round(file.size / 1024)} KB`,
+            [groupType]: "as-photo",
+            [photoField]: e.target.result,
+            [nameField]: file.name,
+            [sizeField]: `${Math.round(file.size / 1024)} KB`,
           }));
         }
       };
@@ -413,82 +606,17 @@ export default function DesignSelectionStep({
     reader.readAsDataURL(file);
   };
 
-  const handleRemoveBackPhoto = () => {
+  const handleRemovePhoto = (groupType) => {
+    const photoField = groupType === "neckFront" ? "frontPhoto" : groupType === "neckBack" ? "backPhoto" : "sleevePhoto";
+    const nameField = groupType === "neckFront" ? "frontPhotoName" : groupType === "neckBack" ? "backPhotoName" : "sleevePhotoName";
+    const sizeField = groupType === "neckFront" ? "frontPhotoSize" : groupType === "neckBack" ? "backPhotoSize" : "sleevePhotoSize";
+
     setDesign((prev) => ({
       ...prev,
-      backPhoto: "",
-      backPhotoName: "",
-      backPhotoSize: "",
-    }));
-  };
-
-  const handleSleevePhotoProcess = (file) => {
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      alert("Please choose an image file (JPG, PNG, WEBP) / कृपया इमेज फ़ाइल ही चुनें।");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new window.Image();
-      img.onload = () => {
-        try {
-          const maxDimension = 900;
-          let width = img.width;
-          let height = img.height;
-
-          if (width > maxDimension || height > maxDimension) {
-            if (width > height) {
-              height = Math.round((height * maxDimension) / width);
-              width = maxDimension;
-            } else {
-              width = Math.round((width * maxDimension) / height);
-              height = maxDimension;
-            }
-          }
-
-          const canvas = document.createElement("canvas");
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, width, height);
-
-          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.75);
-          const sizeKb = Math.round((compressedDataUrl.length * 3) / 4 / 1024);
-
-          setDesign((prev) => ({
-            ...prev,
-            sleeveDesign: "as-photo",
-            sleevePhoto: compressedDataUrl,
-            sleevePhotoName: file.name,
-            sleevePhotoSize: `${sizeKb} KB`,
-          }));
-        } catch (err) {
-          console.error("Sleeve photo processing error:", err);
-          setDesign((prev) => ({
-            ...prev,
-            sleeveDesign: "as-photo",
-            sleevePhoto: e.target.result,
-            sleevePhotoName: file.name,
-            sleevePhotoSize: `${Math.round(file.size / 1024)} KB`,
-          }));
-        }
-      };
-      img.onerror = () => {
-        alert("Could not load image / इमेज लोड नहीं हो सकी, कृपया दूसरी फ़ोटो आज़माएं।");
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleRemoveSleevePhoto = () => {
-    setDesign((prev) => ({
-      ...prev,
-      sleevePhoto: "",
-      sleevePhotoName: "",
-      sleevePhotoSize: "",
+      [photoField]: "",
+      [nameField]: "",
+      [sizeField]: "",
+      ...(prev[groupType] === "as-photo" ? { [groupType]: "" } : {}),
     }));
   };
 
@@ -522,30 +650,6 @@ export default function DesignSelectionStep({
           </div>
         </div>
 
-        {/* Global hidden file input for back neck photo upload */}
-        <input
-          type="file"
-          ref={backFileInputRef}
-          accept="image/*"
-          onChange={(e) => {
-            if (e.target.files?.[0]) handleBackPhotoProcess(e.target.files[0]);
-            e.target.value = "";
-          }}
-          className="hidden"
-        />
-
-        {/* Global hidden file input for sleeve custom photo upload */}
-        <input
-          type="file"
-          ref={sleeveFileInputRef}
-          accept="image/*"
-          onChange={(e) => {
-            if (e.target.files?.[0]) handleSleevePhotoProcess(e.target.files[0]);
-            e.target.value = "";
-          }}
-          className="hidden"
-        />
-
         {/* 1. FRONT NECKLINE (STUDIO CATALOG PHOTOS) */}
         <ChoiceGroup
           title="Front neckline"
@@ -556,7 +660,19 @@ export default function DesignSelectionStep({
           options={neckFront}
           onSelect={(value) => selectDesign("neckFront", value)}
           onOpenDetail={openDetail}
-          design={design}
+        />
+        <AsPerPhotoRow
+          groupType="neckFront"
+          titleEn="Front Neck"
+          titleHi="अगला गला"
+          designValue={design.neckFront}
+          photo={design.frontPhoto}
+          photoName={design.frontPhotoName}
+          photoSize={design.frontPhotoSize}
+          onSelect={() => selectDesign("neckFront", "as-photo")}
+          onProcessFile={(file) => handlePhotoProcess("neckFront", file)}
+          onRemove={() => handleRemovePhoto("neckFront")}
+          onPreview={onPreview}
         />
 
         {/* 2. BACK NECKLINE (STUDIO CATALOG PHOTOS) */}
@@ -569,103 +685,20 @@ export default function DesignSelectionStep({
           options={neckBack}
           onSelect={(value) => selectDesign("neckBack", value)}
           onOpenDetail={openDetail}
-          design={design}
-          onTriggerBackUpload={() => backFileInputRef.current?.click()}
         />
-
-        {/* CUSTOM BACK PHOTO UPLOADER (WHEN "AS PER PHOTO" IS SELECTED) */}
-        {design.neckBack === "as-photo" && (
-          <div className="mt-2 mb-8 rounded-2xl border-2 border-dashed border-[var(--primary)]/45 bg-[#fffbf7] p-4 sm:p-5 shadow-xs transition-all">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#eeddd0] pb-3 mb-3.5">
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--primary)] text-white text-[14px] shadow-2xs">
-                  <Camera size={17} />
-                </span>
-                <div>
-                  <h4 className="font-serif text-[14px] sm:text-[15px] font-bold text-[var(--primary-dark)]">
-                    Upload Back Neck Design Photo / पिछले गले का फ़ोटो अपलोड करें
-                  </h4>
-                  <p className="text-[12px] text-[var(--text-light)]">
-                    Upload your reference photo (from Pinterest, Instagram, or phone) / अपनी पसंद का फ़ोटो चुनें
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => backFileInputRef.current?.click()}
-                className="w-full sm:w-auto h-9 px-4 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white text-[12px] font-bold flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
-              >
-                <UploadCloud size={15} />
-                <span>{design.backPhoto ? "Change Photo / फ़ोटो बदलें" : "Upload Photo / फ़ोटो चुनें"}</span>
-              </button>
-            </div>
-
-            {design.backPhoto ? (
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 rounded-xl bg-white p-3.5 border border-[#eedfd6] shadow-2xs">
-                <div className="relative group shrink-0">
-                  <img
-                    src={design.backPhoto}
-                    alt="Uploaded Back Design"
-                    className="h-20 w-20 rounded-xl object-contain border border-[#ebdcd0] bg-[#faf7f2] shadow-2xs cursor-zoom-in"
-                    onClick={() => onPreview && onPreview("Custom Back Design Photo / पिछला गला", design.backPhoto, design.backPhotoName)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => onPreview && onPreview("Custom Back Design Photo / पिछला गला", design.backPhoto, design.backPhotoName)}
-                    className="absolute bottom-1 right-1 h-5 w-5 rounded-full bg-black/75 text-white flex items-center justify-center text-[10px] shadow-sm"
-                    title="Enlarge / बड़ा देखें"
-                  >
-                    <Eye size={11} />
-                  </button>
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2 py-0.5 rounded-md flex items-center gap-1">
-                      <Check size={12} strokeWidth={3} /> Photo Ready / फ़ोटो संलग्न है
-                    </span>
-                    {design.backPhotoSize && (
-                      <span className="text-[11px] text-stone-500 font-medium">({design.backPhotoSize})</span>
-                    )}
-                  </div>
-                  <p className="font-bold text-[13px] text-stone-900 truncate mt-1">
-                    {design.backPhotoName || "custom-back-neck.jpg"}
-                  </p>
-                  <p className="text-[11.5px] text-stone-500 mt-0.5">
-                    Our master tailor will stitch the back neck exactly according to this photo.
-                    / मास्टर दर्जी ठीक इसी फ़ोटो के अनुसार आपका पिछला गला तैयार करेंगे।
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleRemoveBackPhoto}
-                  className="w-full sm:w-auto text-[12px] text-red-600 hover:text-red-700 font-bold flex items-center justify-center gap-1 p-2 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                  title="Remove Photo / फ़ोटो हटाएं"
-                >
-                  <Trash2 size={14} />
-                  <span>Remove / हटाएं</span>
-                </button>
-              </div>
-            ) : (
-              <div
-                onClick={() => backFileInputRef.current?.click()}
-                className="flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed border-[#e0d2c5] bg-white hover:bg-[#fffdfa] hover:border-[var(--primary)] transition-all cursor-pointer text-center group"
-              >
-                <div className="h-12 w-12 rounded-full bg-[#fcf5ef] text-[var(--primary)] flex items-center justify-center mb-2 shadow-2xs group-hover:scale-105 transition-transform">
-                  <UploadCloud size={24} />
-                </div>
-                <p className="text-[13.5px] font-bold text-[var(--primary-dark)]">
-                  Click here to browse & upload back neck photo / पिछले गले का फ़ोटो अपलोड करने के लिए क्लिक करें
-                </p>
-                <p className="text-[11.5px] text-[var(--text-light)] mt-1">
-                  Supports JPG, PNG, WEBP (Max 10 MB) · Automatic size optimization
-                </p>
-              </div>
-            )}
-          </div>
-        )}
+        <AsPerPhotoRow
+          groupType="neckBack"
+          titleEn="Back Neck"
+          titleHi="पिछला गला"
+          designValue={design.neckBack}
+          photo={design.backPhoto}
+          photoName={design.backPhotoName}
+          photoSize={design.backPhotoSize}
+          onSelect={() => selectDesign("neckBack", "as-photo")}
+          onProcessFile={(file) => handlePhotoProcess("neckBack", file)}
+          onRemove={() => handleRemovePhoto("neckBack")}
+          onPreview={onPreview}
+        />
 
         {/* 3. SLEEVE LENGTH (WITH FRONT & SIDE VIEW TOGGLE + CATALOG PHOTOS) */}
         <ChoiceGroup
@@ -695,103 +728,20 @@ export default function DesignSelectionStep({
           supportsViews={true}
           activeView={sleeveDesignView}
           onToggleView={setSleeveDesignView}
-          design={design}
-          onTriggerSleeveUpload={() => sleeveFileInputRef.current?.click()}
         />
-
-        {/* CUSTOM SLEEVE PHOTO UPLOADER (WHEN "AS PER PHOTO" IS SELECTED) */}
-        {design.sleeveDesign === "as-photo" && (
-          <div className="mt-2 mb-8 rounded-2xl border-2 border-dashed border-[var(--primary)]/45 bg-[#fffbf7] p-4 sm:p-5 shadow-xs transition-all">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#eeddd0] pb-3 mb-3.5">
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--primary)] text-white text-[14px] shadow-2xs">
-                  <Camera size={17} />
-                </span>
-                <div>
-                  <h4 className="font-serif text-[14px] sm:text-[15px] font-bold text-[var(--primary-dark)]">
-                    Upload Sleeve Design Photo / बाज़ू का फ़ोटो अपलोड करें
-                  </h4>
-                  <p className="text-[12px] text-[var(--text-light)]">
-                    Upload your reference photo (from Pinterest, Instagram, or phone) / अपनी पसंद का फ़ोटो चुनें
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => sleeveFileInputRef.current?.click()}
-                className="w-full sm:w-auto h-9 px-4 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white text-[12px] font-bold flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
-              >
-                <UploadCloud size={15} />
-                <span>{design.sleevePhoto ? "Change Photo / फ़ोटो बदलें" : "Upload Photo / फ़ोटो चुनें"}</span>
-              </button>
-            </div>
-
-            {design.sleevePhoto ? (
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 rounded-xl bg-white p-3.5 border border-[#eedfd6] shadow-2xs">
-                <div className="relative group shrink-0">
-                  <img
-                    src={design.sleevePhoto}
-                    alt="Uploaded Sleeve Design"
-                    className="h-20 w-20 rounded-xl object-contain border border-[#ebdcd0] bg-[#faf7f2] shadow-2xs cursor-zoom-in"
-                    onClick={() => onPreview && onPreview("Custom Sleeve Design Photo / बाज़ू डिज़ाइन", design.sleevePhoto, design.sleevePhotoName)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => onPreview && onPreview("Custom Sleeve Design Photo / बाज़ू डिज़ाइन", design.sleevePhoto, design.sleevePhotoName)}
-                    className="absolute bottom-1 right-1 h-5 w-5 rounded-full bg-black/75 text-white flex items-center justify-center text-[10px] shadow-sm"
-                    title="Enlarge / बड़ा देखें"
-                  >
-                    <Eye size={11} />
-                  </button>
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2 py-0.5 rounded-md flex items-center gap-1">
-                      <Check size={12} strokeWidth={3} /> Photo Ready / फ़ोटो संलग्न है
-                    </span>
-                    {design.sleevePhotoSize && (
-                      <span className="text-[11px] text-stone-500 font-medium">({design.sleevePhotoSize})</span>
-                    )}
-                  </div>
-                  <p className="font-bold text-[13px] text-stone-900 truncate mt-1">
-                    {design.sleevePhotoName || "custom-sleeve.jpg"}
-                  </p>
-                  <p className="text-[11.5px] text-stone-500 mt-0.5">
-                    Our master tailor will stitch the sleeves exactly according to this photo.
-                    / मास्टर दर्जी ठीक इसी फ़ोटो के अनुसार आपकी बाज़ू तैयार करेंगे।
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleRemoveSleevePhoto}
-                  className="w-full sm:w-auto text-[12px] text-red-600 hover:text-red-700 font-bold flex items-center justify-center gap-1 p-2 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                  title="Remove Photo / फ़ोटो हटाएं"
-                >
-                  <Trash2 size={14} />
-                  <span>Remove / हटाएं</span>
-                </button>
-              </div>
-            ) : (
-              <div
-                onClick={() => sleeveFileInputRef.current?.click()}
-                className="flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed border-[#e0d2c5] bg-white hover:bg-[#fffdfa] hover:border-[var(--primary)] transition-all cursor-pointer text-center group"
-              >
-                <div className="h-12 w-12 rounded-full bg-[#fcf5ef] text-[var(--primary)] flex items-center justify-center mb-2 shadow-2xs group-hover:scale-105 transition-transform">
-                  <UploadCloud size={24} />
-                </div>
-                <p className="text-[13.5px] font-bold text-[var(--primary-dark)]">
-                  Click here to browse & upload sleeve photo / बाज़ू का फ़ोटो अपलोड करने के लिए क्लिक करें
-                </p>
-                <p className="text-[11.5px] text-[var(--text-light)] mt-1">
-                  Supports JPG, PNG, WEBP (Max 10 MB) · Automatic size optimization
-                </p>
-              </div>
-            )}
-          </div>
-        )}
+        <AsPerPhotoRow
+          groupType="sleeveDesign"
+          titleEn="Sleeve Design"
+          titleHi="बाज़ू का डिज़ाइन"
+          designValue={design.sleeveDesign}
+          photo={design.sleevePhoto}
+          photoName={design.sleevePhotoName}
+          photoSize={design.sleevePhotoSize}
+          onSelect={() => selectDesign("sleeveDesign", "as-photo")}
+          onProcessFile={(file) => handlePhotoProcess("sleeveDesign", file)}
+          onRemove={() => handleRemovePhoto("sleeveDesign")}
+          onPreview={onPreview}
+        />
 
         {/* Additional Fitting and Notes */}
         <div className="mt-8 pt-6 border-t border-[#f0e7df] grid gap-5 md:grid-cols-2">
