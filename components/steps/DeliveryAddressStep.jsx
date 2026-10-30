@@ -92,7 +92,6 @@ export default function DeliveryAddressStep({
   measurementConfigs = {},
   openLightbox,
 }) {
-  const [showFullEditor, setShowFullEditor] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
 
   // Sync customer address to delivery if empty
@@ -109,26 +108,6 @@ export default function DeliveryAddressStep({
     setCustomer((prev) => ({ ...prev, landmark: value }));
   };
 
-  const handleCustomerChange = (field, value) => {
-    if (field === "whatsapp") {
-      let digits = (value || "").replace(/\D/g, "");
-      if (digits.length > 10 && digits.startsWith("91")) {
-        digits = digits.slice(2);
-      } else if (digits.length > 10 && digits.startsWith("0")) {
-        digits = digits.slice(1);
-      }
-      setCustomer((prev) => ({ ...prev, whatsapp: digits.slice(0, 10) }));
-      return;
-    }
-    setCustomer((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleMeasurementChange = (key, value) => {
-    setMeasurements((prev) => ({
-      ...prev,
-      values: { ...prev.values, [key]: value },
-    }));
-  };
 
   // Lookups for labels
   const selectedFrontNeck = neckFront.find((n) => n.id === design?.neckFront);
@@ -167,163 +146,7 @@ export default function DeliveryAddressStep({
             </p>
           </div>
         </div>
-
-        {/* FULL INLINE EDITOR TOGGLE */}
-        <button
-          type="button"
-          onClick={() => setShowFullEditor(!showFullEditor)}
-          className="inline-flex items-center gap-1.5 rounded-full bg-[#fff6ee] hover:bg-[#ffeede] px-4 py-2 text-[12px] font-bold text-[var(--primary)] border border-[#ebdcd0] shadow-2xs transition-colors cursor-pointer"
-        >
-          <Edit2 size={13} />
-          <span>{showFullEditor ? "Close Editor / एडिटर बंद करें" : "⚡ Quick Edit All Details / संपूर्ण जानकारी यहीं एडिट करें"}</span>
-          {showFullEditor ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-        </button>
       </div>
-
-      {/* FULL INLINE QUICK-EDITOR (EXPANDABLE) */}
-      {showFullEditor && (
-        <div className="rounded-2xl border-2 border-[var(--primary)]/30 bg-[#fffdfa] p-5 sm:p-6 shadow-sm space-y-5">
-          <div className="flex items-center justify-between border-b border-[#eedfd4] pb-3">
-            <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--primary)] text-white text-[12px]">
-                ⚡
-              </span>
-              <h3 className="font-serif text-[16px] font-bold text-[var(--primary-dark)]">
-                Direct Inline Editor / सभी फ़ील्ड्स सीधे यहीं संपादित करें
-              </h3>
-            </div>
-            <span className="text-[11px] font-semibold text-stone-500">
-              Changes save automatically / बदलाव तुरंत लागू होंगे
-            </span>
-          </div>
-
-          {/* CUSTOMER CONTACT FIELDS */}
-          <div>
-            <h4 className="text-[12.5px] font-bold text-stone-800 mb-2.5 flex items-center gap-1.5">
-              <User size={13} className="text-[var(--primary)]" />
-              <span>Customer Details / ग्राहक की जानकारी:</span>
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              <div>
-                <label className="block text-[11px] font-bold text-stone-600 mb-1">Full Name / पूरा नाम *</label>
-                <input
-                  type="text"
-                  value={customer?.name || ""}
-                  onChange={(e) => handleCustomerChange("name", e.target.value)}
-                  className="w-full rounded-xl border border-stone-300 p-2 text-[12.5px] outline-none focus:border-[var(--primary)] bg-white"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] font-bold text-stone-600 mb-1">WhatsApp / फ़ोन *</label>
-                <div className="flex rounded-xl border border-stone-300 overflow-hidden bg-white focus-within:border-[var(--primary)]">
-                  <span className="px-2.5 py-1.5 bg-stone-100 border-r border-stone-200 text-stone-600 font-bold text-[12px] select-none flex items-center shrink-0">
-                    +91
-                  </span>
-                  <input
-                    type="tel"
-                    maxLength={10}
-                    value={customer?.whatsapp || ""}
-                    onChange={(e) => handleCustomerChange("whatsapp", e.target.value)}
-                    placeholder="9876543210"
-                    className="w-full p-2 text-[12.5px] font-mono outline-none bg-transparent text-stone-900"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-[11px] font-bold text-stone-600 mb-1">Email / ईमेल</label>
-                <input
-                  type="email"
-                  value={customer?.email || ""}
-                  onChange={(e) => handleCustomerChange("email", e.target.value)}
-                  className="w-full rounded-xl border border-stone-300 p-2 text-[12.5px] outline-none focus:border-[var(--primary)] bg-white"
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-[11px] font-bold text-stone-600 mb-1">Delivery Address / पता *</label>
-                <input
-                  type="text"
-                  value={activeAddress}
-                  onChange={(e) => handleAddressChange(e.target.value)}
-                  className="w-full rounded-xl border border-stone-300 p-2 text-[12.5px] outline-none focus:border-[var(--primary)] bg-white"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] font-bold text-stone-600 mb-1">Landmark / लैंडमार्क</label>
-                <input
-                  type="text"
-                  value={activeLandmark}
-                  onChange={(e) => handleLandmarkChange(e.target.value)}
-                  className="w-full rounded-xl border border-stone-300 p-2 text-[12.5px] outline-none focus:border-[var(--primary)] bg-white"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] font-bold text-stone-600 mb-1">City, State / शहर, राज्य</label>
-                <input
-                  type="text"
-                  value={customer?.cityState || ""}
-                  onChange={(e) => handleCustomerChange("cityState", e.target.value)}
-                  className="w-full rounded-xl border border-stone-300 p-2 text-[12.5px] outline-none focus:border-[var(--primary)] bg-white"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] font-bold text-stone-600 mb-1">PIN Code / पिन कोड</label>
-                <input
-                  type="text"
-                  value={customer?.pin || ""}
-                  onChange={(e) => handleCustomerChange("pin", e.target.value)}
-                  className="w-full rounded-xl border border-stone-300 p-2 text-[12.5px] outline-none focus:border-[var(--primary)] bg-white"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] font-bold text-stone-600 mb-1">Pieces / पीस संख्या</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={outfit?.pieces || "1"}
-                  onChange={(e) => setOutfit((prev) => ({ ...prev, pieces: e.target.value }))}
-                  className="w-full rounded-xl border border-stone-300 p-2 text-[12.5px] outline-none focus:border-[var(--primary)] bg-white"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* MEASUREMENTS INLINE EDITING */}
-          {activeMeasurementFields.length > 0 && (
-            <div className="pt-3 border-t border-[#eedfd4]">
-              <h4 className="text-[12.5px] font-bold text-stone-800 mb-2.5 flex items-center gap-1.5">
-                <Ruler size={13} className="text-[var(--primary)]" />
-                <span>Measurements ({measurements?.unit || "inch"}) / नाप के आंकड़े:</span>
-              </h4>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
-                {activeMeasurementFields.map((field) => (
-                  <div key={field.key}>
-                    <label className="block text-[10.5px] font-bold text-stone-600 mb-1 truncate" title={field.en}>
-                      #{field.num} {field.hi || field.en}
-                    </label>
-                    <input
-                      type="text"
-                      placeholder={`e.g. 36`}
-                      value={measurements?.values?.[field.key] || ""}
-                      onChange={(e) => handleMeasurementChange(field.key, e.target.value)}
-                      className="w-full rounded-lg border border-stone-300 p-1.5 text-[12px] font-mono outline-none focus:border-[var(--primary)] bg-white"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="flex justify-end pt-2">
-            <button
-              type="button"
-              onClick={() => setShowFullEditor(false)}
-              className="px-5 py-2 rounded-full bg-[var(--primary)] text-white text-[12.5px] font-bold shadow-xs hover:opacity-90"
-            >
-              ✓ Save & Review / सुरक्षित करें
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* ---------------------------------------------------- */}
       {/* 1. OUTFIT & DESIGN CODE CARD (WITH PREVIEW PHOTO) */}
