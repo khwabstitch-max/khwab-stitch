@@ -34,8 +34,8 @@ const methodOptions = [
   },
   {
     id: "video_call",
-    label: "Need help on video call / वीडियो कॉल पर मदद चाहिए (1 घंटे में कॉल)",
-    tag: "Master Tailor Help / 1 घंटे में कॉल",
+    label: "Need help on video call / वीडियो कॉल पर मदद चाहिए (जल्दी ही संपर्क करेंगे)",
+    tag: "Master Tailor Help / जल्दी संपर्क",
     type: "videocall",
   },
 ];
@@ -109,7 +109,7 @@ export default function MeasurementsStep({
                 ? `Refer to the measurement diagram to enter your exact ${outfitTitle} size / रेखाचित्र के अनुसार नाप भरें`
                 : isCourier
                 ? `You will send clothes for stitching / आप सिलाई के लिए अपने कपड़े भेजेंगे`
-                : `Live video call assistance with our master tailor / 1 घंटे में वीडियो कॉल पर मास्टर दर्जी की मदद`}
+                : `Live video call assistance with our master tailor / मास्टर दर्जी जल्दी ही आपसे वीडियो कॉल पर संपर्क करेंगे`}
             </p>
           </div>
         </div>
@@ -168,7 +168,7 @@ export default function MeasurementsStep({
 
             <p className="mt-2 text-[11.5px] text-[var(--text-light)]">
               {isSelfMeasure && "📏 नीचे दिए गए रेखाचित्र (Measurement Sketch) को देखकर नाप भरें।"}
-              {isVideoCall && "📹 1 घंटे के अंदर हमारे मास्टर दर्जी का वीडियो कॉल आएगा (नाप भरने की ज़रूरत नहीं)।"}
+              {isVideoCall && "📹 हमारे मास्टर दर्जी जल्दी ही आपसे संपर्क करेंगे (नाप भरने की ज़रूरत नहीं)।"}
             </p>
           </div>
 
@@ -207,10 +207,10 @@ export default function MeasurementsStep({
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="text-[17px] font-bold text-[#6b2636]">
-                        Master Tailor Video Assistance within 1 Hour / 1 घंटे में वीडियो कॉल सहायता
+                        Master Tailor Video Assistance / वीडियो कॉल पर मास्टर दर्जी की मदद
                       </h3>
                       <span className="flex items-center gap-1 rounded-full bg-[#965342] px-2.5 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider">
-                        <Clock size={11} /> 1 Hour Guarantee
+                        <Clock size={11} /> Quick Assistance
                       </span>
                     </div>
 
@@ -220,13 +220,13 @@ export default function MeasurementsStep({
                       <span className="font-semibold text-[#6b2636]">
                         {customer?.whatsapp || customer?.phone || "your contact number"}
                       </span>
-                      ) within <strong>1 hour</strong> of submitting your order to guide you through every measurement
+                      ) shortly to guide you through every measurement
                       step-by-step!
                     </p>
 
                     <p className="mt-2 text-[12.5px] leading-relaxed text-[#5c3732]">
                       <strong>हिंदी:</strong> यदि आपको नाप लेने में किसी भी मदद या वीडियो कॉल की ज़रूरत है, तो ऑर्डर
-                      सबमिट होने के <strong>1 घंटे के भीतर</strong> हमारे वरिष्ठ मास्टर कस्टमाइज़र आपके दिए गए नंबर (
+                      हमारे वरिष्ठ मास्टर दर्जी <strong>जल्दी ही आपसे संपर्क करेंगे</strong> और आपके दिए गए नंबर (
                       <span className="font-semibold text-[#6b2636]">
                         {customer?.whatsapp || customer?.phone || "दिए गए नंबर"}
                       </span>
@@ -236,7 +236,7 @@ export default function MeasurementsStep({
                     <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl bg-white/90 p-3 border border-[#eedfd6]">
                       <Sparkles size={16} className="text-amber-700" />
                       <span className="text-[12px] font-bold text-amber-900">
-                        1-Hour Video Call Confirmed · मास्टर जी सीधे आपके वॉट्सऐप पर कॉल करके नाप नोट कर लेंगे।
+                        Video Call Confirmed · मास्टर जी जल्दी ही आपसे संपर्क करके नाप नोट कर लेंगे।
                       </span>
                     </div>
                   </div>

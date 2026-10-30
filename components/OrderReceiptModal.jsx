@@ -323,8 +323,8 @@ export default function OrderReceiptModal({ order, onClose }) {
                   <span>Measurements on Video Call / वीडियो कॉल द्वारा नाप</span>
                 </div>
                 <p className="text-[12px] mt-1 text-blue-800">
-                  Master tailor will call the customer on WhatsApp within 1 hour to take all measurements live.
-                  / मास्टर दर्जी 1 घंटे में ग्राहक के वॉट्सऐप पर वीडियो कॉल करके नाप दर्ज करेंगे।
+                  Master tailor will contact the customer on WhatsApp shortly to take all measurements live on video call.
+                  / मास्टर दर्जी जल्दी ही ग्राहक के वॉट्सऐप पर संपर्क करके वीडियो कॉल द्वारा नाप दर्ज करेंगे।
                 </p>
                 {order.measurements?.notes && (
                   <p className="mt-2 text-[12px] font-semibold text-stone-700 bg-white/80 p-2 rounded-lg border border-blue-200">
