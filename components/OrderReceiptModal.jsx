@@ -254,9 +254,6 @@ export default function OrderReceiptModal({ order, onClose }) {
                   <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--secondary)] mt-0.5">
                     Custom Stitching · Your Style · Our Stitches / हमारी कारीगरी
                   </p>
-                  <p className="text-[12px] text-stone-600 mt-1">
-                    WhatsApp: <b>+91 98765 43210</b> · khwabstitch.com
-                  </p>
                 </div>
               </div>
 
@@ -668,9 +665,6 @@ export default function OrderReceiptModal({ order, onClose }) {
             <div className="receipt-section-block pt-4 border-t-2 border-[#ebdcd0] text-center text-[12px] text-stone-500 bg-white/90 p-4 rounded-2xl border border-[#ebdcd0]">
               <p className="font-serif font-bold text-[var(--primary)] text-[13.5px]">
                 Thank you for choosing Khwab Stitch! / ख़्वाब स्टिच चुनने के लिए धन्यवाद!
-              </p>
-              <p className="mt-1">
-                Handcrafted with precision · WhatsApp Helpline: <b>+91 98765 43210</b> · khwabstitch.com
               </p>
             </div>
           </div>
