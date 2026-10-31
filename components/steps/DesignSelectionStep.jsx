@@ -489,9 +489,9 @@ export default function DesignSelectionStep({
           const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.75);
           const sizeKb = Math.round((compressedDataUrl.length * 3) / 4 / 1024);
 
-          const photoField = groupType === "neckFront" ? "frontPhoto" : groupType === "neckBack" ? "backPhoto" : "sleevePhoto";
-          const nameField = groupType === "neckFront" ? "frontPhotoName" : groupType === "neckBack" ? "backPhotoName" : "sleevePhotoName";
-          const sizeField = groupType === "neckFront" ? "frontPhotoSize" : groupType === "neckBack" ? "backPhotoSize" : "sleevePhotoSize";
+          const photoField = groupType === "neckFront" ? "frontPhoto" : groupType === "neckBack" ? "backPhoto" : groupType === "sleeveLength" ? "sleeveLengthPhoto" : "sleevePhoto";
+          const nameField = groupType === "neckFront" ? "frontPhotoName" : groupType === "neckBack" ? "backPhotoName" : groupType === "sleeveLength" ? "sleeveLengthPhotoName" : "sleevePhotoName";
+          const sizeField = groupType === "neckFront" ? "frontPhotoSize" : groupType === "neckBack" ? "backPhotoSize" : groupType === "sleeveLength" ? "sleeveLengthPhotoSize" : "sleevePhotoSize";
 
           setDesign((prev) => ({
             ...prev,
@@ -502,9 +502,9 @@ export default function DesignSelectionStep({
           }));
         } catch (err) {
           console.error("Photo processing error:", err);
-          const photoField = groupType === "neckFront" ? "frontPhoto" : groupType === "neckBack" ? "backPhoto" : "sleevePhoto";
-          const nameField = groupType === "neckFront" ? "frontPhotoName" : groupType === "neckBack" ? "backPhotoName" : "sleevePhotoName";
-          const sizeField = groupType === "neckFront" ? "frontPhotoSize" : groupType === "neckBack" ? "backPhotoSize" : "sleevePhotoSize";
+          const photoField = groupType === "neckFront" ? "frontPhoto" : groupType === "neckBack" ? "backPhoto" : groupType === "sleeveLength" ? "sleeveLengthPhoto" : "sleevePhoto";
+          const nameField = groupType === "neckFront" ? "frontPhotoName" : groupType === "neckBack" ? "backPhotoName" : groupType === "sleeveLength" ? "sleeveLengthPhotoName" : "sleevePhotoName";
+          const sizeField = groupType === "neckFront" ? "frontPhotoSize" : groupType === "neckBack" ? "backPhotoSize" : groupType === "sleeveLength" ? "sleeveLengthPhotoSize" : "sleevePhotoSize";
 
           setDesign((prev) => ({
             ...prev,
@@ -524,9 +524,9 @@ export default function DesignSelectionStep({
   };
 
   const handleRemovePhoto = (groupType) => {
-    const photoField = groupType === "neckFront" ? "frontPhoto" : groupType === "neckBack" ? "backPhoto" : "sleevePhoto";
-    const nameField = groupType === "neckFront" ? "frontPhotoName" : groupType === "neckBack" ? "backPhotoName" : "sleevePhotoName";
-    const sizeField = groupType === "neckFront" ? "frontPhotoSize" : groupType === "neckBack" ? "backPhotoSize" : "sleevePhotoSize";
+    const photoField = groupType === "neckFront" ? "frontPhoto" : groupType === "neckBack" ? "backPhoto" : groupType === "sleeveLength" ? "sleeveLengthPhoto" : "sleevePhoto";
+    const nameField = groupType === "neckFront" ? "frontPhotoName" : groupType === "neckBack" ? "backPhotoName" : groupType === "sleeveLength" ? "sleeveLengthPhotoName" : "sleevePhotoName";
+    const sizeField = groupType === "neckFront" ? "frontPhotoSize" : groupType === "neckBack" ? "backPhotoSize" : groupType === "sleeveLength" ? "sleeveLengthPhotoSize" : "sleevePhotoSize";
 
     setDesign((prev) => ({
       ...prev,
@@ -618,7 +618,7 @@ export default function DesignSelectionStep({
         />
 
         {/* 3. SLEEVE LENGTH (WITH FRONT & SIDE VIEW TOGGLE + CATALOG PHOTOS) */}
-        <ChoiceGroup
+<ChoiceGroup
           title="Sleeve length"
           hindiTitle="बाज़ू की लंबाई"
           icon="↟"
@@ -630,6 +630,19 @@ export default function DesignSelectionStep({
           supportsViews={true}
           activeView={sleeveLengthView}
           onToggleView={setSleeveLengthView}
+        />
+        <AsPerPhotoRow
+          groupType="sleeveLength"
+          titleEn="Sleeve Length"
+          titleHi="बाज़ू लंबाई"
+          designValue={design.sleeveLength}
+          photo={design.sleeveLengthPhoto || design.sleevePhoto}
+          photoName={design.sleeveLengthPhotoName || design.sleevePhotoName}
+          photoSize={design.sleeveLengthPhotoSize || design.sleevePhotoSize}
+          onSelect={() => selectDesign("sleeveLength", "as-photo")}
+          onProcessFile={(file) => handlePhotoProcess("sleeveLength", file)}
+          onRemove={() => handleRemovePhoto("sleeveLength")}
+          onPreview={onPreview}
         />
 
         {/* 4. SLEEVE DESIGN (WITH FRONT & SIDE VIEW TOGGLE + STUDIO PHOTOS) */}

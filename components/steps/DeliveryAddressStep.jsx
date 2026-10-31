@@ -74,7 +74,11 @@ export default function DeliveryAddressStep({
   const resolvedOutfit = resolveOutfit(outfit?.type);
   const resolvedFrontNeck = resolveFrontNeck(design?.neckFront, design?.frontPhoto, outfit?.type);
   const resolvedBackNeck = resolveBackNeck(design?.neckBack, design?.backPhoto, outfit?.type);
-  const resolvedSleeveLength = resolveSleeveLength(design?.sleeveLength, outfit?.type);
+  const resolvedSleeveLength = resolveSleeveLength(
+    design?.sleeveLength,
+    design?.sleeveLengthPhoto || design?.sleevePhoto || outfit?.uploadedPhoto,
+    outfit?.type
+  );
   const resolvedSleeveDesign = resolveSleeveDesign(design?.sleeveDesign, design?.sleevePhoto, outfit?.type);
 
   const frontNeckPhoto = resolvedFrontNeck.photo;
@@ -242,11 +246,11 @@ export default function DeliveryAddressStep({
           </span>
         </div>
 
-        {/* 3A: SELECTED OUTFIT & QUANTITY */}
-        <div className="rounded-xl border border-[#ebdcd0] bg-white p-3.5 sm:p-4">
-          <div className="flex items-center justify-between pb-2.5 border-b border-[#f0e7df] mb-3">
+        {/* 3A: SELECTED OUTFIT & DESIGN REFERENCE (UNIFIED SINGLE SUBSECTION) */}
+        <div className="rounded-xl border border-[#ebdcd0] bg-white p-3.5 sm:p-4 space-y-3.5">
+          <div className="flex items-center justify-between pb-2.5 border-b border-[#f0e7df]">
             <p className="text-[11px] font-extrabold uppercase tracking-wider text-stone-500">
-              Selected Outfit & Quantity / चुना गया परिधान व संख्या
+              Selected Outfit & Design / चुना गया परिधान व डिज़ाइन
             </p>
             <button
               type="button"
@@ -258,159 +262,130 @@ export default function DeliveryAddressStep({
             </button>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5">
-            <div className="relative group shrink-0">
-              <img
-                src={outfitPhoto}
-                alt={outfit?.type || "Outfit"}
-                className="h-20 w-20 sm:h-24 sm:w-24 rounded-xl object-cover border border-[#e4d6c8] shadow-2xs bg-white"
-              />
-              {openLightbox && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    openLightbox(
-                      outfit?.type || "Outfit Preview",
-                      outfitPhoto,
-                      `${outfit?.type} · Khwab Stitch Atelier`
-                    )
-                  }
-                  className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity text-white"
-                  title="Zoom / ज़ूम करें"
-                >
-                  <ZoomIn size={18} />
-                </button>
-              )}
-            </div>
-
-            <div className="min-w-0 flex-1 space-y-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-serif text-[18px] sm:text-[20px] font-bold text-stone-900">
-                  {outfit?.type || "Not selected / चुना नहीं गया"}
-                </span>
-                <span className="text-[12px] font-semibold px-2.5 py-0.5 rounded-full bg-[#f8efe7] text-[var(--secondary)] border border-[#ebdcd0]">
-                  {resolvedOutfit?.hi || (outfit?.type === "Blouse" ? "ब्लाउज़" : outfit?.type === "Kurti" ? "कुर्ती" : "सूट")}
-                </span>
-              </div>
-              <p className="text-[13px] text-stone-700">
-                Quantity / संख्या: <b className="text-stone-900">{outfit?.pieces || 1} Piece(s) / थान</b>
-              </p>
-              {outfit?.specialReq && (
-                <p className="text-[12px] text-stone-600 italic bg-[#faf7f2] p-2 rounded-lg border border-stone-200 mt-1">
-                  <b>Tailor Note / विशेष निर्देश:</b> "{outfit.specialReq}"
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* 3B: DESIGN CODE IF CHOSEN */}
-        {outfit?.designCode && (
-          <div className="rounded-xl border border-[#dfd0c4] bg-[#fbf8f5] p-3.5 sm:p-4">
-            <div className="flex items-center justify-between pb-2 border-b border-[#ece2d6] mb-2.5">
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[var(--primary-dark)] text-white text-[11px] font-mono font-bold">
-                  <Tag size={11} />
-                  <span>Design Code: {outfit.designCode}</span>
-                </span>
-                <span className="text-[11.5px] font-bold text-stone-600">
-                  {designCodeInfo?.name || "Studio Catalog Design"}
-                </span>
-              </div>
-              {designCodePhoto && openLightbox && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    openLightbox(
-                      `Design Code ${outfit.designCode}`,
-                      designCodePhoto,
-                      "Studio Catalog Selection / कैटलॉग डिज़ाइन"
-                    )
-                  }
-                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--primary)] hover:underline"
-                >
-                  <Eye size={12} />
-                  <span>View Photo / फ़ोटो देखें</span>
-                </button>
-              )}
-            </div>
-
-            <div className="flex items-center gap-3">
-              {designCodePhoto && (
-                <img
-                  src={designCodePhoto}
-                  alt={outfit.designCode}
-                  className="h-14 w-14 rounded-lg object-cover border border-[#dfd0c4] cursor-pointer"
-                  onClick={() =>
-                    openLightbox &&
-                    openLightbox(
-                      `Design Code ${outfit.designCode}`,
-                      designCodePhoto,
-                      "Studio Catalog Selection / कैटलॉग डिज़ाइन"
-                    )
-                  }
-                />
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-[12px] text-stone-700">
-                  {designCodeInfo?.details || "Master tailoring according to selected studio design pattern."}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 3C: CUSTOMER REFERENCE PHOTO (IF ATTACHED) */}
-        {outfit?.uploadedPhoto && (
-          <div className="rounded-xl border-2 border-emerald-300 bg-emerald-50/60 p-3.5 sm:p-4 flex flex-col sm:flex-row items-center sm:items-start gap-3.5">
-            <div className="relative group shrink-0 max-w-[130px] w-full rounded-lg overflow-hidden border border-emerald-300 bg-white">
-              <img
-                src={outfit.uploadedPhoto}
-                alt="Reference photo"
-                className="w-full h-auto max-h-[130px] object-contain mx-auto"
-              />
-              {openLightbox && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    openLightbox(
-                      "Customer Reference Photo",
-                      outfit.uploadedPhoto,
-                      outfit.uploadedPhotoName || "Design Reference"
-                    )
-                  }
-                  className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity text-white"
-                  title="Zoom / ज़ूम करें"
-                >
-                  <ZoomIn size={18} />
-                </button>
-              )}
-            </div>
-            <div className="min-w-0 flex-1 space-y-1 text-center sm:text-left">
-              <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-700 text-white text-[10.5px] font-bold">
-                📸 Customer Reference Photo / आपकी अपलोड की गई फ़ोटो
+          {/* Outfit Name & Quantity Line */}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5">
+              <span className="font-serif text-[18px] sm:text-[20px] font-bold text-stone-900">
+                {outfit?.type || "Not selected / चुना नहीं गया"}
               </span>
-              <p className="text-[12.5px] font-bold text-stone-900 pt-0.5">
-                {outfit.uploadedPhotoName || "Design Photo Attached"}
-              </p>
-              {outfit.uploadedPhotoSize && (
-                <p className="text-[11px] text-stone-600">
-                  File Size: {outfit.uploadedPhotoSize}
-                </p>
-              )}
-              <p className="text-[11.5px] text-emerald-900 italic">
-                कारीगर इस फ़ोटो के अनुसार परिधान का डिज़ाइन, कटिंग और सिलाई तैयार करेंगे।
-              </p>
+              <span className="text-[12px] font-semibold px-2.5 py-0.5 rounded-full bg-[#f8efe7] text-[var(--secondary)] border border-[#ebdcd0]">
+                {resolvedOutfit?.hi || (outfit?.type === "Blouse" ? "ब्लाउज़" : outfit?.type === "Kurti" ? "कुर्ती" : "सूट")}
+              </span>
             </div>
-          </div>
-        )}
 
-        {outfit?.refPhoto && !outfit?.uploadedPhoto && (
-          <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[12px] flex items-center gap-2">
-            <span>📸</span>
-            <span><b>Reference Choice / रेफ़रेंस विकल्प:</b> {outfit.refPhoto}</span>
+            <span className="text-[12.5px] font-bold text-stone-900 bg-[#fbf5f0] px-3 py-1 rounded-full border border-[#eedfd6]">
+              Quantity / संख्या: <b>{outfit?.pieces || 1} Piece(s) / थान</b>
+            </span>
           </div>
-        )}
+
+          {/* CUSTOMER REFERENCE PHOTO (IF ATTACHED - INTEGRATED DIRECTLY HERE) */}
+          {outfit?.uploadedPhoto && (
+            <div className="rounded-xl border-2 border-emerald-300 bg-emerald-50/60 p-3 sm:p-3.5 flex flex-col sm:flex-row items-center sm:items-start gap-3.5">
+              <div className="relative group shrink-0 max-w-[130px] w-full rounded-lg overflow-hidden border border-emerald-300 bg-white">
+                <img
+                  src={outfit.uploadedPhoto}
+                  alt="Reference photo"
+                  className="w-full h-auto max-h-[130px] object-contain mx-auto"
+                />
+                {openLightbox && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      openLightbox(
+                        "Customer Reference Photo",
+                        outfit.uploadedPhoto,
+                        outfit.uploadedPhotoName || "Design Reference"
+                      )
+                    }
+                    className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity text-white"
+                    title="Zoom / ज़ूम करें"
+                  >
+                    <ZoomIn size={18} />
+                  </button>
+                )}
+              </div>
+              <div className="min-w-0 flex-1 space-y-1 text-center sm:text-left">
+                <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-700 text-white text-[10.5px] font-bold">
+                  📸 Customer Reference Photo / आपकी अपलोड की गई फ़ोटो
+                </span>
+                <p className="text-[12.5px] font-bold text-stone-900 pt-0.5">
+                  {outfit.uploadedPhotoName || "Design Photo Attached"}
+                </p>
+                {outfit.uploadedPhotoSize && (
+                  <p className="text-[11px] text-stone-600">
+                    File Size: {outfit.uploadedPhotoSize}
+                  </p>
+                )}
+                <p className="text-[11.5px] text-emerald-900 italic">
+                  कारीगर इस फ़ोटो के अनुसार परिधान का डिज़ाइन, कटिंग और सिलाई तैयार करेंगे।
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* STUDIO DESIGN CODE (IF SELECTED - INTEGRATED DIRECTLY HERE) */}
+          {outfit?.designCode && (
+            <div className="rounded-xl border border-[#dfd0c4] bg-[#fbf8f5] p-3 sm:p-3.5">
+              <div className="flex items-center justify-between pb-2 border-b border-[#ece2d6] mb-2.5">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[var(--primary-dark)] text-white text-[11px] font-mono font-bold">
+                    <Tag size={11} />
+                    <span>Design Code: {outfit.designCode}</span>
+                  </span>
+                  <span className="text-[11.5px] font-bold text-stone-600">
+                    {designCodeInfo?.name || "Studio Catalog Design"}
+                  </span>
+                </div>
+                {designCodePhoto && openLightbox && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      openLightbox(
+                        `Design Code ${outfit.designCode}`,
+                        designCodePhoto,
+                        "Studio Catalog Selection / कैटलॉग डिज़ाइन"
+                      )
+                    }
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--primary)] hover:underline"
+                  >
+                    <Eye size={12} />
+                    <span>View Photo / फ़ोटो देखें</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3">
+                {designCodePhoto && (
+                  <img
+                    src={designCodePhoto}
+                    alt={outfit.designCode}
+                    className="h-14 w-14 rounded-lg object-cover border border-[#dfd0c4] cursor-pointer"
+                    onClick={() =>
+                      openLightbox &&
+                      openLightbox(
+                        `Design Code ${outfit.designCode}`,
+                        designCodePhoto,
+                        "Studio Catalog Selection / कैटलॉग डिज़ाइन"
+                      )
+                    }
+                  />
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-[12px] text-stone-700">
+                    {designCodeInfo?.details || "Master tailoring according to selected studio design pattern."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tailor Note if any */}
+          {outfit?.specialReq && (
+            <p className="text-[12px] text-stone-600 italic bg-[#faf7f2] p-2 rounded-lg border border-stone-200 mt-1">
+              <b>Tailor Note / विशेष निर्देश:</b> "{outfit.specialReq}"
+            </p>
+          )}
+        </div>
 
         {/* 3D: NECKLINE & SLEEVE STYLING BLUEPRINT (4 CARDS WITH PHOTOS) */}
         <div className="rounded-xl border border-[#ebdcd0] bg-white p-3.5 sm:p-4">

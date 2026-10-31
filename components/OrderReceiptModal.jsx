@@ -160,7 +160,11 @@ export default function OrderReceiptModal({ order, onClose }) {
 
   const frontNeckInfo = resolveFrontNeck(order.design?.neckFront, order.design?.frontPhoto, order.outfit?.type);
   const backNeckInfo = resolveBackNeck(order.design?.neckBack, order.design?.backPhoto, order.outfit?.type);
-  const sleeveLengthInfo = resolveSleeveLength(order.design?.sleeveLength, order.outfit?.type);
+  const sleeveLengthInfo = resolveSleeveLength(
+    order.design?.sleeveLength,
+    order.design?.sleeveLengthPhoto || order.design?.sleevePhoto || order.outfit?.uploadedPhoto,
+    order.outfit?.type
+  );
   const sleeveDesignInfo = resolveSleeveDesign(order.design?.sleeveDesign, order.design?.sleevePhoto, order.outfit?.type);
 
   return (

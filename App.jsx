@@ -750,7 +750,7 @@ export default function App() {
         ...prev,
         neckFront: prev.neckFront || (prev.frontPhoto ? "as-photo" : "round"),
         neckBack: prev.neckBack || (prev.backPhoto ? "as-photo" : "simple"),
-        sleeveLength: prev.sleeveLength || "full",
+        sleeveLength: prev.sleeveLength || (prev.sleeveLengthPhoto || prev.sleevePhoto ? "as-photo" : "full"),
         sleeveDesign: prev.sleeveDesign || (prev.sleevePhoto ? "as-photo" : "straight"),
       }));
     }
@@ -775,7 +775,7 @@ export default function App() {
         ...prev,
         neckFront: prev.neckFront || (prev.frontPhoto ? "as-photo" : "round"),
         neckBack: prev.neckBack || (prev.backPhoto ? "as-photo" : "simple"),
-        sleeveLength: prev.sleeveLength || "full",
+        sleeveLength: prev.sleeveLength || (prev.sleeveLengthPhoto || prev.sleevePhoto ? "as-photo" : "full"),
         sleeveDesign: prev.sleeveDesign || (prev.sleevePhoto ? "as-photo" : "straight"),
       }));
     }
@@ -947,6 +947,8 @@ export default function App() {
                     outfit={outfit}
                     setOutfit={setOutfit}
                     selectOutfit={selectOutfit}
+                    design={design}
+                    setDesign={setDesign}
                     selectionError={stepError}
                   />
                 )}

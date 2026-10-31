@@ -122,7 +122,19 @@ export const resolveOutfit = (outfitType) => {
   return match || OUTFITS[1] || OUTFITS[0];
 };
 
-export const resolveSleeveLength = (key, outfitType = "Kurti") => {
+export const resolveSleeveLength = (key, customPhoto = null, outfitType = "Kurti") => {
+  if (key === "as-photo" || key === "custom") {
+    return {
+      id: "as-photo",
+      en: "As per Photo",
+      hi: "फ़ोटो अनुसार",
+      hiScript: "फ़ोटो अनुसार लंबाई",
+      cm: "As per photo / फ़ोटो अनुसार",
+      length: "As per photo / फ़ोटो अनुसार",
+      photo: customPhoto || "./images/sleeve_lengths/05_full_front.jpg",
+    };
+  }
+
   const defaultItem = SLEEVE_LENGTHS.find((s) => s.id === "full") || SLEEVE_LENGTHS[4] || SLEEVE_LENGTHS[0];
 
   if (!key || String(key).trim() === "" || String(key).trim().toLowerCase() === "standard") {

@@ -10,6 +10,8 @@ export default function OutfitSelectionStep({
   outfit,
   setOutfit,
   selectOutfit,
+  design,
+  setDesign,
   selectionError,
 }) {
   const fileInputRef = useRef(null);
@@ -63,6 +65,28 @@ export default function OutfitSelectionStep({
             uploadedPhotoSize: `${sizeKb} KB`,
             designCode: "",
           }));
+
+          if (setDesign) {
+            setDesign((prev) => ({
+              ...prev,
+              frontPhoto: compressedDataUrl,
+              frontPhotoName: file.name,
+              frontPhotoSize: `${sizeKb} KB`,
+              backPhoto: compressedDataUrl,
+              backPhotoName: file.name,
+              backPhotoSize: `${sizeKb} KB`,
+              sleevePhoto: compressedDataUrl,
+              sleevePhotoName: file.name,
+              sleevePhotoSize: `${sizeKb} KB`,
+              sleeveLengthPhoto: compressedDataUrl,
+              sleeveLengthPhotoName: file.name,
+              sleeveLengthPhotoSize: `${sizeKb} KB`,
+              neckFront: "as-photo",
+              neckBack: "as-photo",
+              sleeveDesign: "as-photo",
+              sleeveLength: "as-photo",
+            }));
+          }
         } catch (err) {
           console.error("Image processing error:", err);
           setOutfit((prev) => ({
@@ -73,6 +97,29 @@ export default function OutfitSelectionStep({
             uploadedPhotoSize: `${Math.round(file.size / 1024)} KB`,
             designCode: "",
           }));
+
+          if (setDesign) {
+            const rawSize = `${Math.round(file.size / 1024)} KB`;
+            setDesign((prev) => ({
+              ...prev,
+              frontPhoto: e.target.result,
+              frontPhotoName: file.name,
+              frontPhotoSize: rawSize,
+              backPhoto: e.target.result,
+              backPhotoName: file.name,
+              backPhotoSize: rawSize,
+              sleevePhoto: e.target.result,
+              sleevePhotoName: file.name,
+              sleevePhotoSize: rawSize,
+              sleeveLengthPhoto: e.target.result,
+              sleeveLengthPhotoName: file.name,
+              sleeveLengthPhotoSize: rawSize,
+              neckFront: "as-photo",
+              neckBack: "as-photo",
+              sleeveDesign: "as-photo",
+              sleeveLength: "as-photo",
+            }));
+          }
         } finally {
           setCompressing(false);
         }
@@ -120,6 +167,27 @@ export default function OutfitSelectionStep({
       uploadedPhotoSize: "",
       refPhoto: "",
     }));
+    if (setDesign) {
+      setDesign((prev) => ({
+        ...prev,
+        frontPhoto: "",
+        frontPhotoName: "",
+        frontPhotoSize: "",
+        backPhoto: "",
+        backPhotoName: "",
+        backPhotoSize: "",
+        sleevePhoto: "",
+        sleevePhotoName: "",
+        sleevePhotoSize: "",
+        sleeveLengthPhoto: "",
+        sleeveLengthPhotoName: "",
+        sleeveLengthPhotoSize: "",
+        neckFront: prev.neckFront === "as-photo" ? "" : prev.neckFront,
+        neckBack: prev.neckBack === "as-photo" ? "" : prev.neckBack,
+        sleeveDesign: prev.sleeveDesign === "as-photo" ? "" : prev.sleeveDesign,
+        sleeveLength: prev.sleeveLength === "as-photo" ? "" : prev.sleeveLength,
+      }));
+    }
   };
 
   return (
