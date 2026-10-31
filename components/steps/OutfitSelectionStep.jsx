@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { Check, Wand2, UploadCloud, Camera, Trash2, RefreshCw, Eye, X, ChevronDown, ChevronUp } from "lucide-react";
+import { useState, useRef } from "react";
+import { Check, Wand2, UploadCloud, Camera, Trash2, RefreshCw, Eye, X, Sparkles, Layers } from "lucide-react";
 
 import DesignCodeDropdown from "../DesignCodeDropdown.jsx";
 
@@ -10,7 +10,13 @@ const REFERENCE_OPTIONS = [
   { value: "No reference photo", label: "✨ No reference photo / कोई रेफ़रेंस फ़ोटो नहीं है" },
 ];
 
-export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, selectOutfit, selectionError }) {
+export default function OutfitSelectionStep({
+  outfitTypes,
+  outfit,
+  setOutfit,
+  selectOutfit,
+  selectionError,
+}) {
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [modalImage, setModalImage] = useState(null);
@@ -53,12 +59,14 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
           const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.72);
           const sizeKb = Math.round((compressedDataUrl.length * 3) / 4 / 1024);
 
+          // Auto-select uploaded photo & clear design code for clean exclusivity
           setOutfit((prev) => ({
             ...prev,
             refPhoto: "Upload Design Photo",
             uploadedPhoto: compressedDataUrl,
             uploadedPhotoName: file.name,
             uploadedPhotoSize: `${sizeKb} KB`,
+            designCode: "",
           }));
         } catch (err) {
           console.error("Image processing error:", err);
@@ -68,6 +76,7 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
             uploadedPhoto: e.target.result,
             uploadedPhotoName: file.name,
             uploadedPhotoSize: `${Math.round(file.size / 1024)} KB`,
+            designCode: "",
           }));
         } finally {
           setCompressing(false);
@@ -118,26 +127,29 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
     }));
   };
 
-  const isUploadMode =
-    outfit.refPhoto === "Upload Design Photo" ||
-    outfit.refPhoto === "I have the photo (Upload Design Photo)" ||
-    !!outfit.uploadedPhoto;
-
   return (
-    <section className="step-card rounded-[28px] border bg-white p-6 md:p-8">
-      {/* Header */}
-      <div className="mb-7 flex items-center gap-3">
-        <span className="step-icon"><Wand2 size={18} /></span>
+    <section className="step-card rounded-[28px] border bg-white p-6 md:p-8 space-y-7">
+      {/* ---------------------------------------------------- */}
+      {/* 1. HEADER: What shall we stitch? / क्या सिलवाना चाहते हैं? */}
+      {/* ---------------------------------------------------- */}
+      <div className="flex items-center gap-3">
+        <span className="step-icon">
+          <Wand2 size={18} />
+        </span>
         <div>
           <p className="step-eyebrow">STEP 03 · YOUR OUTFIT / आपका परिधान</p>
-          <h2 className="text-[25px] font-semibold">What shall we stitch? / क्या सिलवाना चाहते हैं?</h2>
+          <h2 className="text-[25px] font-semibold text-[var(--primary-dark)]">
+            What shall we stitch? / क्या सिलवाना चाहते हैं?
+          </h2>
           <p className="text-[13px] text-[var(--text-light)]">
             Choose an outfit to see the right design and measurement options / सही डिज़ाइन और नाप के विकल्प देखने के लिए परिधान चुनें।
           </p>
         </div>
       </div>
 
-      {/* Outfit Cards (3 Options) */}
+      {/* ---------------------------------------------------- */}
+      {/* 2. OUTFIT CARDS (3 OPTIONS: Blouse, Kurti, Suit Upper) */}
+      {/* ---------------------------------------------------- */}
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
         {outfitTypes.map((item) => {
           const selected = outfit.type === item.id;
@@ -149,7 +161,7 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
               onClick={() => {
                 selectOutfit(item.id);
               }}
-              className={`group relative flex flex-col overflow-hidden rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
+              className={`group relative flex flex-col overflow-hidden rounded-2xl border-2 text-left transition-all duration-200 bg-white cursor-pointer ${
                 selected
                   ? "border-[var(--primary)] ring-4 ring-[var(--primary)]/15 shadow-lg transform -translate-y-1"
                   : "border-[#e9ddd3] hover:border-[var(--primary)]/50 hover:shadow-md hover:-translate-y-0.5"
@@ -223,25 +235,170 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
         })}
       </div>
 
-      {selectionError && <p role="alert" className="mt-3 text-[13px] text-red-600 font-semibold">{selectionError}</p>}
+      {selectionError && (
+        <p role="alert" className="mt-2 text-[13px] text-red-600 font-semibold bg-red-50 p-2.5 rounded-xl border border-red-200">
+          {selectionError}
+        </p>
+      )}
 
-      {/* Outfit Configuration Fields */}
-      <div className="mt-7 grid gap-5 md:grid-cols-2">
-        <label className="form-field">
-          <span>Number of pieces / कपड़ों की संख्या</span>
-          <select value={outfit.pieces} onChange={(event) => setOutfit({ ...outfit, pieces: event.target.value })}>
-            {["1", "2", "3", "4", "5+"].map((piece) => <option key={piece}>{piece}</option>)}
-          </select>
-        </label>
-
-        <div className="w-full">
-          <DesignCodeDropdown outfit={outfit} setOutfit={setOutfit} onOpenZoom={(img) => setModalImage(img)} />
+      {/* ---------------------------------------------------- */}
+      {/* 3. DESIGN SELECTION: STUDIO DESIGNS OR CUSTOM PHOTO */}
+      {/* ---------------------------------------------------- */}
+      <div className="rounded-2xl border-2 border-[#e8ded2] bg-[#fdfbf9] p-4 sm:p-6 shadow-2xs space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#ece2d6]">
+          <div>
+            <h3 className="font-serif text-[16px] sm:text-[17px] font-bold text-[var(--primary-dark)] flex items-center gap-2">
+              <Sparkles size={17} className="text-[var(--primary)]" />
+              <span>Design Selection / डिज़ाइन का चयन</span>
+            </h3>
+            <p className="text-[12px] text-stone-500 mt-0.5">
+              Choose from our studio catalog designs OR upload your own reference photo / हमारी डिज़ाइन में से चुनें या अपनी पसंद का फ़ोटो भेजें।
+            </p>
+          </div>
+          {outfit?.type && (
+            <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-[var(--primary-light)] text-[var(--primary)] border border-[#ebdcd0]">
+              For: {outfit.type}
+            </span>
+          )}
         </div>
 
-        {/* Reference Photo Selection */}
-        <label className="form-field md:col-span-2">
-          <div className="flex items-center justify-between">
-            <span className="font-bold">Reference photo / डिज़ाइन रेफ़रेंस</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-start">
+          {/* OPTION A: Studio Design Codes */}
+          <div className="space-y-2 rounded-xl bg-white p-4 border border-[#ebdcd0] shadow-2xs">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-[13px] text-stone-800">
+                Option 1: Choose from Catalog / कैटलॉग डिज़ाइन
+              </span>
+              {outfit?.designCode && (
+                <span className="text-[11px] font-bold text-[var(--primary)] bg-[var(--primary-light)] px-2.5 py-0.5 rounded-full border border-[#ebdcd0]">
+                  ✓ Selected: {outfit.designCode}
+                </span>
+              )}
+            </div>
+            <p className="text-[11.5px] text-stone-500 leading-snug">
+              Ready designer styles crafted for {outfit?.type || "this outfit"}.
+            </p>
+            <div className="pt-1">
+              <DesignCodeDropdown outfit={outfit} setOutfit={setOutfit} onOpenZoom={(img) => setModalImage(img)} />
+            </div>
+          </div>
+
+          {/* OPTION B: Upload Your Own Design Photo */}
+          <div className="space-y-2 rounded-xl bg-white p-4 border border-[#ebdcd0] shadow-2xs">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-[13px] text-stone-800">
+                Option 2: Have your own design? / क्या आपके पास डिज़ाइन है?
+              </span>
+              {outfit?.uploadedPhoto && (
+                <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                  <Check size={11} strokeWidth={3} /> Selected / चयनित
+                </span>
+              )}
+            </div>
+            <p className="text-[11.5px] text-stone-500 leading-snug">
+              Upload photo from Pinterest, Instagram, or phone / अपनी पसंद का फ़ोटो अपलोड करें।
+            </p>
+
+            {/* Hidden File Input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleInputChange}
+            />
+
+            {outfit.uploadedPhoto ? (
+              /* Uploaded Preview with Active Selected State & Click-to-Deselect */
+              <div className="rounded-xl border-2 border-emerald-500 bg-emerald-50/40 p-3 shadow-xs">
+                <div className="flex items-center gap-3">
+                  <div
+                    onClick={() => setModalImage(outfit.uploadedPhoto)}
+                    className="group/thumb relative h-16 w-16 flex-shrink-0 cursor-pointer overflow-hidden rounded-lg border border-emerald-300 bg-white shadow-2xs"
+                    title="Click to view full size / बड़ी देखने के लिए क्लिक करें"
+                  >
+                    <img
+                      src={outfit.uploadedPhoto}
+                      alt="Uploaded reference"
+                      className="h-full w-full object-cover transition-transform group-hover/thumb:scale-110"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover/thumb:opacity-100">
+                      <Eye size={16} className="text-white" />
+                    </div>
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-700 px-2 py-0.5 text-[10.5px] font-bold text-white">
+                      <Check size={11} strokeWidth={3} /> Selected Photo / चयनित
+                    </span>
+                    <p className="mt-0.5 font-bold text-[13px] text-stone-900 truncate">
+                      {outfit.uploadedPhotoName || "Custom Design Photo"}
+                    </p>
+                    <p className="text-[11px] text-stone-500">
+                      {outfit.uploadedPhotoSize || "Image attached"}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-2.5 py-1 rounded-lg bg-white border border-stone-200 text-[11px] font-semibold text-stone-700 hover:bg-stone-50 cursor-pointer"
+                    >
+                      Change
+                    </button>
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      className="px-2.5 py-1 rounded-lg bg-red-50 border border-red-200 text-[11px] font-bold text-red-600 hover:bg-red-100 cursor-pointer"
+                      title="Deselect / हटाएँ"
+                    >
+                      Deselect
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Upload Button / Dropzone */
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dashed cursor-pointer transition-all ${
+                  isDragging
+                    ? "border-[var(--primary)] bg-[var(--primary-light)]/40"
+                    : "border-[#e0d3c6] bg-[#faf6f2] hover:border-[var(--primary)] hover:bg-[#fbf2ea]"
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-2xs text-[var(--primary)]">
+                    {compressing ? <RefreshCw size={18} className="animate-spin" /> : <Camera size={18} />}
+                  </div>
+                  <div className="text-left">
+                    <p className="font-bold text-[13px] text-[var(--primary-dark)]">
+                      {compressing ? "Processing... / फ़ोटो तैयार हो रही है..." : "Upload Photo / फ़ोटो अपलोड करें"}
+                    </p>
+                    <p className="text-[11px] text-stone-500">
+                      Click to choose or take a photo (JPG, PNG, WEBP)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ---------------------------------------------------- */}
+      {/* 4. REFERENCE PHOTO SELECTION (ADDITIONAL OPTIONS) */}
+      {/* ---------------------------------------------------- */}
+      <div className="space-y-2">
+        <label className="form-field">
+          <div className="flex items-center justify-between mb-1">
+            <span className="font-bold text-[13px] text-stone-800">
+              Reference photo / डिज़ाइन रेफ़रेंस
+            </span>
             {outfit.uploadedPhoto && (
               <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
                 <Check size={13} strokeWidth={3} /> Photo uploaded / फ़ोटो अपलोड हो गई
@@ -268,150 +425,70 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
           </select>
         </label>
 
-        {/* PHOTO UPLOAD & PREVIEW AREA */}
-        <div className="md:col-span-2">
-          {/* Hidden File Input */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleInputChange}
-          />
-
-          {outfit.uploadedPhoto ? (
-            /* Uploaded Photo Preview Card */
-            <div className="rounded-2xl border-2 border-[var(--primary)] bg-[var(--card-bg)] p-4 sm:p-5 shadow-sm">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  {/* Clickable Thumbnail */}
-                  <div
-                    onClick={() => setModalImage(outfit.uploadedPhoto)}
-                    className="group/thumb relative h-20 w-20 flex-shrink-0 cursor-pointer overflow-hidden rounded-xl border border-[var(--border)] bg-stone-100 shadow-inner"
-                    title="Click to view full size / बड़ी देखने के लिए क्लिक करें"
-                  >
-                    <img
-                      src={outfit.uploadedPhoto}
-                      alt="Uploaded reference"
-                      className="h-full w-full object-cover transition-transform group-hover/thumb:scale-110"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover/thumb:opacity-100">
-                      <Eye size={18} className="text-white" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
-                        <Check size={12} strokeWidth={3} /> Photo Attached / फ़ोटो जुड़ गई
-                      </span>
-                      {outfit.uploadedPhotoSize && (
-                        <span className="text-[11px] text-[var(--text-light)]">
-                          {outfit.uploadedPhotoSize}
-                        </span>
-                      )}
-                    </div>
-                    <p className="mt-1 font-semibold text-[14px] text-[var(--text)] line-clamp-1">
-                      {outfit.uploadedPhotoName || "Design Reference Photo"}
-                    </p>
-                    <p className="text-[12px] text-[var(--text-light)]">
-                      This photo will be shown to the boutique master during stitching / यह फ़ोटो सिलाई के समय बुटीक मास्टर जी को दिखाई जाएगी।
-                    </p>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex w-full sm:w-auto items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setModalImage(outfit.uploadedPhoto)}
-                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--border)] bg-white px-3.5 py-2 text-[12px] font-semibold text-[var(--text)] hover:bg-stone-50 transition-colors shadow-sm"
-                  >
-                    <Eye size={14} /> Full View / बड़ी देखें
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--primary)] bg-[var(--primary-light)] px-3.5 py-2 text-[12px] font-semibold text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition-colors"
-                  >
-                    <RefreshCw size={13} /> Change / बदलें
-                  </button>
-                  <button
-                    type="button"
-                    onClick={removePhoto}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
-                    title="Remove Photo / फ़ोटो हटाएं"
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ) : isUploadMode ? (
-            /* Dropzone / Upload Prompt Box */
-            <div
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
-              className={`relative cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition-all ${
-                isDragging
-                  ? "border-[var(--primary)] bg-[var(--primary-light)]/40 scale-[1.01]"
-                  : "border-[var(--primary)]/40 bg-[var(--primary-light)]/15 hover:border-[var(--primary)] hover:bg-[var(--primary-light)]/30"
-              }`}
+        {/* Quick prompt helper */}
+        {!outfit.uploadedPhoto && (
+          <div className="flex items-center justify-between rounded-xl border border-dashed border-[#e3d7cf] bg-[#fbf9f6] px-4 py-2.5 text-[12px] text-[var(--text-light)]">
+            <span>Do you have a design photo? / क्या आपके पास डिज़ाइन की फ़ोटो है?</span>
+            <button
+              type="button"
+              onClick={() => {
+                setOutfit((prev) => ({ ...prev, refPhoto: "Upload Design Photo" }));
+                setTimeout(() => fileInputRef.current?.click(), 100);
+              }}
+              className="font-bold text-[var(--primary)] hover:underline inline-flex items-center gap-1 cursor-pointer"
             >
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--primary-light)] text-[var(--primary)] shadow-sm">
-                {compressing ? (
-                  <RefreshCw size={24} className="animate-spin" />
-                ) : (
-                  <UploadCloud size={26} />
-                )}
-              </div>
+              <Camera size={13} /> Upload Photo / फ़ोटो अपलोड करें
+            </button>
+          </div>
+        )}
+      </div>
 
-              <h4 className="mt-3 font-semibold text-[15px] text-[var(--primary-dark)]">
-                {compressing
-                  ? "Processing photo... / फ़ोटो तैयार हो रही है..."
-                  : "Upload your design photo / अपनी पसंद की फ़ोटो अपलोड करें"}
-              </h4>
-              <p className="mt-1 text-[12px] text-[var(--text-light)]">
-                Click to browse or take a photo / क्लिक करके गैलरी या कैमरे से फ़ोटो चुनें (JPG, PNG, WEBP)
-              </p>
-
-              <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-[12px] font-bold text-[var(--primary)] border border-[var(--border)] shadow-sm">
-                <Camera size={14} /> Choose Photo / फ़ोटो चुनें
-              </div>
-            </div>
-          ) : (
-            /* Helper prompt if another option is selected */
-            <div className="flex items-center justify-between rounded-xl border border-dashed border-[#e3d7cf] bg-[#fbf9f6] px-4 py-2.5 text-[12px] text-[var(--text-light)]">
-              <span>Do you have a design photo? / क्या आपके पास डिज़ाइन की फ़ोटो है?</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setOutfit((prev) => ({ ...prev, refPhoto: "Upload Design Photo" }));
-                  setTimeout(() => fileInputRef.current?.click(), 100);
-                }}
-                className="font-bold text-[var(--primary)] hover:underline inline-flex items-center gap-1"
-              >
-                <Camera size={13} /> Upload Photo / फ़ोटो अपलोड करें
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Special Requests */}
-        <label className="form-field md:col-span-2">
-          <span>Special requests / कोई विशेष निर्देश <small className="text-[11px] font-normal text-stone-500">(Optional / वैकल्पिक)</small></span>
-          <textarea
-            value={outfit.specialReq}
-            onChange={(event) => setOutfit({ ...outfit, specialReq: event.target.value })}
-            placeholder="Latkan, piping, border, deep gala, or finishing details / लटकन, पाइपिंग, बॉर्डर, या कोई विशेष काम..."
-            rows={3}
-          />
+      {/* ---------------------------------------------------- */}
+      {/* 5. NUMBER OF PIECES (PLACED AFTER DESIGN & REFERENCE AS REQUESTED) */}
+      {/* ---------------------------------------------------- */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-[#faf6f2] border border-[#ebdcd0]">
+        <label className="form-field m-0">
+          <div className="flex items-center justify-between mb-1">
+            <span className="font-bold text-[13.5px] text-stone-800 flex items-center gap-1.5">
+              <Layers size={15} className="text-[var(--primary)]" />
+              <span>Number of pieces / कपड़ों की संख्या</span>
+            </span>
+            <span className="text-[11.5px] font-bold px-2.5 py-0.5 rounded-full bg-white text-[var(--primary)] border border-[#ebdcd0]">
+              Total: {outfit.pieces || 1} Piece(s) / पीस
+            </span>
+          </div>
+          <select
+            value={outfit.pieces || "1"}
+            onChange={(event) => setOutfit({ ...outfit, pieces: event.target.value })}
+            className="bg-white font-medium"
+          >
+            {["1", "2", "3", "4", "5+"].map((piece) => (
+              <option key={piece} value={piece}>
+                {piece} Piece{piece !== "1" ? "s" : ""} / {piece} कपड़ा
+              </option>
+            ))}
+          </select>
         </label>
       </div>
 
+      {/* ---------------------------------------------------- */}
+      {/* 6. SPECIAL REQUESTS (OPTIONAL) */}
+      {/* ---------------------------------------------------- */}
+      <label className="form-field">
+        <span className="font-bold text-[13px] text-stone-800">
+          Special requests / कोई विशेष निर्देश <small className="text-[11px] font-normal text-stone-500">(Optional / वैकल्पिक)</small>
+        </span>
+        <textarea
+          value={outfit.specialReq || ""}
+          onChange={(event) => setOutfit({ ...outfit, specialReq: event.target.value })}
+          placeholder="Latkan, piping, border, deep gala, or finishing details / लटकन, पाइपिंग, बॉर्डर, या कोई विशेष काम..."
+          rows={3}
+        />
+      </label>
+
+      {/* ---------------------------------------------------- */}
       {/* FULL PHOTO LIGHTBOX MODAL */}
+      {/* ---------------------------------------------------- */}
       {modalImage && (
         <div
           className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
@@ -426,7 +503,7 @@ export default function OutfitSelectionStep({ outfitTypes, outfit, setOutfit, se
               <button
                 type="button"
                 onClick={() => setModalImage(null)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-stone-200 text-stone-700 hover:bg-stone-300"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-stone-200 text-stone-700 hover:bg-stone-300 cursor-pointer"
               >
                 <X size={16} />
               </button>

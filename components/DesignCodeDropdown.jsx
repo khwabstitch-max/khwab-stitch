@@ -60,10 +60,19 @@ export default function DesignCodeDropdown({
   );
 
   const handleSelectCode = (item) => {
-    setOutfit((prev) => ({
-      ...prev,
-      designCode: item.code,
-    }));
+    setOutfit((prev) => {
+      if (prev.designCode === item.code) {
+        return { ...prev, designCode: "" };
+      }
+      return {
+        ...prev,
+        designCode: item.code,
+        uploadedPhoto: "",
+        uploadedPhotoName: "",
+        uploadedPhotoSize: "",
+        refPhoto: "",
+      };
+    });
     setIsOpen(false);
   };
 
