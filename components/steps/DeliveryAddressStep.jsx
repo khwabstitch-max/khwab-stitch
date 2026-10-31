@@ -27,6 +27,7 @@ import {
   SLEEVE_LENGTH_PHOTOS,
   SLEEVE_DESIGN_PHOTOS,
   OUTFIT_PHOTOS,
+  DESIGN_CODE_PHOTOS,
   resolveSleeveLength,
   resolveSleeveDesign,
   resolveFrontNeck,
@@ -75,6 +76,10 @@ export default function DeliveryAddressStep({
   const resolvedBackNeck = resolveBackNeck(design?.neckBack, design?.backPhoto, outfit?.type);
   const resolvedSleeveLength = resolveSleeveLength(design?.sleeveLength, outfit?.type);
   const resolvedSleeveDesign = resolveSleeveDesign(design?.sleeveDesign, design?.sleevePhoto, outfit?.type);
+
+  const selectedFrontNeck = resolvedFrontNeck;
+  const selectedBackNeck = resolvedBackNeck;
+  const selectedSleeveDesign = resolvedSleeveDesign;
 
   const frontNeckPhoto = resolvedFrontNeck.photo;
   const backNeckPhoto = resolvedBackNeck.photo;

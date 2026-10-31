@@ -1066,7 +1066,7 @@ export default function App() {
                 </div>
                 <h2 className="mt-4 text-[28px] font-bold">Order Confirmed! / ऑर्डर दर्ज हो गया! ✨</h2>
                 <div className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--primary-light)] font-bold text-[14px]">
-                  {successOrder.orderId} • {successOrder.outfit.type}
+                  {successOrder.orderId} • {successOrder.outfit?.type || "Custom Outfit"}
                 </div>
                 {successOrder.outfit?.uploadedPhoto ? (
                   <div className="mt-4 flex items-center justify-center">
