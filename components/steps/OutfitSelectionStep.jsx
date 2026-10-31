@@ -3,12 +3,7 @@ import { Check, Wand2, UploadCloud, Camera, Trash2, RefreshCw, Eye, X, Sparkles,
 
 import DesignCodeDropdown from "../DesignCodeDropdown.jsx";
 
-const REFERENCE_OPTIONS = [
-  { value: "Upload Design Photo", label: "📸 I have a photo (Upload Photo) / मेरे पास डिज़ाइन फ़ोटो है" },
-  { value: "Send on WhatsApp", label: "💬 Will send on WhatsApp / फ़ोटो वॉट्सऐप पर भेजूँगी" },
-  { value: "Need guidance", label: "🧵 Need tailor guidance / मास्टर जी से सलाह चाहिए" },
-  { value: "No reference photo", label: "✨ No reference photo / कोई रेफ़रेंस फ़ोटो नहीं है" },
-];
+
 
 export default function OutfitSelectionStep({
   outfitTypes,
@@ -391,60 +386,7 @@ export default function OutfitSelectionStep({
       </div>
 
       {/* ---------------------------------------------------- */}
-      {/* 4. REFERENCE PHOTO SELECTION (ADDITIONAL OPTIONS) */}
-      {/* ---------------------------------------------------- */}
-      <div className="space-y-2">
-        <label className="form-field">
-          <div className="flex items-center justify-between mb-1">
-            <span className="font-bold text-[13px] text-stone-800">
-              Reference photo / डिज़ाइन रेफ़रेंस
-            </span>
-            {outfit.uploadedPhoto && (
-              <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
-                <Check size={13} strokeWidth={3} /> Photo uploaded / फ़ोटो अपलोड हो गई
-              </span>
-            )}
-          </div>
-          <select
-            value={outfit.refPhoto || ""}
-            onChange={(event) => {
-              const val = event.target.value;
-              setOutfit({ ...outfit, refPhoto: val });
-              if (val === "Upload Design Photo" && !outfit.uploadedPhoto) {
-                setTimeout(() => fileInputRef.current?.click(), 100);
-              }
-            }}
-            className="font-medium bg-white"
-          >
-            <option value="">
-              Select Reference Option / रेफ़रेंस विकल्प चुनें (वैकल्पिक)...
-            </option>
-            {REFERENCE_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
-        </label>
-
-        {/* Quick prompt helper */}
-        {!outfit.uploadedPhoto && (
-          <div className="flex items-center justify-between rounded-xl border border-dashed border-[#e3d7cf] bg-[#fbf9f6] px-4 py-2.5 text-[12px] text-[var(--text-light)]">
-            <span>Do you have a design photo? / क्या आपके पास डिज़ाइन की फ़ोटो है?</span>
-            <button
-              type="button"
-              onClick={() => {
-                setOutfit((prev) => ({ ...prev, refPhoto: "Upload Design Photo" }));
-                setTimeout(() => fileInputRef.current?.click(), 100);
-              }}
-              className="font-bold text-[var(--primary)] hover:underline inline-flex items-center gap-1 cursor-pointer"
-            >
-              <Camera size={13} /> Upload Photo / फ़ोटो अपलोड करें
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* ---------------------------------------------------- */}
-      {/* 5. NUMBER OF PIECES (PLACED AFTER DESIGN & REFERENCE AS REQUESTED) */}
+      {/* 4. NUMBER OF PIECES / कपड़ों की संख्या */}
       {/* ---------------------------------------------------- */}
       <div className="p-4 sm:p-5 rounded-2xl bg-[#faf6f2] border border-[#ebdcd0]">
         <label className="form-field m-0">
