@@ -14,6 +14,8 @@ import {
   Clock,
   Ruler,
   Check,
+  User,
+  Camera,
 } from "lucide-react";
 
 import {
@@ -32,6 +34,7 @@ import {
 const MEASURE_LABELS = {
   blouseLength: "Blouse Length / ब्लाउज़ लंबाई",
   kurtiLength: "Kurti Length / कुर्ती लंबाई",
+  kameezLength: "Kameez Length / कमीज़ लंबाई",
   suitLength: "Suit Length / कमीज़ लंबाई",
   bust: "Around Bust / चेस्ट (छाती)",
   underBust: "Under Bust / छाती के नीचे",
@@ -41,6 +44,7 @@ const MEASURE_LABELS = {
   shoulder: "Shoulder Width / कंधा",
   sleeveLength: "Sleeve Length / बाज़ू लंबाई",
   bottomOpening: "Sleeve Bottom Opening / बाज़ू मोरी",
+  sleeveBottom: "Sleeve Bottom (Mori) / बाज़ू मोरी",
   sideSlit: "Side Slit / साइड चाक",
   frontNeck: "Front Neck Depth / आगे गला गहराई",
   backNeck: "Back Neck Depth / पीछे गला गहराई",
@@ -64,8 +68,8 @@ function lookupItem(catalog, key, fallbackEn = "", fallbackHi = "", fallbackPhot
   }
   return {
     en: fallbackEn || key,
-    hi: fallbackHi || "",
-    photo: fallbackPhoto || "",
+    hi: fallbackHi || key,
+    photo: fallbackPhoto,
   };
 }
 
@@ -80,37 +84,29 @@ export default function OrderReceiptModal({ order, onClose }) {
     const receiptEl = document.getElementById("printable-receipt");
     if (!receiptEl) return;
 
-    const baseUrl =
-      typeof window !== "undefined"
-        ? window.location.origin + window.location.pathname
-        : "";
-
     const fullHtml = `<!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <base href="${baseUrl}">
-  <title>Khwab-Stitch-Order-${order.orderId}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Khwab Stitch Order Receipt #${order.orderId}</title>
   <style>
-    :root {
-      --primary: #6b2d46;
-      --primary-dark: #4e1d31;
-      --primary-light: #fbf0f4;
-      --secondary: #9c4d68;
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap');
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #faf7f2;
+      color: #2b2523;
+      padding: 24px;
+      margin: 0;
     }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Georgia, serif; background: #faf7f2; color: #2d2621; padding: 24px; margin: 0; }
     .receipt-box {
-      position: relative;
       max-width: 820px;
       margin: 0 auto;
-      background-color: #faf7f2;
-      background-image: url("data:image/svg+xml,%3Csvg width='360' height='240' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='40' y='120' transform='rotate(-28 180 120)' fill='%236b2d46' fill-opacity='0.08' font-family='Georgia, serif' font-size='22' font-weight='bold' letter-spacing='0.16em'%3EKHWAB STITCH%3C/text%3E%3Ctext x='40' y='148' transform='rotate(-28 180 120)' fill='%239c4d68' fill-opacity='0.06' font-family='sans-serif' font-size='10' font-weight='bold' letter-spacing='0.22em'%3EBESPOKE ATELIER%3C/text%3E%3C/svg%3E");
-      background-repeat: repeat;
+      background: #ffffff;
+      border: 1px solid #e8ddd0;
       border-radius: 20px;
-      border: 1px solid #e6dacd;
       padding: 32px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      position: relative;
       overflow: hidden;
     }
     table { width: 100%; border-collapse: collapse; margin-top: 12px; }
@@ -219,7 +215,7 @@ export default function OrderReceiptModal({ order, onClose }) {
             backgroundRepeat: "repeat",
           }}
         >
-          {/* ROYAL CENTERPIECE WATERMARK SEAL (CLEARLY VISIBLE IN PRINT & PDF) */}
+          {/* ROYAL CENTERPIECE WATERMARK SEAL */}
           <div
             aria-hidden="true"
             className="stylish-watermark pointer-events-none select-none absolute inset-0 flex items-center justify-center overflow-hidden z-0"
@@ -237,474 +233,444 @@ export default function OrderReceiptModal({ order, onClose }) {
             </div>
           </div>
 
-          {/* ALL CONTENT POSITIONED ABOVE WATERMARK WITH TRANSLUCENT CARDS */}
+          {/* ALL CONTENT POSITIONED ABOVE WATERMARK */}
           <div className="relative z-10 space-y-6">
-            {/* HEADER */}
-            <div className="receipt-section-block flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-6 border-b-2 border-[#ebdcd0] bg-white/90 p-4 rounded-2xl border border-[#ebdcd0] shadow-2xs">
-              <div>
-                <div className="flex items-center gap-3">
-                  <img
-                    src="./images/khwabstitch_logo.jpg"
-                    alt="Khwab Stitch Logo"
-                    className="h-14 w-14 rounded-full object-cover border-2 border-[#dfc5b5] shadow-xs flex-shrink-0"
-                    loading="eager"
-                  />
-                  <div>
-                    <h1 className="font-serif text-[24px] sm:text-[27px] font-bold text-[var(--primary-dark)] m-0 leading-tight">
-                      Khwab Stitch
-                    </h1>
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--secondary)] mt-0.5">
-                      Where Fabric Becomes Art · Bespoke Atelier / हमारी कारीगरी
-                    </p>
-                  </div>
+
+            {/* ================================================================= */}
+            {/* SECTION 1: LOGO & ATELIER BRANDING (हमारा लोगो वाला) */}
+            {/* ================================================================= */}
+            <div className="receipt-section-block flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b-2 border-[#ebdcd0] bg-white/95 p-4 sm:p-5 rounded-2xl border border-[#ebdcd0] shadow-2xs">
+              <div className="flex items-center gap-3.5">
+                <img
+                  src="./images/khwabstitch_logo.jpg"
+                  alt="Khwab Stitch Logo"
+                  className="h-16 w-16 rounded-full object-cover border-2 border-[var(--primary)] shadow-sm flex-shrink-0"
+                  loading="eager"
+                />
+                <div>
+                  <h1 className="font-serif text-[25px] sm:text-[28px] font-bold text-[var(--primary-dark)] m-0 leading-tight">
+                    Khwab Stitch
+                  </h1>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--secondary)] mt-0.5">
+                    Custom Stitching · Your Style · Our Stitches / हमारी कारीगरी
+                  </p>
+                  <p className="text-[12px] text-stone-600 mt-1">
+                    WhatsApp: <b>+91 98765 43210</b> · khwabstitch.com
+                  </p>
                 </div>
-                <p className="text-[12px] text-stone-600 mt-2">
-                  WhatsApp: <b>+91 98765 43210</b> · khwabstitch.com
-                </p>
               </div>
 
-              <div className="sm:text-right">
+              <div className="sm:text-right flex flex-col sm:items-end">
                 <span className="inline-block rounded-full bg-[#fbf0f4] text-[var(--primary)] px-3 py-1 font-bold text-[12px] border border-[#f0d5df]">
-                  Order Receipt / ऑर्डर रसीद
+                  Order Slip (PDF) / ऑर्डर रसीद
                 </span>
-                <div className="font-mono text-[17px] font-bold text-stone-900 mt-1.5">
+                <div className="font-mono text-[18px] font-bold text-stone-900 mt-1.5">
                   #{order.orderId}
                 </div>
-                <div className="flex items-center sm:justify-end gap-1 text-[11.5px] text-stone-500 mt-0.5">
+                <div className="flex items-center sm:justify-end gap-1.5 text-[11.5px] text-stone-500 mt-0.5">
                   <Calendar size={12} />
                   <span>{new Date(order.createdAt || Date.now()).toLocaleString("en-IN")}</span>
                 </div>
               </div>
             </div>
 
-            {/* CUSTOMER & DELIVERY INFO GRID */}
-            <div className="receipt-section-block grid sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-white/90 border border-[#ebdcd0] shadow-2xs">
-              {/* Customer Details */}
-              <div>
-                <h3 className="font-serif text-[13px] font-bold text-[var(--primary)] uppercase tracking-wider mb-2">
-                  👤 Customer Details / ग्राहक की जानकारी
-                </h3>
-                <p className="text-[14.5px] font-bold text-stone-900">{order.customer?.name || "Customer"}</p>
-                <p className="text-[12.5px] text-stone-700 flex items-center gap-1.5 mt-1 font-semibold">
-                  <Phone size={13} className="text-emerald-700" />
-                  <span>+91 {order.customer?.whatsapp ? order.customer.whatsapp.replace(/\D/g, "").slice(-10) : ""}</span>
-                </p>
-                {order.customer?.email && (
-                  <p className="text-[12.5px] text-stone-600 flex items-center gap-1.5 mt-0.5">
-                    <Mail size={13} className="text-stone-400" />
-                    <span>{order.customer.email}</span>
-                  </p>
-                )}
-              </div>
+            {/* ================================================================= */}
+            {/* SECTION 2: DETAIL ABOUT CUSTOMER & ADDRESS (ग्राहक की जानकारी) */}
+            {/* ================================================================= */}
+            <div className="receipt-section-block p-4 sm:p-5 rounded-2xl bg-white/95 border border-[#ebdcd0] shadow-2xs">
+              <h3 className="font-serif text-[14px] font-bold text-[var(--primary-dark)] pb-2 border-b border-[#f0e4d8] mb-3 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <User size={15} className="text-[var(--primary)]" />
+                  <span>Customer Details & Address / ग्राहक विवरण व डिलीवरी पता</span>
+                </span>
+                <span className="text-[11px] font-bold text-[var(--secondary)] bg-[#faf4ef] px-2.5 py-0.5 rounded-full border border-[#ebdcd0]">
+                  Section 2 of 3
+                </span>
+              </h3>
 
-              {/* Delivery Address */}
-              <div>
-                <h3 className="font-serif text-[13px] font-bold text-[var(--primary)] uppercase tracking-wider mb-2">
-                  📍 Delivery Address / डिलीवरी का पता
-                </h3>
-                <p className="text-[13px] text-stone-800 leading-snug font-medium">
-                  {deliveryAddress}
-                </p>
-                {landmark && (
-                  <p className="text-[12px] text-stone-600 mt-0.5">
-                    <b>Landmark:</b> {landmark}
+              <div className="grid sm:grid-cols-2 gap-4">
+                {/* Personal Information */}
+                <div className="space-y-1">
+                  <p className="text-[10.5px] font-extrabold uppercase tracking-wider text-stone-400">
+                    Personal Information / व्यक्तिगत जानकारी
                   </p>
-                )}
-                <p className="text-[12.5px] font-bold text-stone-800 mt-0.5">
-                  {order.customer?.cityState || `${order.customer?.city || ""}, ${order.customer?.state || ""}`} — <b>PIN: {order.customer?.pin}</b>
-                </p>
-                <div className="mt-2 inline-flex items-center gap-1 rounded-md bg-stone-50 border border-[#e2d5c8] px-2 py-0.5 text-[11px] font-bold text-stone-700">
-                  <Clock size={12} />
-                  <span>{order.delivery?.deliveryType || "Standard Delivery · 7-10 Days"}</span>
+                  <p className="text-[15px] font-bold text-stone-900">{order.customer?.name || "Customer"}</p>
+                  <p className="text-[13px] text-stone-700 flex items-center gap-1.5 pt-0.5 font-semibold">
+                    <Phone size={13} className="text-emerald-700" />
+                    <span>+91 {order.customer?.whatsapp ? order.customer.whatsapp.replace(/\D/g, "").slice(-10) : ""}</span>
+                  </p>
+                  {order.customer?.email && (
+                    <p className="text-[12.5px] text-stone-600 flex items-center gap-1.5">
+                      <Mail size={13} className="text-stone-400" />
+                      <span>{order.customer.email}</span>
+                    </p>
+                  )}
+                  <div className="pt-1">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-stone-100 text-stone-700 text-[11px] font-semibold">
+                      Payment Mode: <b>{order.delivery?.paymentMode || "Cash on Delivery / डिलीवरी पर भुगतान"}</b>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Delivery Address */}
+                <div className="space-y-1">
+                  <p className="text-[10.5px] font-extrabold uppercase tracking-wider text-stone-400">
+                    Delivery Destination / डिलीवरी पता
+                  </p>
+                  <p className="text-[13px] text-stone-800 leading-snug font-medium">
+                    {deliveryAddress}
+                  </p>
+                  {landmark && (
+                    <p className="text-[12px] text-stone-600">
+                      <b>Landmark:</b> {landmark}
+                    </p>
+                  )}
+                  <p className="text-[12.5px] font-bold text-stone-800">
+                    {order.customer?.cityState || `${order.customer?.city || ""}, ${order.customer?.state || ""}`} — <b>PIN: {order.customer?.pin}</b>
+                  </p>
+                  <div className="pt-1">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
+                      <Clock size={12} />
+                      <span>{order.delivery?.deliveryType || "Standard Delivery · 7-10 Days"}</span>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* 1. SELECTED DESIGN CODE / OUTFIT SHOWCASE (SINGLE FOCUSED CARD) */}
-            <div className="receipt-section-block">
-              <h3 className="font-serif text-[14px] font-bold text-[var(--primary-dark)] pb-1.5 border-b border-[#f0e4d8] mb-3 flex items-center justify-between">
-                <span>👗 Selected Design & Outfit / चुना गया डिज़ाइन व परिधान:</span>
+            {/* ================================================================= */}
+            {/* SECTION 3: STITCHING DETAIL (सिलाई विवरण व स्टाइलिंग) */}
+            {/* ================================================================= */}
+            <div className="receipt-section-block p-4 sm:p-5 rounded-2xl bg-white/95 border-2 border-[#ebdcd0] shadow-2xs space-y-5">
+              <div className="flex items-center justify-between pb-2 border-b border-[#f0e4d8]">
+                <div className="flex items-center gap-2">
+                  <Scissors size={16} className="text-[var(--primary)]" />
+                  <h3 className="font-serif text-[15px] font-bold text-[var(--primary-dark)] m-0">
+                    Stitching & Design Specifications / सिलाई व डिज़ाइन विवरण
+                  </h3>
+                </div>
                 <span className="text-[11px] font-bold text-[var(--primary)] bg-[#fbf0f4] px-2.5 py-0.5 rounded-full border border-[#f0d5df]">
-                  Total: {order.outfit?.pieces || 1} Piece(s)
+                  Section 3 of 3
                 </span>
-              </h3>
+              </div>
 
-              {order.outfit?.designCode ? (
-                /* ACTUAL DESIGN CODE CARD (NO REDUNDANT BASE GARMENT CARD) */
-                <div className="rounded-2xl border-2 border-[var(--primary)]/30 bg-[#fdf8f9]/90 p-4 sm:p-5 flex flex-col sm:flex-row items-center sm:items-start gap-5 shadow-2xs">
-                  <div className="relative shrink-0 w-32 h-32 sm:w-36 sm:h-36 rounded-xl overflow-hidden border-2 border-[var(--primary)]/30 bg-white">
+              {/* 1. SELECTED OUTFIT BANNER (NAME ONLY AS REQUESTED) */}
+              <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[#faf5f0] border border-[#ebdcd0]">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--primary)] text-white text-[14px]">
+                    👗
+                  </span>
+                  <div>
+                    <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-stone-500 block">
+                      Selected Outfit / चुना गया परिधान
+                    </span>
+                    <span className="text-[16px] font-serif font-bold text-[var(--primary-dark)]">
+                      {order.outfit?.type || "Custom Outfit"} ({outfitInfo?.hi || "सिलाई परिधान"})
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-full bg-white text-[var(--primary)] font-bold text-[12px] border border-[#dfc5b5] shadow-2xs">
+                    Quantity: <b>{order.outfit?.pieces || 1} Piece(s) / पीस</b>
+                  </span>
+                </div>
+              </div>
+
+              {/* 2. DESIGN CODE (IF SELECTED BY CUSTOMER - SHOWS CODE + PHOTO) */}
+              {order.outfit?.designCode && (
+                <div className="rounded-xl border-2 border-[var(--primary)]/30 bg-[#fdf8f9] p-3.5 sm:p-4 flex flex-col sm:flex-row items-center sm:items-start gap-4 shadow-2xs">
+                  <div className="relative shrink-0 w-28 h-28 rounded-lg overflow-hidden border border-[#dfc5b5] bg-white shadow-xs">
                     <img
-                      src={designCodeInfo?.image || "./images/design_codes/K-01.jpg"}
-                      alt={designCodeInfo?.name || order.outfit.designCode}
+                      src={designCodeInfo?.image || `./images/design_codes/${order.outfit.designCode}.jpg`}
+                      alt={`Design Code ${order.outfit.designCode}`}
                       className="w-full h-full object-cover"
                       loading="eager"
                     />
-                    <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded bg-[var(--primary)] text-white text-[11px] font-mono font-bold shadow-xs">
+                    <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-[var(--primary)] text-white text-[10px] font-mono font-bold">
                       {order.outfit.designCode}
                     </span>
-                    <span className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/75 text-white text-[10px] font-bold">
-                      × {order.outfit?.pieces || 1}
-                    </span>
                   </div>
-
-                  <div className="min-w-0 flex-1 text-center sm:text-left space-y-1.5">
-                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                      <span className="inline-block px-3 py-1 rounded-full bg-[var(--primary)] text-white text-[11px] font-mono font-bold shadow-xs">
+                  <div className="min-w-0 flex-1 text-center sm:text-left space-y-1">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
+                      <span className="px-2.5 py-0.5 rounded-full bg-[var(--primary)] text-white text-[11px] font-mono font-bold">
                         Design Code: {order.outfit.designCode}
                       </span>
                       {designCodeInfo?.tag && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10.5px] font-bold border border-amber-200">
+                        <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold border border-amber-200">
                           {designCodeInfo.tag}
                         </span>
                       )}
                     </div>
-
-                    <h4 className="font-serif text-[17px] sm:text-[19px] font-bold text-[var(--primary-dark)] leading-tight">
+                    <h4 className="font-serif text-[15px] sm:text-[16px] font-bold text-[var(--primary-dark)]">
                       {designCodeInfo?.name || `Design ${order.outfit.designCode}`}
                     </h4>
-
-                    <p className="text-[13px] font-semibold text-[var(--secondary)]">
+                    <p className="text-[12px] font-semibold text-[var(--secondary)]">
                       {designCodeInfo?.hi || "कैटलॉग डिज़ाइन"}
                     </p>
-
                     {designCodeInfo?.details && (
-                      <p className="text-[12px] text-stone-700 bg-white/80 p-2.5 rounded-xl border border-[#ece2d6] leading-relaxed">
+                      <p className="text-[11.5px] text-stone-600 bg-white p-2 rounded-lg border border-[#ece2d6] leading-relaxed">
                         <b>Design Features / खासियत:</b> {designCodeInfo.details}
                       </p>
                     )}
-
-                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-1 text-[12px] text-stone-700">
-                      <span>Outfit: <b>{order.outfit?.type} ({outfitInfo?.hi})</b></span>
-                      <span>•</span>
-                      <span>Quantity: <b>{order.outfit?.pieces || 1} Piece(s) / पीस</b></span>
-                      {order.outfit?.refPhoto && (
-                        <>
-                          <span>•</span>
-                          <span>Reference: <b>{order.outfit.refPhoto}</b></span>
-                        </>
-                      )}
-                    </div>
                   </div>
                 </div>
-              ) : (
-                /* BESPOKE GARMENT CARD (WHEN NO CATALOG CODE CHOSEN) */
-                <div className="rounded-2xl border-2 border-[#ebdcd0] bg-white/90 p-4 sm:p-5 flex flex-col sm:flex-row items-center sm:items-start gap-4 shadow-2xs">
-                  <div className="relative shrink-0 w-28 h-28 rounded-xl overflow-hidden border border-stone-200 bg-white">
+              )}
+
+              {/* 3. CUSTOMER REFERENCE PHOTO (IF ATTACHED - PROMINENT DISPLAY) */}
+              {order.outfit?.uploadedPhoto && (
+                <div className="rounded-xl border-2 border-emerald-300 bg-emerald-50/50 p-3.5 sm:p-4 flex flex-col sm:flex-row items-center sm:items-start gap-4 shadow-2xs">
+                  <div className="relative shrink-0 max-w-[160px] w-full rounded-lg overflow-hidden border border-emerald-300 bg-white shadow-xs">
                     <img
-                      src={order.outfit?.uploadedPhoto || outfitInfo?.photo || "./images/outfits/02_kurti.jpg"}
-                      alt={order.outfit?.type || "Outfit"}
-                      className="w-full h-full object-cover"
+                      src={order.outfit.uploadedPhoto}
+                      alt="Customer Reference Design"
+                      className="w-full h-auto max-h-[160px] object-contain mx-auto"
                       loading="eager"
                     />
-                    <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/75 text-white text-[9.5px] font-bold">
-                      × {order.outfit?.pieces || 1}
-                    </span>
                   </div>
                   <div className="min-w-0 flex-1 text-center sm:text-left space-y-1">
-                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#fbf0e0] text-[var(--secondary)] text-[11px] font-bold border border-[#ebdcd0]">
-                      Custom Bespoke Garment / कस्टम सिलाई
+                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-700 text-white text-[11px] font-bold">
+                      📸 Customer Reference Photo / ग्राहक द्वारा अपलोड की गई फ़ोटो
                     </span>
-                    <h4 className="font-serif text-[17px] sm:text-[19px] font-bold text-stone-900 leading-tight">
-                      {order.outfit?.type || "Bespoke Outfit"}
-                    </h4>
-                    <p className="text-[12.5px] font-semibold text-[var(--secondary)]">
-                      {outfitInfo?.hi || "सिलाई परिधान"}
+                    <p className="text-[13px] font-bold text-stone-900 pt-0.5">
+                      File: {order.outfit.uploadedPhotoName || "reference-photo.jpg"}
                     </p>
-                    <p className="text-[12px] text-stone-600">
-                      Quantity: <b>{order.outfit?.pieces || 1} Piece(s) / पीस</b>
-                    </p>
-                    <p className="text-[11.5px] text-stone-500">
-                      {order.outfit?.uploadedPhoto
-                        ? "✓ Custom design photo attached below"
-                        : (order.outfit?.refPhoto || "Tailored according to selected necklines & sleeves")}
+                    {order.outfit.uploadedPhotoSize && (
+                      <p className="text-[11.5px] text-stone-600">
+                        Size: {order.outfit.uploadedPhotoSize}
+                      </p>
+                    )}
+                    <p className="text-[12px] text-emerald-900 bg-white p-2 rounded-lg border border-emerald-200 italic">
+                      कारीगर इस फ़ोटो के अनुसार परिधान का डिज़ाइन, कटिंग और सिलाई तैयार करेंगे।
                     </p>
                   </div>
                 </div>
               )}
-            </div>
 
-            {/* 2. STYLING BLUEPRINT (4 CARDS WITH REAL PHOTOS) */}
-            <div className="receipt-section-block">
-              <h3 className="font-serif text-[14px] font-bold text-[var(--primary-dark)] pb-1.5 border-b border-[#f0e4d8] mb-3 flex items-center justify-between">
-                <span>✂️ Necklines & Sleeves Styling Blueprint / गले व बाज़ू का चुना गया स्टाइल:</span>
-                <span className="text-[11px] font-semibold text-stone-500">Every Selection with Photo</span>
-              </h3>
+              {/* REFERENCE PHOTO NOTE (IF TEXT INSTEAD OF UPLOAD) */}
+              {order.outfit?.refPhoto && !order.outfit?.uploadedPhoto && (
+                <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[12px] flex items-center gap-2">
+                  <span>📸</span>
+                  <span><b>Reference Choice / रेफ़रेंस:</b> {order.outfit.refPhoto}</span>
+                </div>
+              )}
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {/* 1. FRONT NECK */}
-                <div className="rounded-xl border border-[#ebdcd0] bg-white/90 p-2.5 flex flex-col justify-between shadow-2xs">
-                  <div>
-                    <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
-                      Front Neck / आगे गला
-                    </p>
-                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
-                      {(order.design?.neckFront === "as-photo" && order.design?.frontPhoto) || frontNeckInfo?.photo ? (
+              {/* 4. STYLING SPECIFICATIONS (4 BLUEPRINT CARDS WITH REAL PHOTOS) */}
+              <div>
+                <p className="text-[11px] font-extrabold uppercase tracking-wider text-stone-500 mb-2.5">
+                  ✂️ Necklines & Sleeves Blueprint / गले व बाज़ू का चुना गया स्टाइल
+                </p>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {/* FRONT NECK */}
+                  <div className="rounded-xl border border-[#ebdcd0] bg-white p-2.5 flex flex-col justify-between shadow-2xs">
+                    <div>
+                      <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
+                        Front Neck / आगे गला
+                      </p>
+                      <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#faf7f2] border border-stone-200 mb-2">
                         <img
-                          src={(order.design?.neckFront === "as-photo" && order.design?.frontPhoto) || frontNeckInfo.photo}
-                          alt={frontNeckInfo?.en || "Front Neck"}
+                          src={frontNeckInfo.photo}
+                          alt={frontNeckInfo.en}
                           className="h-full w-full object-contain"
                           loading="eager"
                         />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center text-[10px] text-stone-400">
-                          No photo
-                        </div>
-                      )}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[12px] font-bold text-stone-900 leading-tight">
+                        {frontNeckInfo.en}
+                      </p>
+                      <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
+                        {order.design?.neckFront === "as-photo" && order.design?.frontPhoto
+                          ? "✓ कस्टम फ़ोटो अनुसार"
+                          : frontNeckInfo.hiScript || frontNeckInfo.hi}
+                      </p>
                     </div>
                   </div>
-                  <div>
-                    <p className="text-[12px] font-bold text-stone-900 leading-tight">
-                      {order.design?.neckFront === "as-photo"
-                        ? "As per Photo"
-                        : frontNeckInfo?.en || order.design?.neckFront || "Standard"}
-                    </p>
-                    <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
-                      {order.design?.neckFront === "as-photo" && order.design?.frontPhoto
-                        ? "✓ कस्टम फ़ोटो संलग्न"
-                        : frontNeckInfo?.hi || "सामान्य गला"}
-                    </p>
-                  </div>
-                </div>
 
-                {/* 2. BACK NECK */}
-                <div className="rounded-xl border border-[#ebdcd0] bg-white/90 p-2.5 flex flex-col justify-between shadow-2xs">
-                  <div>
-                    <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
-                      Back Neck / पीछे गला
-                    </p>
-                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
-                      {(order.design?.neckBack === "as-photo" && order.design?.backPhoto) || backNeckInfo?.photo ? (
+                  {/* BACK NECK */}
+                  <div className="rounded-xl border border-[#ebdcd0] bg-white p-2.5 flex flex-col justify-between shadow-2xs">
+                    <div>
+                      <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
+                        Back Neck / पीछे गला
+                      </p>
+                      <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#faf7f2] border border-stone-200 mb-2">
                         <img
-                          src={(order.design?.neckBack === "as-photo" && order.design?.backPhoto) || backNeckInfo.photo}
-                          alt={backNeckInfo.en || "Back Neck"}
+                          src={backNeckInfo.photo}
+                          alt={backNeckInfo.en}
                           className="h-full w-full object-contain"
                           loading="eager"
                         />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center text-[10px] text-stone-400">
-                          No photo
-                        </div>
-                      )}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[12px] font-bold text-stone-900 leading-tight">
+                        {backNeckInfo.en}
+                      </p>
+                      <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
+                        {order.design?.neckBack === "as-photo" && order.design?.backPhoto
+                          ? "✓ कस्टम फ़ोटो अनुसार"
+                          : backNeckInfo.hiScript || backNeckInfo.hi}
+                      </p>
                     </div>
                   </div>
-                  <div>
-                    <p className="text-[12px] font-bold text-stone-900 leading-tight">
-                      {order.design?.neckBack === "as-photo"
-                        ? "As per Photo"
-                        : backNeckInfo?.en || order.design?.neckBack || "Standard"}
-                    </p>
-                    <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
-                      {order.design?.neckBack === "as-photo" && order.design?.backPhoto
-                        ? `Custom Photo Attached / फ़ोटो अनुसार (${order.design.backPhotoName || "Design Photo"})`
-                        : backNeckInfo?.hi || "सामान्य बैक"}
-                    </p>
-                  </div>
-                </div>
 
-                {/* 3. SLEEVE LENGTH */}
-                <div className="rounded-xl border border-[#ebdcd0] bg-white/90 p-2.5 flex flex-col justify-between shadow-2xs">
-                  <div>
-                    <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
-                      Sleeve Length / बाज़ू लंबाई
-                    </p>
-                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
-                      <img
-                        src={sleeveLengthInfo.photo}
-                        alt={sleeveLengthInfo.en}
-                        className="h-full w-full object-contain"
-                        loading="eager"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-[12px] font-bold text-stone-900 leading-tight">
-                      {sleeveLengthInfo.en}
-                    </p>
-                    <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
-                      {sleeveLengthInfo.hi}
-                    </p>
-                    <p className="text-[10px] text-stone-500 mt-0.5 font-mono">
-                      {sleeveLengthInfo.cm || sleeveLengthInfo.length}
-                    </p>
-                  </div>
-                </div>
-
-                {/* 4. SLEEVE DESIGN */}
-                <div className="rounded-xl border border-[#ebdcd0] bg-white/90 p-2.5 flex flex-col justify-between shadow-2xs">
-                  <div>
-                    <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
-                      Sleeve Style / बाज़ू स्टाइल
-                    </p>
-                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
-                      {(order.design?.sleeveDesign === "as-photo" && order.design?.sleevePhoto) || sleeveDesignInfo?.photo ? (
+                  {/* SLEEVE LENGTH */}
+                  <div className="rounded-xl border border-[#ebdcd0] bg-white p-2.5 flex flex-col justify-between shadow-2xs">
+                    <div>
+                      <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
+                        Sleeve Length / बाज़ू लंबाई
+                      </p>
+                      <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#faf7f2] border border-stone-200 mb-2">
                         <img
-                          src={(order.design?.sleeveDesign === "as-photo" && order.design?.sleevePhoto) || sleeveDesignInfo.photo}
-                          alt={sleeveDesignInfo?.en || "Sleeve Design"}
+                          src={sleeveLengthInfo.photo}
+                          alt={sleeveLengthInfo.en}
                           className="h-full w-full object-contain"
                           loading="eager"
                         />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center text-[10px] text-stone-400">
-                          No photo
-                        </div>
-                      )}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[12px] font-bold text-stone-900 leading-tight">
+                        {sleeveLengthInfo.en}
+                      </p>
+                      <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
+                        {sleeveLengthInfo.hiScript || sleeveLengthInfo.hi}
+                      </p>
+                      <p className="text-[10px] text-stone-600 mt-0.5 font-mono font-bold">
+                        Length: {sleeveLengthInfo.cm || sleeveLengthInfo.length}
+                      </p>
                     </div>
                   </div>
-                  <div>
-                    <p className="text-[12px] font-bold text-stone-900 leading-tight">
-                      {order.design?.sleeveDesign === "as-photo"
-                        ? "As per Photo"
-                        : sleeveDesignInfo?.en || order.design?.sleeveDesign || "Straight"}
-                    </p>
-                    <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
-                      {order.design?.sleeveDesign === "as-photo" && order.design?.sleevePhoto
-                        ? "✓ कस्टम फ़ोटो संलग्न"
-                        : sleeveDesignInfo?.hi || "सादी बाज़ू"}
-                    </p>
+
+                  {/* SLEEVE DESIGN */}
+                  <div className="rounded-xl border border-[#ebdcd0] bg-white p-2.5 flex flex-col justify-between shadow-2xs">
+                    <div>
+                      <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
+                        Sleeve Style / बाज़ू स्टाइल
+                      </p>
+                      <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#faf7f2] border border-stone-200 mb-2">
+                        <img
+                          src={sleeveDesignInfo.photo}
+                          alt={sleeveDesignInfo.en}
+                          className="h-full w-full object-contain"
+                          loading="eager"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[12px] font-bold text-stone-900 leading-tight">
+                        {sleeveDesignInfo.en}
+                      </p>
+                      <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
+                        {order.design?.sleeveDesign === "as-photo" && order.design?.sleevePhoto
+                          ? "✓ कस्टम फ़ोटो अनुसार"
+                          : sleeveDesignInfo.hiScript || sleeveDesignInfo.hi}
+                      </p>
+                    </div>
                   </div>
+                </div>
+
+                {/* Fitting Preference & Tailor Notes */}
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-white border border-stone-200 text-[12px] shadow-2xs">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-bold text-stone-700">Fitting Preference / फिटिंग:</span>
+                    <span className="font-bold text-[var(--primary)] bg-stone-50 px-2.5 py-0.5 rounded-md border border-stone-200">
+                      {order.design?.fit || "Regular"} Fit
+                    </span>
+                  </div>
+                  {order.design?.additionalInstructions && (
+                    <div className="text-stone-600">
+                      <b>Tailor Instructions / विशेष निर्देश:</b> {order.design.additionalInstructions}
+                    </div>
+                  )}
+                  {order.outfit?.specialReq && (
+                    <div className="text-stone-600">
+                      <b>Special Request:</b> {order.outfit.specialReq}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* FIT & SPECIAL TAILOR NOTES */}
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-white/90 border border-stone-200 text-[12px] shadow-2xs">
-                <div className="flex items-center gap-1.5">
-                  <span className="font-bold text-stone-700">Fitting Preference / फिटिंग:</span>
-                  <span className="font-bold text-[var(--primary)] bg-stone-50 px-2.5 py-0.5 rounded-md border border-stone-200">
-                    {order.design?.fit || "Regular"} Fit
+              {/* 5. MEASUREMENTS TABLE */}
+              <div>
+                <div className="flex items-center justify-between pb-1.5 border-b border-[#f0e4d8] mb-3">
+                  <div className="flex items-center gap-2">
+                    <Ruler size={16} className="text-[var(--primary)]" />
+                    <h4 className="font-serif text-[13.5px] font-bold text-[var(--primary-dark)] m-0">
+                      Measurements / शारीरिक नाप ({order.measurements?.unit || "inch"})
+                    </h4>
+                  </div>
+                  <span className="text-[11px] font-bold text-stone-700 bg-stone-100 px-2.5 py-0.5 rounded-md">
+                    {order.measurements?.provideMethod || "Self Measurement / खुद से नाप"}
                   </span>
                 </div>
-                {order.design?.additionalInstructions && (
-                  <div className="text-stone-600">
-                    <b>Tailor Instructions / विशेष निर्देश:</b> {order.design.additionalInstructions}
+
+                {order.measurements?.values && Object.keys(order.measurements.values).length > 0 ? (
+                  <div className="overflow-x-auto rounded-xl border border-[#ece2d6] bg-white shadow-2xs">
+                    <table className="w-full text-left text-[12.5px] border-collapse">
+                      <thead>
+                        <tr className="bg-[#faf5f0] text-[var(--primary-dark)] border-b border-[#ece2d6]">
+                          <th className="py-2 px-3 font-bold">Measurement Parameter / नाप का भाग</th>
+                          <th className="py-2 px-3 font-bold text-right">Value / माप ({order.measurements.unit?.toUpperCase() || "INCH"})</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.entries(order.measurements.values).map(([key, val], idx) => {
+                          if (!val) return null;
+                          const label = MEASURE_LABELS[key] || key.replace(/([A-Z])/g, " $1");
+                          return (
+                            <tr
+                              key={key}
+                              className={`border-b border-[#f2eae2] ${idx % 2 === 0 ? "bg-white" : "bg-[#fdfbf9]"}`}
+                            >
+                              <td className="py-2 px-3 font-medium text-stone-800">
+                                {label}
+                              </td>
+                              <td className="py-2 px-3 text-right font-bold font-mono text-stone-900">
+                                {val} {order.measurements.unit || "inch"}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
+                ) : (order.measurements?.provideMethod?.includes("भेजूंगी") || order.measurements?.provideMethod?.includes("सिले")) ? (
+                  <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 shadow-2xs">
+                    <div className="flex items-center gap-2 font-bold text-[13px]">
+                      <span>📦</span>
+                      <span>Sending Stitched Sample Clothes / मैं अपने सिले हुए कपड़े नापने के लिए भेजूंगी</span>
+                    </div>
+                    <p className="text-[12px] mt-1 text-amber-800">
+                      Customer will send their stitched sample garment for size measurement. / ग्राहक नाप के लिए अपने सिले हुए कपड़े भेजेंगी।
+                    </p>
+                  </div>
+                ) : order.measurements?.provideMethod?.includes("वीडियो कॉल") ? (
+                  <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 shadow-2xs">
+                    <div className="flex items-center gap-2 font-bold text-[13px]">
+                      <span>📹</span>
+                      <span>Measurements on Video Call / वीडियो कॉल द्वारा नाप</span>
+                    </div>
+                    <p className="text-[12px] mt-1 text-blue-800">
+                      Master tailor will contact customer to take all measurements live on video call. / मास्टर दर्जी जल्दी ही वीडियो कॉल पर नाप लेंगे।
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-[12px] text-stone-500 italic p-3 bg-white rounded-lg border border-stone-200">
+                    No individual measurements recorded / कोई अलग से नाप दर्ज नहीं है।
+                  </p>
                 )}
               </div>
             </div>
 
-            {/* 3. CUSTOMER REFERENCE PHOTO (IF ATTACHED) */}
-            {order.outfit?.uploadedPhoto && (
-              <div className="receipt-section-block p-4 rounded-2xl bg-white/90 border-2 border-[#ebdcd0] shadow-2xs">
-                <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#e9ded4]">
-                  <div className="flex items-center gap-2">
-                    <Sparkles size={16} className="text-[var(--primary)]" />
-                    <h3 className="font-serif text-[14px] font-bold text-[var(--primary-dark)] m-0">
-                      Customer Reference Design Photo / ग्राहक द्वारा अपलोड की गई डिज़ाइन फ़ोटो
-                    </h3>
-                  </div>
-                  <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    ✓ Photo Attached / फ़ोटो संलग्न
-                  </span>
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-center gap-4">
-                  <div className="relative max-w-[220px] w-full rounded-xl overflow-hidden border-2 border-white shadow-md bg-white">
-                    <img
-                      src={order.outfit.uploadedPhoto}
-                      alt="Customer Design Reference"
-                      className="w-full h-auto max-h-[220px] object-contain mx-auto"
-                      loading="eager"
-                    />
-                  </div>
-                  <div className="flex-1 text-[12.5px] text-stone-700 space-y-1.5 text-center sm:text-left">
-                    <p>
-                      <b>File Name:</b> {order.outfit.uploadedPhotoName || "design-reference.jpg"}
-                    </p>
-                    {order.outfit.uploadedPhotoSize && (
-                      <p>
-                        <b>Size:</b> {order.outfit.uploadedPhotoSize}
-                      </p>
-                    )}
-                    <p className="text-[12px] text-stone-500 italic">
-                      कारीगर इस फ़ोटो के अनुसार परिधान की कटिंग, सिलाई और फिनिशिंग तैयार करेंगे।
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* 4. MEASUREMENTS SECTION (FULLY MAPPED) */}
-            <div className="receipt-section-block">
-              <div className="flex items-center justify-between pb-1.5 border-b border-[#f0e4d8] mb-3">
-                <div className="flex items-center gap-2">
-                  <Ruler size={16} className="text-[var(--primary)]" />
-                  <h3 className="font-serif text-[14px] font-bold text-[var(--primary-dark)] m-0">
-                    Measurements / शारीरिक नाप ({order.measurements?.unit || "inch"})
-                  </h3>
-                </div>
-                <span className="text-[11.5px] font-bold text-stone-700 bg-stone-100 px-2.5 py-0.5 rounded-md">
-                  {order.measurements?.provideMethod || "Self Measurement / खुद से नाप"}
-                </span>
-              </div>
-
-              {order.measurements?.values && Object.keys(order.measurements.values).length > 0 ? (
-                <div className="overflow-x-auto rounded-xl border border-[#ece2d6] bg-white/90 shadow-2xs">
-                  <table className="w-full text-left text-[12.5px] border-collapse">
-                    <thead>
-                      <tr className="bg-[#faf5f0] text-[var(--primary-dark)] border-b border-[#ece2d6]">
-                        <th className="py-2 px-3 font-bold">Measurement Parameter / नाप का भाग</th>
-                        <th className="py-2 px-3 font-bold text-right">Value / माप ({order.measurements.unit?.toUpperCase() || "INCH"})</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(order.measurements.values).map(([key, val], idx) => {
-                        if (!val) return null;
-                        const label = MEASURE_LABELS[key] || key.replace(/([A-Z])/g, " $1");
-                        return (
-                          <tr
-                            key={key}
-                            className={`border-b border-[#f2eae2] ${idx % 2 === 0 ? "bg-white/80" : "bg-[#fdfbf9]/80"}`}
-                          >
-                            <td className="py-2 px-3 font-medium text-stone-800">
-                              {label}
-                            </td>
-                            <td className="py-2 px-3 text-right font-bold font-mono text-stone-900">
-                              {val} {order.measurements.unit || "inch"}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (order.measurements?.provideMethod?.includes("भेजूंगी") || order.measurements?.provideMethod?.includes("सिले")) ? (
-                <div className="p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 text-amber-900 shadow-2xs">
-                  <div className="flex items-center gap-2 font-bold text-[13px]">
-                    <span>📦</span>
-                    <span>Sending Stitched Sample Clothes / मैं अपने सिले हुए कपड़े नापने के लिए भेजूंगी</span>
-                  </div>
-                  <p className="text-[12px] mt-1 text-amber-800">
-                    Customer will send their stitched sample garment for size measurement. / ग्राहक नाप के लिए अपने सिले हुए कपड़े भेजेंगी।
-                  </p>
-                  {order.measurements?.notes && (
-                    <p className="mt-2 text-[12px] font-semibold text-stone-700 bg-white/80 p-2 rounded-lg border border-amber-200">
-                      <b>Customer Note / विशेष निर्देश:</b> {order.measurements.notes}
-                    </p>
-                  )}
-                </div>
-              ) : order.measurements?.provideMethod?.includes("वीडियो कॉल") ? (
-                <div className="p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-900 shadow-2xs">
-                  <div className="flex items-center gap-2 font-bold text-[13px]">
-                    <span>📹</span>
-                    <span>Measurements on Video Call / वीडियो कॉल द्वारा नाप</span>
-                  </div>
-                  <p className="text-[12px] mt-1 text-blue-800">
-                    Master tailor will contact customer shortly to take all measurements live on video call. / मास्टर दर्जी जल्दी ही वीडियो कॉल पर नाप लेंगे।
-                  </p>
-                </div>
-              ) : (
-                <p className="text-[12px] text-stone-500 italic p-3 bg-white/90 rounded-lg border border-stone-200">
-                  No individual measurements recorded / कोई अलग से नाप दर्ज नहीं है।
-                </p>
-              )}
-            </div>
-
             {/* FOOTER */}
-            <div className="receipt-section-block pt-4 border-t-2 border-[#ebdcd0] text-center text-[12px] text-stone-500 bg-white/80 p-4 rounded-2xl border border-[#ebdcd0]">
+            <div className="receipt-section-block pt-4 border-t-2 border-[#ebdcd0] text-center text-[12px] text-stone-500 bg-white/90 p-4 rounded-2xl border border-[#ebdcd0]">
               <p className="font-serif font-bold text-[var(--primary)] text-[13.5px]">
                 Thank you for choosing Khwab Stitch! / ख़्वाब स्टिच चुनने के लिए धन्यवाद!
               </p>
               <p className="mt-1">
-                Where Fabric Becomes Art · WhatsApp Helpline: <b>+91 98765 43210</b>
+                Handcrafted with precision · WhatsApp Helpline: <b>+91 98765 43210</b> · khwabstitch.com
               </p>
             </div>
           </div>

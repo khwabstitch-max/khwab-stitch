@@ -96,32 +96,44 @@ const generateOrderWhatsAppText = (o) => {
 };
 
 const syncOrderToCloud = async (order) => {
+  if (!order) return;
   try {
-    const cloudPayload = stripPhotosFromOrder(order, false);
-    const payloadStr = JSON.stringify(cloudPayload);
-    const safePayload = payloadStr.length > 3800 ? JSON.stringify({
-      orderId: order.orderId,
-      createdAt: order.createdAt,
-      customer: order.customer,
-      outfit: { type: order.outfit?.type, designCode: order.outfit?.designCode },
-      design: { neckFront: order.design?.neckFront, neckBack: order.design?.neckBack, sleeveLength: order.design?.sleeveLength, sleeveDesign: order.design?.sleeveDesign, fit: order.design?.fit },
-      measurements: order.measurements,
-      delivery: order.delivery,
-    }) : payloadStr;
+    const hasPhotos = Boolean(
+      order.outfit?.uploadedPhoto ||
+      order.design?.frontPhoto ||
+      order.design?.backPhoto ||
+      order.design?.sleevePhoto
+    );
 
     const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-    const timeoutId = controller ? setTimeout(() => controller.abort(), 4000) : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 8000) : null;
 
-    await fetch(CLOUD_BRIDGE_URL, {
-      method: "POST",
-      headers: {
-        "Title": `Order #${order.orderId || "NEW"} - ${order.customer?.name || "Customer"} (${order.outfit?.type || "Custom Outfit"})`,
-        "Tags": "dress,sparkles,shopping_bags",
-        "Priority": "4",
-      },
-      body: safePayload,
-      signal: controller ? controller.signal : undefined,
-    });
+    if (hasPhotos) {
+      // Send complete order WITH full reference photos as attachment file via PUT
+      await fetch(CLOUD_BRIDGE_URL, {
+        method: "PUT",
+        headers: {
+          "Title": `Order #${order.orderId || "NEW"} - ${order.customer?.name || "Customer"} (${order.outfit?.type || "Custom Outfit"})`,
+          "Filename": `order_${order.orderId || "new"}.json`,
+          "Tags": "dress,sparkles,shopping_bags,camera",
+          "Priority": "4",
+        },
+        body: JSON.stringify(order),
+        signal: controller ? controller.signal : undefined,
+      });
+    } else {
+      // Lightweight message when no custom photo uploaded
+      await fetch(CLOUD_BRIDGE_URL, {
+        method: "POST",
+        headers: {
+          "Title": `Order #${order.orderId || "NEW"} - ${order.customer?.name || "Customer"} (${order.outfit?.type || "Custom Outfit"})`,
+          "Tags": "dress,sparkles,shopping_bags",
+          "Priority": "4",
+        },
+        body: JSON.stringify(order),
+        signal: controller ? controller.signal : undefined,
+      });
+    }
     if (timeoutId) clearTimeout(timeoutId);
   } catch (err) {
     console.warn("Cloud sync note:", err);
@@ -131,7 +143,7 @@ const syncOrderToCloud = async (order) => {
 const fetchCloudOrders = async () => {
   try {
     const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-    const timeoutId = controller ? setTimeout(() => controller.abort(), 4000) : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 8000) : null;
     const res = await fetch(`${CLOUD_BRIDGE_URL}/json?poll=1&since=all`, {
       cache: "no-store",
       signal: controller ? controller.signal : undefined,
@@ -145,8 +157,23 @@ const fetchCloudOrders = async () => {
       if (!line.trim()) continue;
       try {
         const item = JSON.parse(line);
-        if (item.event === "message" && item.message) {
-          const parsedOrder = JSON.parse(item.message);
+        if (item.event === "message") {
+          let parsedOrder = null;
+          // If message has an attachment file (which holds full reference photos), fetch it!
+          if (item.attachment?.url) {
+            try {
+              const attachRes = await fetch(item.attachment.url);
+              if (attachRes.ok) {
+                parsedOrder = await attachRes.json();
+              }
+            } catch {}
+          }
+          // Fallback to inline message body
+          if (!parsedOrder && item.message) {
+            try {
+              parsedOrder = JSON.parse(item.message);
+            } catch {}
+          }
           if (parsedOrder && parsedOrder.orderId) {
             cloudOrders.push(parsedOrder);
           }
