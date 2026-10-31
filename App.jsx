@@ -1148,14 +1148,6 @@ export default function App() {
                   >
                     <Download size={17} /> Download Slip / PDF (रसीद / PDF प्राप्त करें)
                   </button>
-                  <a
-                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(generateOrderWhatsAppText(successOrder))}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 h-13 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[14px] flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer text-center"
-                  >
-                    <MessageCircle size={18} /> Share on WhatsApp / वॉट्सऐप पर भेजें
-                  </a>
                   <button
                     type="button"
                     onClick={() => {
