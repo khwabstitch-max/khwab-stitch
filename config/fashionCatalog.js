@@ -447,8 +447,8 @@ export const getSleeveLengthById = (id) => SLEEVE_LENGTH_MAP[id] || null;
 export const getSleeveDesignById = (id) => SLEEVE_DESIGN_MAP[id] || null;
 
 export const DEFAULT_SLEEVE_LENGTH_BY_OUTFIT = {
-  Blouse: "half",
-  Kurti: "three-quarter",
+  Blouse: "full",
+  Kurti: "full",
   "Suit Upper": "full",
 };
 

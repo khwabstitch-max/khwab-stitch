@@ -314,7 +314,19 @@ function AsPerPhotoRow({
               </p>
             </div>
 
-            {!isSelected && (
+            {isSelected ? (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelect();
+                }}
+                className="w-full sm:w-auto h-8.5 px-4 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-[11.5px] font-bold border border-red-200 transition-all cursor-pointer"
+                title="Deselect / हटाएं"
+              >
+                Deselect / हटाएं
+              </button>
+            ) : (
               <button
                 type="button"
                 onClick={(e) => {
@@ -439,16 +451,7 @@ export default function DesignSelectionStep({
   const [sleeveDesignView, setSleeveDesignView] = useState("side");
   const [detailModal, setDetailModal] = useState(null);
 
-  // Ensure sleeveLength always has a sensible default if not selected
-  React.useEffect(() => {
-    if (!design?.sleeveLength) {
-      setDesign((prev) => ({
-        ...prev,
-        sleeveLength: prev.sleeveLength || "three-quarter",
-        sleeveDesign: prev.sleeveDesign || "straight",
-      }));
-    }
-  }, []);
+// Defaults applied cleanly when proceeding or uploading
 
   // Unified image compressor & state setter for custom reference photos
   const handlePhotoProcess = (groupType, file) => {

@@ -602,7 +602,10 @@ export default function App() {
     setStepError("");
   };
   const selectDesign = (type, value) => {
-    setDesign({ ...design, [type]: value });
+    setDesign((prev) => ({
+      ...prev,
+      [type]: prev[type] === value ? "" : value,
+    }));
   };
   const showMeasurements = () => {
     return outfit.type ? measurementConfigs[outfit.type] || measurementConfigs.Other : [];
@@ -746,6 +749,14 @@ export default function App() {
         setStepError("कृपया आगे बढ़ने से पहले परिधान चुनें · Please choose an outfit before continuing.");
         return;
       }
+    } else if (currentSection === 4) {
+      setDesign((prev) => ({
+        ...prev,
+        neckFront: prev.neckFront || (prev.frontPhoto ? "as-photo" : "round"),
+        neckBack: prev.neckBack || (prev.backPhoto ? "as-photo" : "simple"),
+        sleeveLength: prev.sleeveLength || "full",
+        sleeveDesign: prev.sleeveDesign || (prev.sleevePhoto ? "as-photo" : "straight"),
+      }));
     }
     setEditingFromReview(false);
     setCurrentSection(6);
@@ -761,6 +772,16 @@ export default function App() {
     if (currentSection === 3 && !outfit.type) {
       setStepError("कृपया आगे बढ़ने से पहले परिधान चुनें · Please choose an outfit before continuing.");
       return;
+    }
+    if (currentSection === 4) {
+      // Auto-fallback: round neck, simple back, full sleeves, straight sleeve if left unchosen
+      setDesign((prev) => ({
+        ...prev,
+        neckFront: prev.neckFront || (prev.frontPhoto ? "as-photo" : "round"),
+        neckBack: prev.neckBack || (prev.backPhoto ? "as-photo" : "simple"),
+        sleeveLength: prev.sleeveLength || "full",
+        sleeveDesign: prev.sleeveDesign || (prev.sleevePhoto ? "as-photo" : "straight"),
+      }));
     }
     if (currentSection === 6) {
       if (!customer.address?.trim() && !delivery.address?.trim()) {
