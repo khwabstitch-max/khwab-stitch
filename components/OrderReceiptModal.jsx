@@ -162,7 +162,7 @@ export default function OrderReceiptModal({ order, onClose }) {
   const backNeckInfo = resolveBackNeck(order.design?.neckBack, order.design?.backPhoto, order.outfit?.type);
   const sleeveLengthInfo = resolveSleeveLength(
     order.design?.sleeveLength,
-    order.design?.sleeveLengthPhoto || order.design?.sleevePhoto || order.outfit?.uploadedPhoto,
+    order.design?.sleeveLengthPhoto,
     order.outfit?.type
   );
   const sleeveDesignInfo = resolveSleeveDesign(order.design?.sleeveDesign, order.design?.sleevePhoto, order.outfit?.type);

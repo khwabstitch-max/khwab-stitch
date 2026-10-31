@@ -636,9 +636,9 @@ export default function DesignSelectionStep({
           titleEn="Sleeve Length"
           titleHi="बाज़ू लंबाई"
           designValue={design.sleeveLength}
-          photo={design.sleeveLengthPhoto || design.sleevePhoto}
-          photoName={design.sleeveLengthPhotoName || design.sleevePhotoName}
-          photoSize={design.sleeveLengthPhotoSize || design.sleevePhotoSize}
+          photo={design.sleeveLengthPhoto}
+          photoName={design.sleeveLengthPhotoName}
+          photoSize={design.sleeveLengthPhotoSize}
           onSelect={() => selectDesign("sleeveLength", "as-photo")}
           onProcessFile={(file) => handlePhotoProcess("sleeveLength", file)}
           onRemove={() => handleRemovePhoto("sleeveLength")}

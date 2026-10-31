@@ -222,6 +222,9 @@ export default function App() {
     sleevePhoto: "",
     sleevePhotoName: "",
     sleevePhotoSize: "",
+    sleeveLengthPhoto: "",
+    sleeveLengthPhotoName: "",
+    sleeveLengthPhotoSize: "",
   });
   const [measurements, setMeasurements] = useState({
     unit: "inch",
@@ -750,7 +753,7 @@ export default function App() {
         ...prev,
         neckFront: prev.neckFront || (prev.frontPhoto ? "as-photo" : "round"),
         neckBack: prev.neckBack || (prev.backPhoto ? "as-photo" : "simple"),
-        sleeveLength: prev.sleeveLength || (prev.sleeveLengthPhoto || prev.sleevePhoto ? "as-photo" : "full"),
+        sleeveLength: prev.sleeveLength || (prev.sleeveLengthPhoto ? "as-photo" : "full"),
         sleeveDesign: prev.sleeveDesign || (prev.sleevePhoto ? "as-photo" : "straight"),
       }));
     }
@@ -775,7 +778,7 @@ export default function App() {
         ...prev,
         neckFront: prev.neckFront || (prev.frontPhoto ? "as-photo" : "round"),
         neckBack: prev.neckBack || (prev.backPhoto ? "as-photo" : "simple"),
-        sleeveLength: prev.sleeveLength || (prev.sleeveLengthPhoto || prev.sleevePhoto ? "as-photo" : "full"),
+        sleeveLength: prev.sleeveLength || (prev.sleeveLengthPhoto ? "as-photo" : "full"),
         sleeveDesign: prev.sleeveDesign || (prev.sleevePhoto ? "as-photo" : "straight"),
       }));
     }

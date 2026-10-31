@@ -76,7 +76,7 @@ export default function DeliveryAddressStep({
   const resolvedBackNeck = resolveBackNeck(design?.neckBack, design?.backPhoto, outfit?.type);
   const resolvedSleeveLength = resolveSleeveLength(
     design?.sleeveLength,
-    design?.sleeveLengthPhoto || design?.sleevePhoto || outfit?.uploadedPhoto,
+    design?.sleeveLengthPhoto,
     outfit?.type
   );
   const resolvedSleeveDesign = resolveSleeveDesign(design?.sleeveDesign, design?.sleevePhoto, outfit?.type);
