@@ -12,6 +12,7 @@ import {
   FileEdit,
 } from "lucide-react";
 import BlouseMeasurementSketch from "../BlouseMeasurementSketch.jsx";
+import { MEASUREMENT_GUIDES } from "../../config/fashionCatalog.js";
 
 const methodOptions = [
   {
@@ -73,7 +74,11 @@ export default function MeasurementsStep({
   // Selected outfit label & sketch info
   const outfitTitle = outfit.type || "Outfit";
   const isBlouse = outfit.type === "Blouse";
-  const kurtiSketchImg = "./images/measurement_guide_kurti.png";
+  const outfitGuideImg =
+    MEASUREMENT_GUIDES?.[outfit.type] ||
+    measurementConfigs?.[outfit.type]?.guideImage ||
+    "./images/measurement_guides/measurement_guide_kurti.png";
+  const kurtiSketchImg = outfitGuideImg;
 
   const handleMethodChange = (event) => {
     const selected = event.target.value;

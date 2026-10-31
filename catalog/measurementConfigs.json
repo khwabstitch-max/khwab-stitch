@@ -1,0 +1,220 @@
+{
+  "Blouse": {
+    "guideImage": "./images/measurement_guides/measurement_guide_blouse.png",
+    "fields": [
+      {
+        "key": "blouseLength",
+        "num": "1",
+        "en": "Blouse Length",
+        "hi": "ब्लाउज़ लंबाई",
+        "help": "कंधे से नीचे तक (Point 1 on sketch)"
+      },
+      {
+        "key": "bust",
+        "num": "2",
+        "en": "Around Bust",
+        "hi": "छाती / चेस्ट",
+        "help": "छाती की पूरी गोलाई (Point 2 on sketch)"
+      },
+      {
+        "key": "underBust",
+        "num": "3",
+        "en": "Under Bust",
+        "hi": "छाती के नीचे (ब्रा लाइन)",
+        "help": "ब्रा लाइन की गोलाई (Point 3 on sketch)"
+      },
+      {
+        "key": "waist",
+        "num": "4",
+        "en": "Waist",
+        "hi": "कमर",
+        "help": "कमर का निचला भाग (Point 4 on sketch)"
+      },
+      {
+        "key": "armhole",
+        "num": "5",
+        "en": "Armhole",
+        "hi": "कांख / आर्महोल",
+        "help": "कांख की पूरी गोलाई (Point 5 on sketch)"
+      },
+      {
+        "key": "shoulder",
+        "num": "6",
+        "en": "Shoulder Width",
+        "hi": "कंधा चौड़ाई",
+        "help": "कंधे की चौड़ाई (Point 6 on sketch)"
+      },
+      {
+        "key": "sleeveLength",
+        "num": "7",
+        "en": "Sleeve Length",
+        "hi": "बाज़ू लंबाई",
+        "help": "कंधे से आस्तीन तक (Point 7 on sketch)"
+      },
+      {
+        "key": "frontNeck",
+        "num": "8",
+        "en": "Front Neck Depth",
+        "hi": "आगे गले की गहराई",
+        "help": "कंधे से आगे गले तक (Point 8 on sketch)"
+      },
+      {
+        "key": "backNeck",
+        "num": "9",
+        "en": "Back Neck Depth",
+        "hi": "पीछे गले की गहराई",
+        "help": "कंधे से पीछे गले तक (Point 9 on sketch)"
+      }
+    ]
+  },
+  "Kurti": {
+    "guideImage": "./images/measurement_guides/measurement_guide_kurti.png",
+    "fields": [
+      {
+        "key": "kurtiLength",
+        "num": "1",
+        "en": "Kurti Length",
+        "hi": "कुर्ती लंबाई",
+        "help": "कंधे से नीचे पूरी लंबाई (Point 1 on sketch)"
+      },
+      {
+        "key": "bust",
+        "num": "2",
+        "en": "Around Bust",
+        "hi": "छाती / चेस्ट",
+        "help": "छाती की पूरी गोलाई (Point 2 on sketch)"
+      },
+      {
+        "key": "waist",
+        "num": "3",
+        "en": "Around Above Waist",
+        "hi": "कमर की गोलाई",
+        "help": "नाभि के ऊपर कमर की गोलाई (Point 3 on sketch)"
+      },
+      {
+        "key": "hip",
+        "num": "4",
+        "en": "Around Hip",
+        "hi": "हिप की गोलाई",
+        "help": "कूल्हे / हिप की पूरी गोलाई (Point 4 on sketch)"
+      },
+      {
+        "key": "armhole",
+        "num": "5",
+        "en": "Around Armhole",
+        "hi": "आर्महोल / कांख",
+        "help": "कांख की पूरी गोलाई (Point 5 on sketch)"
+      },
+      {
+        "key": "shoulder",
+        "num": "6",
+        "en": "Shoulder Width",
+        "hi": "कंधा चौड़ाई",
+        "help": "एक कंधे से दूसरे कंधे तक (Point 6 on sketch)"
+      },
+      {
+        "key": "sleeveLength",
+        "num": "7",
+        "en": "Sleeve Length",
+        "hi": "बाज़ू लंबाई",
+        "help": "कंधे से आस्तीन तक (Point 7 on sketch)"
+      },
+      {
+        "key": "bottomOpening",
+        "num": "8",
+        "en": "Around Arm / Bottom Opening",
+        "hi": "बाज़ू की मोरी / घेर",
+        "help": "बाज़ू का निचला भाग (Point 8 on sketch)"
+      },
+      {
+        "key": "frontNeck",
+        "num": "9",
+        "en": "Front Neck Deep",
+        "hi": "आगे गले की गहराई",
+        "help": "कंधे से आगे गले की गहराई (Point 9 on sketch)"
+      },
+      {
+        "key": "backNeck",
+        "num": "10",
+        "en": "Back Neck Deep",
+        "hi": "पीछे गले की गहराई",
+        "help": "कंधे से पीछे गले की गहराई (Point 10 on sketch)"
+      }
+    ]
+  },
+  "Suit Upper": {
+    "guideImage": "./images/measurement_guides/measurement_guide_kurti.png",
+    "fields": [
+      {
+        "key": "kameezLength",
+        "num": "1",
+        "en": "Kameez Length",
+        "hi": "कमीज़ लंबाई",
+        "help": "कंधे से नीचे तक (Point 1 on sketch)"
+      },
+      {
+        "key": "bust",
+        "num": "2",
+        "en": "Around Bust",
+        "hi": "छाती / चेस्ट",
+        "help": "छाती की पूरी गोलाई (Point 2 on sketch)"
+      },
+      {
+        "key": "waist",
+        "num": "3",
+        "en": "Around Waist",
+        "hi": "कमर",
+        "help": "कमर की गोलाई (Point 3 on sketch)"
+      },
+      {
+        "key": "hip",
+        "num": "4",
+        "en": "Around Hip",
+        "hi": "हिप की गोलाई",
+        "help": "कूल्हे / हिप की पूरी गोलाई (Point 4 on sketch)"
+      },
+      {
+        "key": "shoulder",
+        "num": "5",
+        "en": "Shoulder Width",
+        "hi": "कंधा चौड़ाई",
+        "help": "एक कंधे से दूसरे कंधे तक (Point 5 on sketch)"
+      },
+      {
+        "key": "armhole",
+        "num": "6",
+        "en": "Armhole",
+        "hi": "आर्महोल / कांख",
+        "help": "कांख की पूरी गोलाई (Point 6 on sketch)"
+      },
+      {
+        "key": "sleeveLength",
+        "num": "7",
+        "en": "Sleeve Length",
+        "hi": "बाज़ू लंबाई",
+        "help": "कंधे से आस्तीन तक (Point 7 on sketch)"
+      },
+      {
+        "key": "sleeveBottom",
+        "num": "8",
+        "en": "Sleeve Bottom (Mori)",
+        "hi": "बाज़ू मोरी",
+        "help": "बाज़ू का निचला भाग (Point 8 on sketch)"
+      },
+      {
+        "key": "frontNeck",
+        "num": "9",
+        "en": "Front Neck Deep",
+        "hi": "आगे गले की गहराई",
+        "help": "कंधे से आगे गले तक (Point 9 on sketch)"
+      },
+      {
+        "key": "backNeck",
+        "num": "10",
+        "en": "Back Neck Deep",
+        "hi": "पीछे गले की गहराई",
+        "help": "कंधे से पीछे गले तक (Point 10 on sketch)"
+      }
+    ]
+  }
+}

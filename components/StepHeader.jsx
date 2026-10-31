@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { Globe, ShieldCheck } from "lucide-react";
+import { BRAND_CONFIG } from "../config/fashionCatalog.js";
 
 const steps = [
   { en: "Welcome", hi: "स्वागत" },
@@ -47,9 +48,12 @@ export default function StepHeader({
         >
           <div className="relative flex-shrink-0">
             <img
-              src="./images/khwabstitch_logo.jpg"
+              src={BRAND_CONFIG?.logo || "./images/brand/logo.jpg"}
               alt="Khwab Stitch Logo"
               className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-[#dfc5b5] shadow-xs transition-transform duration-200 group-hover:scale-105"
+              onError={(e) => {
+                e.currentTarget.src = "./images/khwabstitch_logo.jpg";
+              }}
             />
             <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[var(--primary)] text-[8px] text-white shadow-2xs">
               ✦

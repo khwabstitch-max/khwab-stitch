@@ -1,0 +1,101 @@
+[
+  {
+    "id": "straight",
+    "number": 1,
+    "en": "Straight Plain",
+    "hi": "सीधी बाज़ू",
+    "hiScript": "सीधी बाज़ू",
+    "front": "./images/sleeve_designs/01_straight_front.jpg",
+    "side": "./images/sleeve_designs/01_straight_side.jpg"
+  },
+  {
+    "id": "puff",
+    "number": 2,
+    "en": "Puff Sleeve",
+    "hi": "फूली बाज़ू",
+    "hiScript": "फूली बाज़ू",
+    "front": "./images/sleeve_designs/02_puff_front.jpg",
+    "side": "./images/sleeve_designs/02_puff_side.jpg"
+  },
+  {
+    "id": "bell",
+    "number": 3,
+    "en": "Bell Sleeve",
+    "hi": "घंटी बाज़ू",
+    "hiScript": "घंटी बाज़ू",
+    "front": "./images/sleeve_designs/03_bell_front.jpg",
+    "side": "./images/sleeve_designs/03_bell_side.jpg"
+  },
+  {
+    "id": "ruffle",
+    "number": 4,
+    "en": "Ruffle",
+    "hi": "झालर बाज़ू",
+    "hiScript": "झालर बाज़ू",
+    "front": "./images/sleeve_designs/04_ruffle_front.jpg",
+    "side": "./images/sleeve_designs/04_ruffle_side.jpg"
+  },
+  {
+    "id": "cap",
+    "number": 5,
+    "en": "Cap Sleeve",
+    "hi": "छोटी टोपी",
+    "hiScript": "छोटी टोपी",
+    "front": "./images/sleeve_designs/05_cap_front.jpg",
+    "side": "./images/sleeve_designs/05_cap_side.jpg"
+  },
+  {
+    "id": "bishop",
+    "number": 6,
+    "en": "Bishop Balloon",
+    "hi": "गुब्बारे जैसी",
+    "hiScript": "गुब्बारे जैसी",
+    "front": "./images/sleeve_designs/06_bishop_front.jpg",
+    "side": "./images/sleeve_designs/06_bishop_side.jpg"
+  },
+  {
+    "id": "butterfly",
+    "number": 7,
+    "en": "Butterfly",
+    "hi": "तितली बाज़ू",
+    "hiScript": "तितली बाज़ू",
+    "front": "./images/sleeve_designs/07_butterfly_front.jpg",
+    "side": "./images/sleeve_designs/07_butterfly_side.jpg"
+  },
+  {
+    "id": "cold",
+    "number": 8,
+    "en": "Cold Shoulder",
+    "hi": "कंधा खुला",
+    "hiScript": "कंधा खुला",
+    "front": "./images/sleeve_designs/08_cold_front.jpg",
+    "side": "./images/sleeve_designs/08_cold_side.jpg"
+  },
+  {
+    "id": "flutter",
+    "number": 9,
+    "en": "Flutter",
+    "hi": "लहर बाज़ू",
+    "hiScript": "लहर बाज़ू",
+    "front": "./images/sleeve_designs/09_flutter_front.jpg",
+    "side": "./images/sleeve_designs/09_flutter_side.jpg"
+  },
+  {
+    "id": "bell-cuff",
+    "number": 10,
+    "en": "Bell-Cuff",
+    "hi": "कफ़ वाली",
+    "hiScript": "कफ़ वाली",
+    "front": "./images/sleeve_designs/10_bell_cuff_front.jpg",
+    "side": "./images/sleeve_designs/10_bell_cuff_side.jpg"
+  },
+  {
+    "id": "pleated",
+    "number": 11,
+    "en": "Pleated",
+    "hi": "चुन्नट वाली",
+    "hiScript": "चुन्नट वाली",
+    "front": "./images/sleeve_designs/11_pleated_front.jpg",
+    "side": "./images/sleeve_designs/11_pleated_side.jpg"
+  }
+]

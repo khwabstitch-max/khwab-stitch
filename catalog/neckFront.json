@@ -1,0 +1,66 @@
+[
+  {
+    "id": "round",
+    "number": 1,
+    "en": "Round Neck",
+    "hi": "गोल गला",
+    "hiScript": "गोल गला",
+    "photo": "./images/neck_front/01_round.jpg"
+  },
+  {
+    "id": "vneck",
+    "number": 2,
+    "en": "V-Neck",
+    "hi": "वी गला",
+    "hiScript": "वी गला",
+    "photo": "./images/neck_front/02_vneck.jpg"
+  },
+  {
+    "id": "boat",
+    "number": 3,
+    "en": "Boat Neck",
+    "hi": "नाव गला",
+    "hiScript": "नाव गला",
+    "photo": "./images/neck_front/03_boat.jpg"
+  },
+  {
+    "id": "collar",
+    "number": 4,
+    "en": "Collar Neck",
+    "hi": "कॉलर वाला",
+    "hiScript": "कॉलर वाला",
+    "photo": "./images/neck_front/04_collar.jpg"
+  },
+  {
+    "id": "square",
+    "number": 5,
+    "en": "Square Neck",
+    "hi": "चौकोर गला",
+    "hiScript": "चौकोर गला",
+    "photo": "./images/neck_front/05_square.jpg"
+  },
+  {
+    "id": "sweetheart",
+    "number": 6,
+    "en": "Sweetheart",
+    "hi": "दिल वाला गला",
+    "hiScript": "दिल वाला गला",
+    "photo": "./images/neck_front/06_sweetheart.jpg"
+  },
+  {
+    "id": "high",
+    "number": 7,
+    "en": "High Neck",
+    "hi": "बंद गला",
+    "hiScript": "बंद गला",
+    "photo": "./images/neck_front/07_high.jpg"
+  },
+  {
+    "id": "mandarin",
+    "number": 8,
+    "en": "Mandarin Collar",
+    "hi": "चाइनीज़ गला",
+    "hiScript": "चाइनीज़ गला",
+    "photo": "./images/neck_front/08_mandarin.jpg"
+  }
+]

@@ -1,0 +1,57 @@
+[
+  {
+    "id": "sleeveless",
+    "number": 1,
+    "en": "Sleeveless",
+    "hi": "बिना बाज़ू",
+    "hiScript": "बिना बाज़ू",
+    "cm": "0 cm (0\")",
+    "desc": "Length: 0 cm · Shoulder: 38 cm",
+    "front": "./images/sleeve_lengths/01_sleeveless_front.jpg",
+    "side": "./images/sleeve_lengths/01_sleeveless_side.jpg"
+  },
+  {
+    "id": "quarter",
+    "number": 2,
+    "en": "1/4 Sleeve",
+    "hi": "चौथाई बाज़ू",
+    "hiScript": "चौथाई बाज़ू",
+    "cm": "10 cm (4\")",
+    "desc": "Length: 10 cm · Opening: 28 cm",
+    "front": "./images/sleeve_lengths/02_quarter_front.jpg",
+    "side": "./images/sleeve_lengths/02_quarter_side.jpg"
+  },
+  {
+    "id": "half",
+    "number": 3,
+    "en": "1/2 Sleeve",
+    "hi": "आधी बाज़ू",
+    "hiScript": "आधी बाज़ू",
+    "cm": "20 cm (7.9\")",
+    "desc": "Length: 20 cm · Opening: 30 cm",
+    "front": "./images/sleeve_lengths/03_half_front.jpg",
+    "side": "./images/sleeve_lengths/03_half_side.jpg"
+  },
+  {
+    "id": "three-quarter",
+    "number": 4,
+    "en": "3/4 Sleeve",
+    "hi": "पौनी बाज़ू",
+    "hiScript": "पौनी बाज़ू",
+    "cm": "38 cm (15\")",
+    "desc": "Length: 38 cm · Opening: 24 cm",
+    "front": "./images/sleeve_lengths/04_three_quarter_front.jpg",
+    "side": "./images/sleeve_lengths/04_three_quarter_side.jpg"
+  },
+  {
+    "id": "full",
+    "number": 5,
+    "en": "Full Sleeve",
+    "hi": "पूरी बाज़ू",
+    "hiScript": "पूरी बाज़ू",
+    "cm": "55 cm (21.7\")",
+    "desc": "Length: 55 cm · Opening: 22 cm",
+    "front": "./images/sleeve_lengths/05_full_front.jpg",
+    "side": "./images/sleeve_lengths/05_full_side.jpg"
+  }
+]

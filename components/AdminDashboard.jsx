@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { BRAND_CONFIG } from "../config/fashionCatalog.js";
 import {
   Download,
   RefreshCw,
@@ -300,9 +301,12 @@ export default function AdminDashboard({
           <div className="flex items-center gap-3.5">
             <div className="relative flex-shrink-0">
               <img
-                src="./images/khwabstitch_logo.jpg"
+                src={BRAND_CONFIG?.logo || "./images/brand/logo.jpg"}
                 alt="Khwab Stitch Logo"
                 className="h-14 w-14 rounded-full object-cover border-2 border-[#f5d7b5] shadow-md"
+                onError={(e) => {
+                  e.currentTarget.src = "./images/khwabstitch_logo.jpg";
+                }}
               />
             </div>
             <div>

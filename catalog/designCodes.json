@@ -1,0 +1,74 @@
+[
+  {
+    "code": "B-01",
+    "number": 1,
+    "outfit": "Blouse",
+    "prefix": "B",
+    "name": "Royal Velvet Embroidered Blouse",
+    "hi": "रॉयल वेलवेट एम्ब्रॉयडर्ड ब्लाउज़",
+    "image": "./images/design_codes/B-01.jpg",
+    "details": "Sweetheart neckline, golden zardozi embroidery, elbow sleeves, dori back",
+    "tag": "Bridal & Festive / लोकप्रिय",
+    "popular": true
+  },
+  {
+    "code": "B-02",
+    "number": 2,
+    "outfit": "Blouse",
+    "prefix": "B",
+    "name": "Classic Saree Designer Choli",
+    "hi": "क्लासिक साड़ी डिज़ाइनर चोली",
+    "image": "./images/design_codes/B-02.jpg",
+    "details": "Deep round back with tassels, fitted bust cup padding, clean finish",
+    "tag": "Partywear / पार्टीवियर",
+    "popular": false
+  },
+  {
+    "code": "K-01",
+    "number": 1,
+    "outfit": "Kurti",
+    "prefix": "K",
+    "name": "Classic Cotton Printed Kurti",
+    "hi": "क्लासिक कॉटन प्रिंटेड कुर्ती",
+    "image": "./images/design_codes/K-01.jpg",
+    "details": "Mandarin collar, button placket, 3/4 sleeves, straight side-slit cut",
+    "tag": "Studio Signature / सर्वाधिक लोकप्रिय",
+    "popular": true
+  },
+  {
+    "code": "K-02",
+    "number": 2,
+    "outfit": "Kurti",
+    "prefix": "K",
+    "name": "Festive Embroidered Straight Kurti",
+    "hi": "फ़ेस्टिव एम्ब्रॉयडर्ड स्ट्रेट कुर्ती",
+    "image": "./images/design_codes/K-02.jpg",
+    "details": "Round neck with V-slit, quarter sleeves, elegant side-slit hem",
+    "tag": "Designer Choice / डिज़ाइनर पसंद",
+    "popular": false
+  },
+  {
+    "code": "SU-01",
+    "number": 1,
+    "outfit": "Suit Upper",
+    "prefix": "SU",
+    "name": "Traditional Punjabi Straight Kameez",
+    "hi": "पारंपरिक पंजाबी स्ट्रेट कमीज़",
+    "image": "./images/design_codes/SU-01.jpg",
+    "details": "Boat neck with lace border, full sleeves, side chak open slits",
+    "tag": "Popular / लोकप्रिय",
+    "popular": true
+  },
+  {
+    "code": "SU-02",
+    "number": 2,
+    "outfit": "Suit Upper",
+    "prefix": "SU",
+    "name": "Embroidered Festive A-Line Kameez",
+    "hi": "कशीदाकारी फ़ेस्टिव ए-लाइन कमीज़",
+    "image": "./images/design_codes/SU-02.jpg",
+    "details": "Mandarin collar with neck slit, quarter sleeves with border, flared hem",
+    "tag": "Festive / उत्सव",
+    "popular": false
+  }
+]

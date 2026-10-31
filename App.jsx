@@ -13,6 +13,7 @@ import AdminDashboard from "./components/AdminDashboard.jsx";
 import AdminLoginPage from "./components/AdminLoginPage.jsx";
 
 import {
+  BRAND_CONFIG,
   DEFAULT_SLEEVE_LENGTH_BY_OUTFIT,
   resolveSleeveLength,
   OUTFITS as outfitTypes,
@@ -594,11 +595,6 @@ export default function App() {
         type: t,
       };
     });
-    setDesign((prev) => ({
-      ...prev,
-      sleeveLength: prev.sleeveLength || DEFAULT_SLEEVE_LENGTH_BY_OUTFIT[t] || "three-quarter",
-      sleeveDesign: prev.sleeveDesign || "straight",
-    }));
     setStepError("");
   };
   const selectDesign = (type, value) => {
@@ -1077,9 +1073,12 @@ export default function App() {
               >
                 <div className="relative mx-auto h-20 w-20">
                   <img
-                    src="./images/khwabstitch_logo.jpg"
+                    src={BRAND_CONFIG?.logo || "./images/brand/logo.jpg"}
                     alt="Khwab Stitch Logo"
                     className="h-20 w-20 rounded-full object-cover border-2 border-[#dfc5b5] shadow-md"
+                    onError={(e) => {
+                      e.currentTarget.src = "./images/khwabstitch_logo.jpg";
+                    }}
                   />
                   <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--success)] text-white shadow-sm">
                     <Check size={16} />

@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 
 import {
+  BRAND_CONFIG,
   DESIGN_CODE_MAP as DESIGN_CODE_CATALOG,
   OUTFIT_MAP as OUTFIT_CATALOG,
   FRONT_NECK_MAP as FRONT_NECK_CATALOG,
@@ -242,10 +243,13 @@ export default function OrderReceiptModal({ order, onClose }) {
             <div className="receipt-section-block flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b-2 border-[#ebdcd0] bg-white/95 p-4 sm:p-5 rounded-2xl border border-[#ebdcd0] shadow-2xs">
               <div className="flex items-center gap-3.5">
                 <img
-                  src="./images/khwabstitch_logo.jpg"
+                  src={BRAND_CONFIG?.logo || "./images/brand/logo.jpg"}
                   alt="Khwab Stitch Logo"
                   className="h-16 w-16 rounded-full object-cover border-2 border-[var(--primary)] shadow-sm flex-shrink-0"
                   loading="eager"
+                  onError={(e) => {
+                    e.currentTarget.src = "./images/khwabstitch_logo.jpg";
+                  }}
                 />
                 <div>
                   <h1 className="font-serif text-[25px] sm:text-[28px] font-bold text-[var(--primary-dark)] m-0 leading-tight">

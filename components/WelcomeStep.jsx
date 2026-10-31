@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowRight, Sparkles, Scissors, Camera } from "lucide-react";
+import { BRAND_CONFIG } from "../config/fashionCatalog.js";
 
 export default function WelcomeStep({ onStart }) {
   return (
@@ -10,9 +11,12 @@ export default function WelcomeStep({ onStart }) {
           <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-[#c4994d] via-[#d69680] to-[#6b2636] opacity-60 blur-md transition-all duration-300" />
           <div className="relative h-22 w-22 sm:h-28 sm:w-28 overflow-hidden rounded-full border-4 border-[#fff7f0] bg-[#fffaf5] shadow-xl">
             <img
-              src="./images/khwabstitch_logo.jpg"
+              src={BRAND_CONFIG?.logo || "./images/brand/logo.jpg"}
               alt="Khwab Stitch Logo"
               className="h-full w-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = "./images/khwabstitch_logo.jpg";
+              }}
             />
           </div>
         </div>

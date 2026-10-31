@@ -1,0 +1,58 @@
+[
+  {
+    "id": "simple",
+    "number": 1,
+    "en": "Simple Back",
+    "hi": "सीधा बैक",
+    "hiScript": "सीधा बैक",
+    "photo": "./images/neck_back/01_simple.jpg"
+  },
+  {
+    "id": "round-back",
+    "number": 2,
+    "en": "Round Back",
+    "hi": "गोल बैक",
+    "hiScript": "गोल बैक",
+    "photo": "./images/neck_back/02_round_back.jpg"
+  },
+  {
+    "id": "v-back",
+    "number": 3,
+    "en": "V-Back",
+    "hi": "वी बैक",
+    "hiScript": "वी बैक",
+    "photo": "./images/neck_back/03_v_back.jpg"
+  },
+  {
+    "id": "square-back",
+    "number": 4,
+    "en": "Square Back",
+    "hi": "चौकोर बैक",
+    "hiScript": "चौकोर बैक",
+    "photo": "./images/neck_back/04_square_back.jpg"
+  },
+  {
+    "id": "deep",
+    "number": 5,
+    "en": "Deep Back",
+    "hi": "गहरा बैक",
+    "hiScript": "गहरा बैक",
+    "photo": "./images/neck_back/05_deep.jpg"
+  },
+  {
+    "id": "button",
+    "number": 6,
+    "en": "Button Back",
+    "hi": "बटन वाला",
+    "hiScript": "बटन वाला",
+    "photo": "./images/neck_back/06_button.jpg"
+  },
+  {
+    "id": "cutout",
+    "number": 7,
+    "en": "Cut-out Back",
+    "hi": "जाली वाला",
+    "hiScript": "जाली वाला",
+    "photo": "./images/neck_back/07_cutout.jpg"
+  }
+]
