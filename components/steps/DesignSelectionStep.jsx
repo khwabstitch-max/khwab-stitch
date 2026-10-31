@@ -7,6 +7,7 @@ import {
   BACK_NECK_PHOTOS,
   SLEEVE_LENGTH_PHOTOS,
   SLEEVE_DESIGN_PHOTOS,
+  DEFAULT_SLEEVE_LENGTH_BY_OUTFIT,
 } from "../../config/fashionCatalog.js";
 
 function ChoiceGroup({
@@ -437,6 +438,17 @@ export default function DesignSelectionStep({
   const [sleeveLengthView, setSleeveLengthView] = useState("front");
   const [sleeveDesignView, setSleeveDesignView] = useState("side");
   const [detailModal, setDetailModal] = useState(null);
+
+  // Ensure sleeveLength always has a sensible default if not selected
+  React.useEffect(() => {
+    if (!design?.sleeveLength) {
+      setDesign((prev) => ({
+        ...prev,
+        sleeveLength: prev.sleeveLength || "three-quarter",
+        sleeveDesign: prev.sleeveDesign || "straight",
+      }));
+    }
+  }, []);
 
   // Unified image compressor & state setter for custom reference photos
   const handlePhotoProcess = (groupType, file) => {

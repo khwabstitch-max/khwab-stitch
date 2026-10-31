@@ -13,6 +13,8 @@ import AdminDashboard from "./components/AdminDashboard.jsx";
 import AdminLoginPage from "./components/AdminLoginPage.jsx";
 
 import {
+  DEFAULT_SLEEVE_LENGTH_BY_OUTFIT,
+  resolveSleeveLength,
   OUTFITS as outfitTypes,
   FRONT_NECKLINES as neckFront,
   BACK_NECKLINES as neckBack,
@@ -565,6 +567,11 @@ export default function App() {
         type: t,
       };
     });
+    setDesign((prev) => ({
+      ...prev,
+      sleeveLength: prev.sleeveLength || DEFAULT_SLEEVE_LENGTH_BY_OUTFIT[t] || "three-quarter",
+      sleeveDesign: prev.sleeveDesign || "straight",
+    }));
     setStepError("");
   };
   const selectDesign = (type, value) => {

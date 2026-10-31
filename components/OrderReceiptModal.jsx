@@ -23,6 +23,10 @@ import {
   BACK_NECK_MAP as BACK_NECK_CATALOG,
   SLEEVE_LENGTH_MAP as SLEEVE_LENGTH_CATALOG,
   SLEEVE_DESIGN_MAP as SLEEVE_DESIGN_CATALOG,
+  resolveSleeveLength,
+  resolveSleeveDesign,
+  resolveFrontNeck,
+  resolveBackNeck,
 } from "../config/fashionCatalog.js";
 
 const MEASURE_LABELS = {
@@ -157,10 +161,10 @@ export default function OrderReceiptModal({ order, onClose }) {
   const outfitInfo = lookupItem(OUTFIT_CATALOG, order.outfit?.type, order.outfit?.type, "परिधान", "./images/outfits/02_kurti.jpg");
   const designCodeInfo = order.outfit?.designCode ? DESIGN_CODE_CATALOG[order.outfit.designCode] : null;
 
-  const frontNeckInfo = lookupItem(FRONT_NECK_CATALOG, order.design?.neckFront, order.design?.neckFront, "गला", "./images/neck_front/01_round.jpg");
-  const backNeckInfo = lookupItem(BACK_NECK_CATALOG, order.design?.neckBack, order.design?.neckBack, "बैक", "./images/neck_back/01_simple.jpg");
-  const sleeveLengthInfo = lookupItem(SLEEVE_LENGTH_CATALOG, order.design?.sleeveLength, order.design?.sleeveLength, "बाज़ू", "./images/sleeve_lengths/05_full_front.jpg");
-  const sleeveDesignInfo = lookupItem(SLEEVE_DESIGN_CATALOG, order.design?.sleeveDesign, order.design?.sleeveDesign, "बाज़ू स्टाइल", "./images/sleeve_designs/01_straight_front.jpg");
+  const frontNeckInfo = resolveFrontNeck(order.design?.neckFront, order.design?.frontPhoto, order.outfit?.type);
+  const backNeckInfo = resolveBackNeck(order.design?.neckBack, order.design?.backPhoto, order.outfit?.type);
+  const sleeveLengthInfo = resolveSleeveLength(order.design?.sleeveLength, order.outfit?.type);
+  const sleeveDesignInfo = resolveSleeveDesign(order.design?.sleeveDesign, order.design?.sleevePhoto, order.outfit?.type);
 
   return (
     <div className="order-receipt-overlay fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm p-3 md:p-6 overflow-y-auto flex items-start justify-center">
@@ -504,32 +508,24 @@ export default function OrderReceiptModal({ order, onClose }) {
                       Sleeve Length / बाज़ू लंबाई
                     </p>
                     <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
-                      {sleeveLengthInfo?.photo ? (
-                        <img
-                          src={sleeveLengthInfo.photo}
-                          alt={sleeveLengthInfo.en || "Sleeve Length"}
-                          className="h-full w-full object-contain"
-                          loading="eager"
-                        />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center text-[10px] text-stone-400">
-                          No photo
-                        </div>
-                      )}
+                      <img
+                        src={sleeveLengthInfo.photo}
+                        alt={sleeveLengthInfo.en}
+                        className="h-full w-full object-contain"
+                        loading="eager"
+                      />
                     </div>
                   </div>
                   <div>
                     <p className="text-[12px] font-bold text-stone-900 leading-tight">
-                      {sleeveLengthInfo?.en || order.design?.sleeveLength || "Standard"}
+                      {sleeveLengthInfo.en}
                     </p>
                     <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
-                      {sleeveLengthInfo?.hi || "सामान्य बाज़ू"}
+                      {sleeveLengthInfo.hi}
                     </p>
-                    {sleeveLengthInfo?.length && (
-                      <p className="text-[10px] text-stone-500 mt-0.5 font-mono">
-                        {sleeveLengthInfo.length}
-                      </p>
-                    )}
+                    <p className="text-[10px] text-stone-500 mt-0.5 font-mono">
+                      {sleeveLengthInfo.cm || sleeveLengthInfo.length}
+                    </p>
                   </div>
                 </div>
 

@@ -27,6 +27,10 @@ import {
   SLEEVE_LENGTH_PHOTOS,
   SLEEVE_DESIGN_PHOTOS,
   OUTFIT_PHOTOS,
+  resolveSleeveLength,
+  resolveSleeveDesign,
+  resolveFrontNeck,
+  resolveBackNeck,
 } from "../../config/fashionCatalog.js";
 
 export default function DeliveryAddressStep({
@@ -66,26 +70,16 @@ export default function DeliveryAddressStep({
   };
 
 
-  // Lookups for labels
-  const selectedFrontNeck = neckFront.find((n) => n.id === design?.neckFront);
-  const selectedBackNeck = neckBack.find((n) => n.id === design?.neckBack);
-  const selectedSleeveLength = sleeveLengthData.find((s) => s.id === design?.sleeveLength);
-  const selectedSleeveDesign = sleeveDesign.find((s) => s.id === design?.sleeveDesign);
+  // Resilient resolvers ensuring photo, name, and length are ALWAYS 100% synced & never blank
+  const resolvedFrontNeck = resolveFrontNeck(design?.neckFront, design?.frontPhoto, outfit?.type);
+  const resolvedBackNeck = resolveBackNeck(design?.neckBack, design?.backPhoto, outfit?.type);
+  const resolvedSleeveLength = resolveSleeveLength(design?.sleeveLength, outfit?.type);
+  const resolvedSleeveDesign = resolveSleeveDesign(design?.sleeveDesign, design?.sleevePhoto, outfit?.type);
 
-  // Photo lookups
-  const frontNeckPhoto =
-    design?.neckFront === "as-photo" && design?.frontPhoto
-      ? design.frontPhoto
-      : FRONT_NECK_PHOTOS[design?.neckFront];
-  const backNeckPhoto =
-    design?.neckBack === "as-photo" && design?.backPhoto
-      ? design.backPhoto
-      : BACK_NECK_PHOTOS[design?.neckBack];
-  const sleeveLengthPhoto = SLEEVE_LENGTH_PHOTOS[design?.sleeveLength]?.front || SLEEVE_LENGTH_PHOTOS[design?.sleeveLength];
-  const sleeveDesignPhoto =
-    design?.sleeveDesign === "as-photo" && design?.sleevePhoto
-      ? design.sleevePhoto
-      : SLEEVE_DESIGN_PHOTOS[design?.sleeveDesign];
+  const frontNeckPhoto = resolvedFrontNeck.photo;
+  const backNeckPhoto = resolvedBackNeck.photo;
+  const sleeveLengthPhoto = resolvedSleeveLength.photo;
+  const sleeveDesignPhoto = resolvedSleeveDesign.photo;
   const outfitPhoto = outfit?.uploadedPhoto || OUTFIT_PHOTOS[outfit?.type] || "./images/outfits/02_kurti.jpg";
 
   // Active measurement fields
@@ -336,33 +330,23 @@ export default function DeliveryAddressStep({
           <div className="rounded-xl border border-[#ebdcd0] bg-white p-2.5 flex flex-col justify-between shadow-2xs">
             <div>
               <p className="text-[10.5px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
-                Sleeve Length / लंबाई
+                Sleeve Length / बाज़ू लंबाई
               </p>
               <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-[#faf7f2] border border-stone-200 mb-2">
-                {sleeveLengthPhoto ? (
-                  <img
-                    src={sleeveLengthPhoto}
-                    alt={selectedSleeveLength?.en || "Sleeve Length"}
-                    className="h-full w-full object-contain"
-                  />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center text-[11px] text-stone-400">
-                    No photo
-                  </div>
-                )}
+                <img
+                  src={sleeveLengthPhoto}
+                  alt={resolvedSleeveLength.en}
+                  className="h-full w-full object-contain"
+                />
               </div>
             </div>
             <div>
               <p className="text-[12.5px] font-bold text-stone-900 leading-tight">
-                {selectedSleeveLength
-                  ? `${selectedSleeveLength.en} / ${selectedSleeveLength.hiScript || selectedSleeveLength.hi}`
-                  : design?.sleeveLength || "Standard / सामान्य"}
+                {resolvedSleeveLength.en} / {resolvedSleeveLength.hiScript || resolvedSleeveLength.hi}
               </p>
-              {selectedSleeveLength?.cm && (
-                <p className="text-[11px] text-[var(--secondary)] mt-0.5 font-semibold">
-                  {selectedSleeveLength.cm}
-                </p>
-              )}
+              <p className="text-[11px] text-[var(--secondary)] mt-0.5 font-semibold">
+                Length: {resolvedSleeveLength.cm || resolvedSleeveLength.length}
+              </p>
             </div>
           </div>
 

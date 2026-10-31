@@ -445,3 +445,160 @@ export const getFrontNeckById = (id) => FRONT_NECK_MAP[id] || null;
 export const getBackNeckById = (id) => BACK_NECK_MAP[id] || null;
 export const getSleeveLengthById = (id) => SLEEVE_LENGTH_MAP[id] || null;
 export const getSleeveDesignById = (id) => SLEEVE_DESIGN_MAP[id] || null;
+
+export const DEFAULT_SLEEVE_LENGTH_BY_OUTFIT = {
+  Blouse: "half",
+  Kurti: "three-quarter",
+  "Suit Upper": "full",
+};
+
+export const resolveSleeveLength = (key, outfitType = "Kurti") => {
+  const defaultId = DEFAULT_SLEEVE_LENGTH_BY_OUTFIT[outfitType] || "three-quarter";
+  const defaultItem = SLEEVE_LENGTHS.find((s) => s.id === defaultId) || SLEEVE_LENGTHS[3];
+
+  if (!key || String(key).trim() === "" || String(key).trim().toLowerCase() === "standard") {
+    return { ...defaultItem, photo: defaultItem.front, length: defaultItem.cm };
+  }
+
+  const raw = String(key).trim();
+  const k = raw.toLowerCase().replace(/[_s]+/g, "-");
+
+  const byId = SLEEVE_LENGTHS.find((s) => s.id === k);
+  if (byId) return { ...byId, photo: byId.front, length: byId.cm };
+
+  const byName = SLEEVE_LENGTHS.find(
+    (s) => s.en.toLowerCase() === raw.toLowerCase() || s.hi === raw || s.hiScript === raw
+  );
+  if (byName) return { ...byName, photo: byName.front, length: byName.cm };
+
+  if (k.includes("three") || k.includes("3/4") || k.includes("pauni") || k.includes("पौनी")) {
+    const item = SLEEVE_LENGTHS.find((s) => s.id === "three-quarter");
+    return { ...item, photo: item.front, length: item.cm };
+  }
+  if (k.includes("full") || k.includes("puri") || k.includes("पूरी")) {
+    const item = SLEEVE_LENGTHS.find((s) => s.id === "full");
+    return { ...item, photo: item.front, length: item.cm };
+  }
+  if (k.includes("half") || k.includes("1/2") || k.includes("aadhi") || k.includes("आधी") || k.includes("elbow")) {
+    const item = SLEEVE_LENGTHS.find((s) => s.id === "half");
+    return { ...item, photo: item.front, length: item.cm };
+  }
+  if (k.includes("quarter") || k.includes("1/4") || k.includes("chauthai") || k.includes("चौथाई") || k.includes("short")) {
+    const item = SLEEVE_LENGTHS.find((s) => s.id === "quarter");
+    return { ...item, photo: item.front, length: item.cm };
+  }
+  if (k.includes("sleeveless") || k.includes("bina") || k.includes("बिना") || k.includes("zero") || k.includes("cut")) {
+    const item = SLEEVE_LENGTHS.find((s) => s.id === "sleeveless");
+    return { ...item, photo: item.front, length: item.cm };
+  }
+
+  return { ...defaultItem, photo: defaultItem.front, length: defaultItem.cm };
+};
+
+export const resolveSleeveDesign = (key, customPhoto = null, outfitType = "Kurti") => {
+  if (key === "as-photo" || key === "custom") {
+    return {
+      id: "as-photo",
+      en: "As per Photo",
+      hi: "फ़ोटो जैसा",
+      hiScript: "फ़ोटो जैसा",
+      photo: customPhoto || "./images/sleeve_designs/01_straight_front.jpg",
+    };
+  }
+
+  const defaultItem = SLEEVE_DESIGNS[0];
+  if (!key || String(key).trim() === "" || String(key).trim().toLowerCase() === "standard") {
+    return { ...defaultItem, photo: defaultItem.front };
+  }
+
+  const raw = String(key).trim();
+  const k = raw.toLowerCase().replace(/[_s]+/g, "-");
+
+  const byId = SLEEVE_DESIGNS.find((s) => s.id === k);
+  if (byId) return { ...byId, photo: byId.front };
+
+  const byName = SLEEVE_DESIGNS.find(
+    (s) => s.en.toLowerCase() === raw.toLowerCase() || s.hi === raw || s.hiScript === raw
+  );
+  if (byName) return { ...byName, photo: byName.front };
+
+  for (const s of SLEEVE_DESIGNS) {
+    if (k.includes(s.id) || s.id.includes(k)) {
+      return { ...s, photo: s.front };
+    }
+  }
+
+  return { ...defaultItem, photo: defaultItem.front };
+};
+
+export const resolveFrontNeck = (key, customPhoto = null, outfitType = "Kurti") => {
+  if (key === "as-photo" || key === "custom") {
+    return {
+      id: "as-photo",
+      en: "As per Photo",
+      hi: "फ़ोटो जैसा",
+      hiScript: "फ़ोटो जैसा",
+      photo: customPhoto || "./images/neck_front/01_round.jpg",
+    };
+  }
+
+  const defaultItem = FRONT_NECKLINES[0];
+  if (!key || String(key).trim() === "" || String(key).trim().toLowerCase() === "standard") {
+    return { ...defaultItem, photo: defaultItem.photo };
+  }
+
+  const raw = String(key).trim();
+  const k = raw.toLowerCase().replace(/[_s]+/g, "-");
+
+  const byId = FRONT_NECKLINES.find((n) => n.id === k);
+  if (byId) return byId;
+
+  const byName = FRONT_NECKLINES.find(
+    (n) => n.en.toLowerCase() === raw.toLowerCase() || n.hi === raw || n.hiScript === raw
+  );
+  if (byName) return byName;
+
+  for (const n of FRONT_NECKLINES) {
+    if (k.includes(n.id) || n.id.includes(k)) {
+      return n;
+    }
+  }
+
+  return defaultItem;
+};
+
+export const resolveBackNeck = (key, customPhoto = null, outfitType = "Kurti") => {
+  if (key === "as-photo" || key === "custom") {
+    return {
+      id: "as-photo",
+      en: "As per Photo",
+      hi: "फ़ोटो जैसा",
+      hiScript: "फ़ोटो जैसा",
+      photo: customPhoto || "./images/neck_back/01_simple.jpg",
+    };
+  }
+
+  const defaultItem = BACK_NECKLINES[0];
+  if (!key || String(key).trim() === "" || String(key).trim().toLowerCase() === "standard") {
+    return { ...defaultItem, photo: defaultItem.photo };
+  }
+
+  const raw = String(key).trim();
+  const k = raw.toLowerCase().replace(/[_s]+/g, "-");
+
+  const byId = BACK_NECKLINES.find((n) => n.id === k);
+  if (byId) return byId;
+
+  const byName = BACK_NECKLINES.find(
+    (n) => n.en.toLowerCase() === raw.toLowerCase() || n.hi === raw || n.hiScript === raw
+  );
+  if (byName) return byName;
+
+  for (const n of BACK_NECKLINES) {
+    if (k.includes(n.id) || n.id.includes(k)) {
+      return n;
+    }
+  }
+
+  return defaultItem;
+};
