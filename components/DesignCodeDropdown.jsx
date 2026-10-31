@@ -302,32 +302,7 @@ export default function DesignCodeDropdown({
             )}
           </div>
 
-          {/* MANUAL CODE ENTRY */}
-          <div className="pt-2 border-t border-stone-100">
-            <span className="block text-[11px] font-bold text-stone-600 mb-1">
-              Or enter custom code (must start with {expectedPrefix}-) / या कस्टम कोड दर्ज करें:
-            </span>
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={outfit?.designCode || ""}
-                onChange={(e) => {
-                  let val = e.target.value.toUpperCase();
-                  setOutfit({ ...outfit, designCode: val });
-                }}
-                placeholder={`e.g. ${expectedPrefix}-01, ${expectedPrefix}-02...`}
-                className="flex-1 rounded-lg border border-stone-300 px-3 py-1.5 text-[12.5px] font-mono outline-none focus:border-[var(--primary)] bg-white"
-              />
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="px-3.5 py-1.5 rounded-lg bg-stone-800 text-white text-[11.5px] font-bold cursor-pointer"
-              >
-                Done / ठीक है
-              </button>
-            </div>
-          </div>
-        </div>
+                  </div>
       )}
     </div>
   );
