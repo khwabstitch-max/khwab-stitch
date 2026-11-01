@@ -126,22 +126,23 @@ function csvCell(value) {
 
 function orderCsv(orders) {
   const headers = [
-    "Order ID", "Submitted At", "Customer Name", "WhatsApp", "Email", "City & State", "PIN",
-    "Outfit", "Pieces", "Design Code", "Reference Photo", "Special Requests",
+    "Order ID", "Submitted At", "Language", "Customer Name", "WhatsApp", "Email", "City & State", "PIN",
+    "Outfit", "Pieces", "Fabric Type", "Fabric Color", "Design Code", "Reference Photo", "Special Requests",
     "Front Neck", "Back Neck", "Sleeve Length", "Sleeve Design", "Fit", "Design Notes",
     "Measurement Unit", "Measurement Method", "Measurements",
     "Delivery Address", "Landmark", "Delivery Type", "Payment Mode",
   ];
   const rows = orders.map((order) => [
-    order.orderId, order.createdAt, order.customer.name, order.customer.whatsapp,
-    order.customer.email, order.customer.cityState, order.customer.pin,
-    order.outfit.type, order.outfit.pieces, order.outfit.designCode, order.outfit.refPhoto,
-    order.outfit.specialReq, order.design.neckFront, order.design.neckBack,
-    order.design.sleeveLength, order.design.sleeveDesign, order.design.fit,
-    order.design.additionalInstructions, order.measurements.unit,
-    order.measurements.provideMethod, JSON.stringify(order.measurements.values),
-    order.delivery.address, order.delivery.landmark, order.delivery.deliveryType,
-    order.delivery.paymentMode,
+    order.orderId, order.createdAt, order.language || "en", order.customer?.name, order.customer?.whatsapp,
+    order.customer?.email, order.customer?.cityState, order.customer?.pin,
+    order.outfit?.type, order.outfit?.pieces, order.outfit?.fabricType, order.outfit?.fabricColor,
+    order.outfit?.designCode, order.outfit?.refPhoto, order.outfit?.specialReq,
+    order.design?.neckFront, order.design?.neckBack, order.design?.sleeveLength,
+    order.design?.sleeveDesign, order.design?.fit, order.design?.additionalInstructions,
+    order.measurements?.unit, order.measurements?.provideMethod,
+    JSON.stringify(order.measurements?.values || {}),
+    order.delivery?.address, order.delivery?.landmark, order.delivery?.deliveryType,
+    order.delivery?.paymentMode,
   ]);
   return `\uFEFF${[headers, ...rows].map((row) => row.map(csvCell).join(",")).join("\r\n")}`;
 }

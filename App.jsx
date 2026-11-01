@@ -561,16 +561,23 @@ export default function App() {
           return;
         }
         const headers = [
-          "Order ID", "Date", "Customer Name", "WhatsApp", "Email", "City & State", "PIN",
-          "Outfit", "Pieces", "Design Code", "Front Neck", "Back Neck",
-          "Sleeve Length", "Sleeve Design", "Fit", "Method", "Address", "Payment"
+          "Order ID", "Date", "Language", "Customer Name", "WhatsApp", "Email", "City & State", "PIN",
+          "Outfit", "Pieces", "Fabric Type", "Fabric Color", "Design Code", "Reference Photo", "Special Requests",
+          "Front Neck", "Back Neck", "Sleeve Length", "Sleeve Design", "Fit", "Design Notes",
+          "Measurement Unit", "Measurement Method", "Measurements",
+          "Delivery Address", "Landmark", "Delivery Type", "Payment Mode"
         ];
         const rows = orders.map((o) => [
-          o.orderId, o.createdAt, o.customer?.name, o.customer?.whatsapp, o.customer?.email,
+          o.orderId, o.createdAt, o.language || "en", o.customer?.name, o.customer?.whatsapp, o.customer?.email,
           o.customer?.cityState, o.customer?.pin, o.outfit?.type, o.outfit?.pieces,
-          o.outfit?.designCode, o.design?.neckFront, o.design?.neckBack,
+          o.outfit?.fabricType, o.outfit?.fabricColor, o.outfit?.designCode, o.outfit?.refPhoto,
+          o.outfit?.specialReq, o.design?.neckFront, o.design?.neckBack,
           o.design?.sleeveLength, o.design?.sleeveDesign, o.design?.fit,
-          o.measurements?.provideMethod, `"${(o.delivery?.address || "").replace(/"/g, '""')}"`,
+          o.design?.additionalInstructions, o.measurements?.unit,
+          o.measurements?.provideMethod, JSON.stringify(o.measurements?.values || {}),
+          `"${(o.delivery?.address || "").replace(/"/g, '""')}"`,
+          `"${(o.delivery?.landmark || "").replace(/"/g, '""')}"`,
+          o.delivery?.deliveryType,
           o.delivery?.paymentMode
         ]);
         const csvContent = "\uFEFF" + [headers.join(","), ...rows.map((r) => r.join(","))].join("\r\n");
