@@ -794,11 +794,8 @@ export default function App() {
       return;
     }
 
-    if (editingFromReview) {
+    if (currentSection >= 5) {
       setEditingFromReview(false);
-      setCurrentSection(6);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
     }
 
     setCurrentSection((section) => Math.min(6, section + 1));
@@ -1039,25 +1036,13 @@ export default function App() {
                   </button>
 
                   {currentSection < 6 ? (
-                    editingFromReview ? (
-                      <button
-                        type="button"
-                        onClick={saveAndReturnToReview}
-                        className="flex-[1.5] sm:flex-[2] h-11 sm:h-12 px-3 rounded-full text-white font-bold text-[12.5px] sm:text-[14px] flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:opacity-95 transition-opacity cursor-pointer truncate"
-                        style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
-                      >
-                        <Check size={16} />
-                        <span>{t("Save & Return to Step 6", "सहेजें और चरण 6 पर लौटें")}</span>
-                      </button>
-                    ) : (
-                      <button
-                        type="submit"
-                        className="flex-[1.5] sm:flex-[2] h-11 sm:h-12 px-3 rounded-full text-white font-bold text-[13px] sm:text-[14px] flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:opacity-95 transition-opacity cursor-pointer"
-                        style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
-                      >
-                        <span>{t("Next", "आगे बढ़ें")}</span> <ChevronRight size={16} />
-                      </button>
-                    )
+                    <button
+                      type="submit"
+                      className="flex-[1.5] sm:flex-[2] h-11 sm:h-12 px-3 rounded-full text-white font-bold text-[13px] sm:text-[14px] flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:opacity-95 transition-opacity cursor-pointer"
+                      style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
+                    >
+                      <span>{t("Next", "आगे बढ़ें")}</span> <ChevronRight size={16} />
+                    </button>
                   ) : (
                     <button
                       type="submit"
