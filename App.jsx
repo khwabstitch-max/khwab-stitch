@@ -595,10 +595,10 @@ export default function App() {
   const selectOutfit = (t) => {
     if (!t) return;
     setOutfit((current) => {
-      if (current.type === t) return current;
+      const isSelected = current.type === t;
       return {
         ...current,
-        type: t,
+        type: isSelected ? "" : t,
       };
     });
     setStepError("");

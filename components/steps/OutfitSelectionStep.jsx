@@ -290,7 +290,7 @@ export default function OutfitSelectionStep({
                   >
                     {selected ? (
                       <>
-                        <Check size={14} strokeWidth={3} /> {t("Selected Garment", "चयनित परिधान")}
+                        <Check size={14} strokeWidth={3} /> {t("Selected · Click to deselect", "चयनित · हटाने के लिए टैप करें")}
                       </>
                     ) : (
                       t("Select Outfit", "चुनें")
