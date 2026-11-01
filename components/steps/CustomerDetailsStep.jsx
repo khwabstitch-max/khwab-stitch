@@ -123,7 +123,7 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
   const isPinValid = pinLength === 6;
 
   return (
-    <section className="step-card rounded-[28px] border bg-white p-5 sm:p-7 md:p-8 shadow-sm">
+    <section className="step-card rounded-[24px] sm:rounded-[28px] border bg-white p-4 sm:p-6 md:p-8 shadow-sm">
       {/* SECTION HEADER */}
       <div className="mb-7 flex flex-wrap items-center justify-between gap-4 border-b border-[#f2e7e1] pb-5">
         <div className="flex items-center gap-3.5">
@@ -212,7 +212,7 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
               value={customer.whatsapp || ""}
               onChange={(e) => handlePhoneChange(e.target.value)}
               placeholder={t("9876543210 (10 digits)", "9876543210 (10 अंक)")}
-              className="w-full bg-transparent px-3.5 py-3 text-[14px] font-mono tracking-wider text-stone-900 outline-none placeholder:text-stone-400 placeholder:font-sans placeholder:tracking-normal"
+              className="w-full min-w-0 bg-transparent px-3 sm:px-3.5 py-3 text-[14px] font-mono tracking-wider text-stone-900 outline-none placeholder:text-stone-400 placeholder:font-sans placeholder:tracking-normal"
             />
             {phoneLength > 0 && (
               <button

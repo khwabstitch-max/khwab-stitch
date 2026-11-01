@@ -164,13 +164,13 @@ export default function OrderReceiptModal({ order, onClose }) {
   const sleeveDesignInfo = resolveSleeveDesign(order.design?.sleeveDesign, order.design?.sleevePhoto, order.outfit?.type);
 
   return (
-    <div className="order-receipt-overlay fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm p-3 md:p-6 overflow-y-auto flex items-start justify-center">
+    <div className="order-receipt-overlay fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm p-2 sm:p-4 md:p-6 overflow-y-auto flex items-start justify-center">
       <div
         id="printable-receipt-container"
-        className="relative w-full max-w-[840px] bg-white rounded-[28px] shadow-2xl border border-stone-200 my-4 overflow-hidden"
+        className="relative w-full max-w-[840px] bg-white rounded-[20px] sm:rounded-[28px] shadow-2xl border border-stone-200 my-2 sm:my-4 overflow-hidden"
       >
         {/* ACTION BAR (HIDDEN IN PRINT) */}
-        <div className="no-print sticky top-0 z-20 flex items-center justify-between gap-3 p-4 bg-stone-900 text-white border-b border-stone-800 rounded-t-[28px]">
+        <div className="no-print sticky top-0 z-20 flex flex-wrap items-center justify-between gap-2.5 p-3 sm:p-4 bg-stone-900 text-white border-b border-stone-800 rounded-t-[20px] sm:rounded-t-[28px]">
           <div className="flex items-center gap-2">
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--primary)] text-white text-xs font-bold">
               ✓
@@ -210,7 +210,7 @@ export default function OrderReceiptModal({ order, onClose }) {
         {/* PRINTABLE RECEIPT CONTENT */}
         <div
           id="printable-receipt"
-          className="relative p-6 sm:p-8 md:p-10 text-stone-800 bg-[#faf7f2]"
+          className="relative p-3.5 sm:p-6 md:p-10 text-stone-800 bg-[#faf7f2]"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='360' height='240' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='40' y='120' transform='rotate(-28 180 120)' fill='%236b2d46' fill-opacity='0.08' font-family='Georgia, serif' font-size='22' font-weight='bold' letter-spacing='0.16em'%3EKHWAB STITCH%3C/text%3E%3Ctext x='40' y='148' transform='rotate(-28 180 120)' fill='%239c4d68' fill-opacity='0.06' font-family='sans-serif' font-size='10' font-weight='bold' letter-spacing='0.22em'%3EBESPOKE ATELIER%3C/text%3E%3C/svg%3E")`,
             backgroundRepeat: "repeat",

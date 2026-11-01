@@ -105,7 +105,7 @@ export default function MeasurementsStep({
   };
 
   return (
-    <section className="step-card rounded-[28px] border bg-white p-6 md:p-8 shadow-sm">
+    <section className="step-card rounded-[24px] sm:rounded-[28px] border bg-white p-4 sm:p-6 md:p-8 shadow-sm">
       {/* HEADER */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-[#f2e7e1] pb-5">
         <div className="flex items-center gap-3">
@@ -164,7 +164,7 @@ export default function MeasurementsStep({
       {outfit.type ? (
         <>
           {/* METHOD SELECTION DROPDOWN (4 OPTIONS) */}
-          <div className="mb-6 rounded-2xl border border-[#eedfd6] bg-[#fdfaf8] p-5 shadow-xs">
+          <div className="mb-6 rounded-2xl border border-[#eedfd6] bg-[#fdfaf8] p-3.5 sm:p-5 shadow-xs">
             <div className="mb-2 flex items-center justify-between">
               <label
                 htmlFor="measurement-method-select"
@@ -370,7 +370,7 @@ export default function MeasurementsStep({
                   </button>
                 </div>
 
-                <div className="p-4 md:p-6">
+                <div className="p-3 sm:p-4 md:p-6">
                   <div className="grid gap-6 lg:grid-cols-12 lg:items-center">
                     {/* LEFT: THE SKETCH IMAGE / SVG */}
                     <div className="lg:col-span-6 flex flex-col items-center justify-center">

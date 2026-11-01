@@ -571,7 +571,7 @@ export default function DesignSelectionStep({
   return (
     <div className="space-y-6">
       {/* Main Design Section */}
-      <section className="step-card rounded-[28px] border bg-white p-6 md:p-8 shadow-sm">
+      <section className="step-card rounded-[24px] sm:rounded-[28px] border bg-white p-4 sm:p-6 md:p-8 shadow-sm">
         {/* Step Header */}
         <div className="mb-7 flex flex-wrap items-center justify-between gap-4 border-b border-[#ebdcd0] pb-5">
           <div className="flex items-center gap-3.5">
@@ -709,7 +709,7 @@ export default function DesignSelectionStep({
 
                 {/* TAILORING EMBELLISHMENTS & TRIMS (INTERACTIVE CLOTH CHIPS) */}
         <div className="mt-8 pt-6 border-t border-[#ebdcd0] space-y-5">
-          <div className="rounded-2xl border-2 border-dashed border-[#dfcdbe] bg-[#fdfbf8] p-4 sm:p-5 shadow-2xs space-y-3">
+          <div className="rounded-2xl border-2 border-dashed border-[#dfcdbe] bg-[#fdfbf8] p-3.5 sm:p-5 shadow-2xs space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[var(--primary)] text-white text-[11px] font-bold">
@@ -842,7 +842,7 @@ export default function DesignSelectionStep({
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b px-6 py-4 bg-[#faf7f2]">
+            <div className="flex items-center justify-between border-b px-4 sm:px-6 py-3 sm:py-4 bg-[#faf7f2]">
               <div>
                 <h3 className="font-serif text-[18px] font-bold text-[var(--primary-dark)]">
                   {lang === "hi"
@@ -865,7 +865,7 @@ export default function DesignSelectionStep({
             </div>
 
             {/* Modal Body */}
-            <div className="p-6">
+            <div className="p-3.5 sm:p-6">
               {detailModal.groupType === "neckFront" ? (
                 /* FRONT NECK */
                 <div>

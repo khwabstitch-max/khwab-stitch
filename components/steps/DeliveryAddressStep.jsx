@@ -93,9 +93,9 @@ export default function DeliveryAddressStep({
   );
 
   return (
-    <section className="step-card rounded-[28px] border bg-white p-5 sm:p-7 md:p-8 shadow-sm space-y-6">
+    <section className="step-card rounded-[24px] sm:rounded-[28px] border bg-white p-4 sm:p-6 md:p-8 shadow-sm space-y-5 sm:space-y-6">
       {/* SECTION 1: LOGO & ATELIER BRANDING */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b-2 border-[#ebdcd0] bg-[#fdfbf9] p-4 sm:p-5 rounded-2xl border border-[#ebdcd0] shadow-2xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-5 border-b-2 border-[#ebdcd0] bg-[#fdfbf9] p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-[#ebdcd0] shadow-2xs">
         <div className="flex items-center gap-3.5">
           <img
             src={BRAND_CONFIG?.logo || "./images/brand/logo.jpg"}
@@ -126,7 +126,7 @@ export default function DeliveryAddressStep({
       </div>
 
       {/* SECTION 2: CUSTOMER DETAILS & ADDRESS */}
-      <div className="rounded-2xl border-2 border-[#e8ded2] bg-[#fdfbf9] p-4 sm:p-5 shadow-2xs">
+      <div className="rounded-2xl border-2 border-[#e8ded2] bg-[#fdfbf9] p-3.5 sm:p-5 shadow-2xs">
         <div className="flex items-center justify-between pb-3 border-b border-[#ece2d6]">
           <div className="flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[var(--primary-light)] text-[var(--primary)] text-[12px] font-bold">
@@ -220,7 +220,7 @@ export default function DeliveryAddressStep({
       </div>
 
       {/* SECTION 3: STITCHING DETAIL */}
-      <div className="rounded-2xl border-2 border-[#e8ded2] bg-[#fdfbf9] p-4 sm:p-5 shadow-2xs space-y-5">
+      <div className="rounded-2xl border-2 border-[#e8ded2] bg-[#fdfbf9] p-3.5 sm:p-5 shadow-2xs space-y-4 sm:space-y-5">
         {/* SECTION 3 HEADER */}
         <div className="flex items-center justify-between pb-3 border-b border-[#ece2d6]">
           <div className="flex items-center gap-2">
@@ -599,7 +599,7 @@ export default function DeliveryAddressStep({
                     <span className="text-stone-600 truncate mr-2" title={pointLabel}>
                       {pointLabel}:
                     </span>
-                    <b className="font-mono text-stone-900 bg-white px-2 py-0.5 rounded border border-stone-200">
+                    <b className="font-mono text-stone-900 bg-white px-2 py-0.5 rounded border border-stone-200 shrink-0">
                       {v} {measurements?.unit || "in"}
                     </b>
                   </div>

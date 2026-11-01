@@ -138,20 +138,20 @@ export default function DesignCodeDropdown({
       {/* TRIGGER BUTTON */}
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center justify-between rounded-xl border-2 p-2.5 cursor-pointer bg-white transition-all select-none ${
+        className={`flex items-center justify-between gap-2 rounded-xl border-2 p-2.5 cursor-pointer bg-white transition-all select-none ${
           isOpen
             ? "border-[var(--primary)] ring-3 ring-[var(--primary)]/15 shadow-sm"
             : "border-[#e5d9ce] hover:border-[var(--primary)]/50"
         }`}
       >
         {selectedCatalogItem ? (
-          <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
             <img
               src={selectedCatalogItem.image}
               alt={selectedCatalogItem.name}
               className="h-11 w-11 rounded-lg object-cover border border-[#e0d3c6] shadow-2xs flex-shrink-0"
             />
-            <div className="min-w-0 text-left">
+            <div className="min-w-0 text-left flex-1">
               <div className="flex items-center gap-1.5">
                 <span className="font-bold bg-[var(--primary)] text-white px-2 py-0.5 rounded text-[11px]">
                   {selectedCatalogItem.code}
@@ -177,7 +177,7 @@ export default function DesignCodeDropdown({
         ) : (
           <div className="flex items-center gap-2 text-stone-500 py-1">
             <Sparkles size={15} className="text-[var(--secondary)]" />
-            <span className="text-[13px]">
+            <span className="text-[12.5px] sm:text-[13px] truncate flex-1 min-w-0">
               {t(
                 `Select ${outfit.type} Design Code (${expectedPrefix}-Codes)...`,
                 `${outfit.type} डिज़ाइन कोड चुनें (${expectedPrefix}-कोड)...`
@@ -207,16 +207,18 @@ export default function DesignCodeDropdown({
 
       {/* DROPDOWN MENU */}
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full z-40 mt-1.5 rounded-2xl border-2 border-[#ebdcd0] bg-white p-3 shadow-2xl space-y-2.5 animate-in fade-in zoom-in-95 duration-100">
+        <div className="absolute left-0 right-0 top-full z-40 mt-1.5 rounded-2xl border-2 border-[#ebdcd0] bg-white p-2.5 sm:p-3 shadow-2xl space-y-2.5 animate-in fade-in zoom-in-95 duration-100 max-w-full">
           <div className="flex items-center justify-between pb-2 border-b border-stone-100 text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-            <span>
+            <span className="truncate pr-2">
               {outfit.type} {t("Designs", "डिज़ाइन")} ({expectedPrefix}-Codes)
             </span>
-            <span>{t("Zoom & Select", "ज़ूम व चुनें")}</span>
+            <span className="shrink-0 text-[10.5px] bg-[#fbf5f0] text-[var(--primary)] px-2 py-0.5 rounded-full border border-[#eedfd6]">
+              {visibleCodes.length} {t("Styles", "डिज़ाइन")}
+            </span>
           </div>
 
           {/* CATALOG ITEMS LIST */}
-          <div className="space-y-2 max-h-[300px] overflow-y-auto">
+          <div className="space-y-2.5 max-h-[340px] overflow-y-auto pr-0.5">
             {visibleCodes.length > 0 ? (
               visibleCodes.map((item) => {
                 const isItemActive =
@@ -224,71 +226,74 @@ export default function DesignCodeDropdown({
                 return (
                   <div
                     key={item.code}
-                    className={`flex items-center justify-between gap-3 p-2.5 rounded-xl border transition-all ${
+                    className={`flex flex-col p-3 rounded-xl border transition-all ${
                       isItemActive
-                        ? "bg-[#faf5f0] border-[var(--primary)] ring-1 ring-[var(--primary)]"
-                        : "bg-white hover:bg-stone-50 border-stone-200"
+                        ? "bg-[#faf5f0] border-[var(--primary)] ring-2 ring-[var(--primary)]/20 shadow-xs"
+                        : "bg-white hover:bg-stone-50/80 border-stone-200 shadow-2xs"
                     }`}
                   >
-                    {/* THUMBNAIL WITH ZOOM ICON */}
-                    <div
-                      className="relative flex-shrink-0 cursor-pointer group"
-                      onClick={() => onOpenZoom && onOpenZoom(item.image)}
-                      title={t("Click to Zoom Photo", "बड़ी फ़ोटो देखने के लिए क्लिक करें")}
-                    >
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="h-14 w-14 rounded-xl object-cover border-2 border-white shadow-xs group-hover:scale-105 transition-transform"
-                      />
-                      <span className="absolute bottom-1 right-1 h-5 w-5 rounded-full bg-black/70 text-white flex items-center justify-center text-[10px] shadow-sm">
-                        <Eye size={11} />
-                      </span>
-                    </div>
-
-                    {/* DETAILS */}
-                    <div className="flex-1 min-w-0 text-left">
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-bold text-[11.5px] bg-[var(--primary)] text-white px-2 py-0.5 rounded-md">
-                          {item.code}
-                        </span>
-                        <span className="font-bold text-[13px] text-stone-900 truncate">
-                          {lang === "hi" && item.hi ? item.hi : item.name}
+                    {/* TOP ROW: THUMBNAIL + TITLE + CODE + DESCRIPTION */}
+                    <div className="flex items-start gap-3 w-full">
+                      {/* THUMBNAIL WITH ZOOM BADGE */}
+                      <div
+                        className="relative shrink-0 cursor-pointer group"
+                        onClick={() => onOpenZoom && onOpenZoom(item.image)}
+                        title={t("Click to Zoom Photo", "बड़ी फ़ोटो देखने के लिए क्लिक करें")}
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="h-14 w-14 sm:h-16 sm:w-16 rounded-xl object-cover border-2 border-white shadow-xs group-hover:scale-105 transition-transform"
+                        />
+                        <span className="absolute bottom-1 right-1 h-5 w-5 rounded-full bg-black/70 text-white flex items-center justify-center text-[10px] shadow-sm">
+                          <Eye size={11} />
                         </span>
                       </div>
-                      <p className="text-[11px] text-stone-500 truncate mt-0.5">
-                        {item.details}
-                      </p>
+
+                      {/* DETAILS */}
+                      <div className="flex-1 min-w-0 text-left">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="font-bold text-[11px] bg-[var(--primary)] text-white px-2 py-0.5 rounded-md font-mono shrink-0">
+                            {item.code}
+                          </span>
+                          <span className="font-bold text-[13px] text-stone-900 leading-snug break-words">
+                            {lang === "hi" && item.hi ? item.hi : item.name}
+                          </span>
+                        </div>
+                        <p className="text-[11.5px] text-stone-500 line-clamp-2 mt-1 leading-snug">
+                          {item.details}
+                        </p>
+                      </div>
                     </div>
 
-                    {/* ACTION BUTTONS: ZOOM & SELECT */}
-                    <div className="flex flex-col sm:flex-row items-center gap-1.5 flex-shrink-0">
+                    {/* BOTTOM ACTION ROW: DEDICATED 2-COLUMN BUTTON BAR - NEVER OVERLAPS */}
+                    <div className="grid grid-cols-2 gap-2 mt-2.5 pt-2 border-t border-stone-100 w-full">
                       <button
                         type="button"
                         onClick={() => onOpenZoom && onOpenZoom(item.image)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 text-[11px] font-bold transition-colors cursor-pointer"
-                        title={t("Zoom", "बड़ा देखें")}
+                        className="w-full h-8.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 text-[11.5px] font-bold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                        title={t("Zoom Photo", "बड़ी फ़ोटो देखें")}
                       >
                         <Eye size={13} />
-                        <span className="hidden sm:inline">{t("Zoom", "ज़ूम")}</span>
+                        <span>{t("Zoom Photo", "फ़ोटो देखें")}</span>
                       </button>
 
                       <button
                         type="button"
                         onClick={() => handleSelectCode(item)}
-                        className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11.5px] font-bold transition-all cursor-pointer ${
+                        className={`w-full h-8.5 rounded-lg text-[11.5px] font-bold inline-flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                           isItemActive
-                            ? "bg-emerald-600 text-white shadow-xs"
+                            ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
                             : "bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white shadow-xs"
                         }`}
                       >
                         {isItemActive ? (
                           <>
-                            <Check size={13} strokeWidth={3} />
+                            <Check size={14} strokeWidth={3} />
                             <span>{t("Selected", "चयनित")}</span>
                           </>
                         ) : (
-                          <span>{t("Select", "चुनें")}</span>
+                          <span>{t("Select Design", "डिज़ाइन चुनें")}</span>
                         )}
                       </button>
                     </div>

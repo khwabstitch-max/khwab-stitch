@@ -194,7 +194,7 @@ export default function OutfitSelectionStep({
   const selectedFabric = outfit.fabricType || "own_fabric";
 
   return (
-    <section className="step-card rounded-[28px] border bg-white p-6 md:p-8 space-y-7">
+    <section className="step-card rounded-[24px] sm:rounded-[28px] border bg-white p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-7">
       {/* 1. HEADER */}
       <div className="flex items-center gap-3.5 pb-2 border-b border-[#f0e4d8]">
         <span className="step-icon">
@@ -402,7 +402,7 @@ export default function OutfitSelectionStep({
       </div>
 
       {/* 4. DESIGN SELECTION: STUDIO DESIGNS OR CUSTOM PHOTO */}
-      <div className="rounded-2xl border-2 border-[#e8ded2] bg-[#fdfbf9] p-4 sm:p-6 shadow-2xs space-y-4">
+      <div className="rounded-2xl border-2 border-[#e8ded2] bg-[#fdfbf9] p-3.5 sm:p-5 md:p-6 shadow-2xs space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#ece2d6]">
           <div>
             <h3 className="font-serif text-[16px] sm:text-[17px] font-bold text-[var(--primary-dark)] flex items-center gap-2">
@@ -425,7 +425,7 @@ export default function OutfitSelectionStep({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-start">
           {/* OPTION A: Studio Design Codes */}
-          <div className="space-y-2 rounded-xl bg-white p-4 border border-[#ebdcd0] shadow-2xs">
+          <div className="space-y-2 rounded-xl bg-white p-3.5 sm:p-4 border border-[#ebdcd0] shadow-2xs">
             <div className="flex items-center justify-between">
               <span className="font-bold text-[13px] text-stone-800">
                 {t("Option 1: Choose from Catalog", "विकल्प 1: कैटलॉग डिज़ाइन")}
@@ -448,7 +448,7 @@ export default function OutfitSelectionStep({
           </div>
 
           {/* OPTION B: Upload Your Own Design Photo */}
-          <div className="space-y-2 rounded-xl bg-white p-4 border border-[#ebdcd0] shadow-2xs">
+          <div className="space-y-2 rounded-xl bg-white p-3.5 sm:p-4 border border-[#ebdcd0] shadow-2xs">
             <div className="flex items-center justify-between">
               <span className="font-bold text-[13px] text-stone-800">
                 {t("Option 2: Have your own design?", "विकल्प 2: क्या आपके पास डिज़ाइन है?")}
