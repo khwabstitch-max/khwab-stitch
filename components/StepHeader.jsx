@@ -1,15 +1,15 @@
 import React, { useRef } from "react";
-import { Globe, ShieldCheck } from "lucide-react";
+import { Globe } from "lucide-react";
 import { BRAND_CONFIG } from "../config/fashionCatalog.js";
 import { useLanguage } from "../context/LanguageContext.jsx";
 
 const steps = [
-  { en: "Welcome", hi: "स्वागत" },
-  { en: "Details", hi: "जानकारी" },
-  { en: "Outfit", hi: "परिधान" },
-  { en: "Design", hi: "डिज़ाइन" },
-  { en: "Measurements", hi: "नाप" },
-  { en: "Delivery", hi: "डिलीवरी" },
+  { en: "Welcome", hi: "स्वागत", icon: "🪡" },
+  { en: "Details", hi: "जानकारी", icon: "👤" },
+  { en: "Outfit & Cloth", hi: "परिधान व कपड़ा", icon: "👗" },
+  { en: "Design & Cut", hi: "डिज़ाइन व कटिंग", icon: "✂️" },
+  { en: "Measurements", hi: "नाप", icon: "📏" },
+  { en: "Review & Dispatch", hi: "डिलीवरी", icon: "🏷️" },
 ];
 
 export default function StepHeader({
@@ -44,7 +44,7 @@ export default function StepHeader({
       <div className="step-header__inner">
         {/* BRAND LOGO */}
         <div
-          className="brand-lockup cursor-pointer group flex items-center gap-2.5 sm:gap-3 select-none"
+          className="brand-lockup cursor-pointer group flex items-center gap-2.5 sm:gap-3.5 select-none"
           onClick={handleLogoClick}
           title={t("Khwab Stitch — Where Fabric Becomes Art", "ख़्वाब स्टिच — हमारी कारीगरी")}
         >
@@ -52,25 +52,25 @@ export default function StepHeader({
             <img
               src={BRAND_CONFIG?.logo || "./images/brand/logo.jpg"}
               alt="Khwab Stitch Logo"
-              className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-[#dfc5b5] shadow-xs transition-transform duration-200 group-hover:scale-105"
+              className="h-11 w-11 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-[var(--primary)] shadow-sm transition-transform duration-200 group-hover:scale-105"
               onError={(e) => {
                 e.currentTarget.src = "./images/khwabstitch_logo.jpg";
               }}
             />
-            <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[var(--primary)] text-[8px] text-white shadow-2xs">
+            <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--accent)] text-[9px] text-white shadow-2xs">
               ✦
             </span>
           </div>
           <div className="min-w-0">
-            <strong className="font-serif text-[17px] sm:text-[20px] font-bold text-[var(--primary-dark)] tracking-tight leading-tight block">
+            <strong className="font-serif text-[18px] sm:text-[21px] font-bold text-[var(--primary-dark)] tracking-tight leading-tight block">
               {activeMode === "admin"
                 ? t("Khwab Stitch Atelier", "ख़्वाब स्टिच एटेलियर")
                 : t("Khwab Stitch", "ख़्वाब स्टिच")}
             </strong>
-            <small className="block text-[9px] sm:text-[10px] font-semibold tracking-wider uppercase text-[var(--secondary)] truncate">
+            <small className="block text-[9.5px] sm:text-[10.5px] font-bold tracking-wider uppercase text-[var(--secondary)] truncate">
               {activeMode === "admin"
                 ? t("Master Tailor Order Management", "मास्टर दर्जी ऑर्डर प्रबंधन")
-                : t("Where Fabric Becomes Art", "हमारी कारीगरी · ख़्वाब स्टिच")}
+                : t("Bespoke Atelier · Where Fabric Becomes Art", "हमारी कारीगरी · ख़्वाब स्टिच")}
             </small>
           </div>
         </div>
@@ -79,17 +79,17 @@ export default function StepHeader({
         <div className="flex items-center gap-2 sm:gap-3">
           {/* LANGUAGE TOGGLE SWITCH (TOP RIGHT) */}
           <div
-            className="inline-flex items-center rounded-full bg-[#f2eae1] p-0.5 border border-[#e4d8cc] text-[11.5px] font-bold shadow-2xs"
+            className="inline-flex items-center rounded-full bg-[#f2e7dc] p-0.5 border border-[#dfcebf] text-[11.5px] font-bold shadow-2xs"
             role="group"
             aria-label="Language selector"
           >
             <button
               type="button"
               onClick={() => setLang("en")}
-              className={`px-2.5 sm:px-3 py-1 rounded-full transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
                 lang === "en"
                   ? "bg-[var(--primary)] text-white shadow-xs font-extrabold"
-                  : "text-stone-600 hover:text-stone-900"
+                  : "text-stone-700 hover:text-stone-900"
               }`}
               title="Switch to English"
             >
@@ -98,10 +98,10 @@ export default function StepHeader({
             <button
               type="button"
               onClick={() => setLang("hi")}
-              className={`px-2.5 sm:px-3 py-1 rounded-full transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
                 lang === "hi"
                   ? "bg-[var(--primary)] text-white shadow-xs font-extrabold"
-                  : "text-stone-600 hover:text-stone-900"
+                  : "text-stone-700 hover:text-stone-900"
               }`}
               title="हिंदी में बदलें"
             >
@@ -113,7 +113,7 @@ export default function StepHeader({
             <button
               type="button"
               onClick={onNavigateCustomer}
-              className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full bg-[var(--primary)] text-white text-[11.5px] sm:text-[12px] font-bold shadow-xs hover:opacity-95 transition-opacity cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full bg-[var(--primary)] text-white text-[12px] font-bold shadow-xs hover:opacity-95 transition-opacity cursor-pointer"
             >
               <Globe size={13} />
               <span className="hidden sm:inline">
@@ -128,14 +128,17 @@ export default function StepHeader({
       {/* CUSTOMER STEP PROGRESS BAR (ONLY ON CUSTOMER PAGE) */}
       {activeMode === "customer" && (
         <div className="step-progress">
-          <div className="step-progress__top">
-            <span>
+          <div className="step-progress__top flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <span className="text-[12px]">{steps[currentSection - 1]?.icon}</span>
               <b>{t(`STEP ${currentSection}`, `चरण ${currentSection}`)}</b> {t(`OF ${steps.length}`, `कुल ${steps.length}`)}
             </span>
-            <span>
+            <span className="font-bold text-[var(--primary)] bg-white px-2.5 py-0.5 rounded-full border border-[#e8ddd2] text-[11px] shadow-2xs">
               {lang === "hi" ? steps[currentSection - 1]?.hi : steps[currentSection - 1]?.en}
             </span>
           </div>
+
+          {/* MEASURING TAPE ACCENTED PROGRESS TRACK */}
           <div
             className="step-progress__track"
             role="progressbar"
@@ -146,23 +149,29 @@ export default function StepHeader({
           >
             <span style={{ width: `${progress}%` }} />
           </div>
+
           <nav className="step-progress__steps" aria-label="Order steps">
             {steps.map((step, index) => {
               const number = index + 1;
               const label = lang === "hi" ? step.hi : step.en;
+              const isPast = number < currentSection;
+              const isCurrent = number === currentSection;
+
               return (
                 <button
                   type="button"
                   key={step.en}
                   onClick={() => onJumpToSection && onJumpToSection(number)}
-                  className={`step-progress__step cursor-pointer text-left bg-transparent border-0 p-0 transition-opacity hover:opacity-80${
-                    number === currentSection ? " is-current" : ""
-                  }${number < currentSection ? " is-complete" : ""}`}
-                  aria-current={number === currentSection ? "step" : undefined}
+                  className={`step-progress__step cursor-pointer text-left bg-transparent border-0 p-0 transition-all hover:opacity-90${
+                    isCurrent ? " is-current" : ""
+                  }${isPast ? " is-complete" : ""}`}
+                  aria-current={isCurrent ? "step" : undefined}
                   title={`Jump to Step ${number}: ${label}`}
                 >
-                  <i>{number < currentSection ? "✓" : number}</i>
-                  <small>
+                  <i className={isCurrent ? "scale-110 shadow-sm" : ""}>
+                    {isPast ? "✓" : isCurrent ? step.icon : number}
+                  </i>
+                  <small className="hidden sm:grid">
                     <span>{label}</span>
                   </small>
                 </button>

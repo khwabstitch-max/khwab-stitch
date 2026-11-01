@@ -25,6 +25,7 @@ import {
   resolveSleeveDesign,
   resolveFrontNeck,
   resolveBackNeck,
+  resolveFabric,
 } from "../../config/fashionCatalog.js";
 import { useLanguage } from "../../context/LanguageContext.jsx";
 
@@ -67,6 +68,7 @@ export default function DeliveryAddressStep({
 
   // Resilient resolvers
   const resolvedOutfit = resolveOutfit(outfit?.type);
+  const resolvedFabric = resolveFabric(outfit?.fabricType);
   const resolvedFrontNeck = resolveFrontNeck(design?.neckFront, design?.frontPhoto, outfit?.type);
   const resolvedBackNeck = resolveBackNeck(design?.neckBack, design?.backPhoto, outfit?.type);
   const resolvedSleeveLength = resolveSleeveLength(
@@ -265,6 +267,31 @@ export default function DeliveryAddressStep({
 
             <span className="text-[12.5px] font-bold text-stone-900 bg-[#fbf5f0] px-3 py-1 rounded-full border border-[#eedfd6]">
               {t(`Quantity: ${outfit?.pieces || 1} Piece(s)`, `संख्या: ${outfit?.pieces || 1} थान / पीस`)}
+            </span>
+          </div>
+
+          {/* FABRIC & MATERIAL SPECIFICATION */}
+          <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-[#fdfbf9] border border-[#ebdcd0]">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--primary)] text-white text-[14px]">
+                {resolvedFabric?.icon || "🧵"}
+              </span>
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 block">
+                  {t("Fabric & Cloth Material", "कपड़ा व फ़ैब्रिक")}
+                </span>
+                <span className="text-[13.5px] font-bold text-stone-900">
+                  {lang === "hi" ? resolvedFabric?.nameHi : resolvedFabric?.name}
+                </span>
+                {outfit?.fabricColor && (
+                  <span className="text-[11.5px] text-stone-600 block mt-0.5">
+                    <b>{t("Color / Texture:", "रंग / विवरण:")}</b> {outfit.fabricColor}
+                  </span>
+                )}
+              </div>
+            </div>
+            <span className="text-[10.5px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200">
+              {resolvedFabric?.tag}
             </span>
           </div>
 
@@ -508,11 +535,21 @@ export default function DeliveryAddressStep({
             </div>
           </div>
 
-          <div className="mt-3 pt-2.5 border-t border-[#f0e7df] flex items-center justify-between">
+          <div className="mt-3 pt-2.5 border-t border-[#f0e7df] flex flex-wrap items-center justify-between gap-2">
             <span className="text-[12px] text-stone-600">
               {t("Fitting Preference:", "सिलाई की फ़िटिंग:")} <b className="text-stone-900">{design?.fit || "Regular"}</b>
             </span>
+            <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+              ✂️ {t("1.5-inch inner margin included", "1.5 इंच इनर मार्जिन शामिल")}
+            </span>
           </div>
+
+          {design?.additionalInstructions && (
+            <div className="mt-2.5 p-2.5 rounded-lg bg-[#fffdfa] border border-[#ebdcd0] text-[12px] text-stone-700 leading-snug">
+              <b className="text-[var(--primary)]">✨ {t("Trims & Finishing Details:", "विशेष काम व निर्देश:")}</b>{" "}
+              {design.additionalInstructions}
+            </div>
+          )}
         </div>
 
         {/* 3E: MEASUREMENTS */}

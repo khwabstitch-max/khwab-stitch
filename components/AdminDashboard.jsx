@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BRAND_CONFIG } from "../config/fashionCatalog.js";
+import { BRAND_CONFIG, resolveFabric } from "../config/fashionCatalog.js";
 import {
   Download,
   RefreshCw,
@@ -546,6 +546,11 @@ export default function AdminDashboard({
                           >
                             {order.outfit?.type} × {order.outfit?.pieces || 1}
                           </span>
+                          {order.outfit?.fabricType && (
+                            <span className="font-medium text-[10.5px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200">
+                              {resolveFabric(order.outfit.fabricType)?.icon || "🧵"} {resolveFabric(order.outfit.fabricType)?.name || order.outfit.fabricType}
+                            </span>
+                          )}
                         </div>
                         <p className="text-[11px] text-stone-500 mt-1 flex items-center gap-1">
                           <Calendar size={11} />
@@ -648,6 +653,11 @@ export default function AdminDashboard({
                       </div>
                     </div>
 
+                    {order.outfit?.fabricColor && (
+                      <p className="mt-2 text-[11px] text-stone-700 bg-amber-50/60 p-1.5 rounded-md border border-amber-200">
+                        <b>Fabric Color/Texture:</b> {order.outfit.fabricColor}
+                      </p>
+                    )}
                     {order.design?.additionalInstructions && (
                       <p className="mt-2 text-[11px] text-stone-600 bg-[#faf7f2] p-1.5 rounded-md border border-[#eee2d6] italic">
                         Note: {order.design.additionalInstructions}

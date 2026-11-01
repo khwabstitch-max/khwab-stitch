@@ -158,6 +158,9 @@ export default function MeasurementsStep({
         )}
       </div>
 
+      {/* AUTHENTIC DRESSMAKER TAPE MEASURE RIBBON */}
+      <div className="tape-measure-bar h-3.5 w-full rounded-full -mt-2 mb-5 shadow-xs" title="Khwab Stitch Master Tailor Measuring Ribbon" />
+
       {outfit.type ? (
         <>
           {/* METHOD SELECTION DROPDOWN (4 OPTIONS) */}
@@ -559,6 +562,28 @@ export default function MeasurementsStep({
           </div>
         </div>
       )}
+    
+                  {/* MASTER TAILOR 1.5-INCH SEAM MARGIN GUARANTEE */}
+                  <div className="mt-5 flex items-start sm:items-center gap-3 p-3.5 rounded-xl bg-[#fff8eb] border border-[#f3d49f] text-[#7a4e10] text-[12px] shadow-2xs">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#c49233] text-white text-[13px] font-bold">
+                      ✂️
+                    </span>
+                    <div>
+                      <p className="font-bold text-[12.5px] leading-tight text-[#623b05]">
+                        {t(
+                          "1.5-Inch In-Seam Alteration Margin Included Inside",
+                          "1.5 इंच अतिरिक्त दबाव (सीवन मार्जिन) गारंटी"
+                        )}
+                      </p>
+                      <p className="text-[11px] text-[#7a4e10] leading-snug mt-0.5">
+                        {t(
+                          "Every custom garment is hand-stitched with 1.5 extra inches on both sides for effortless future adjustments.",
+                          "हमारे हर सिले परिधान में दोनों तरफ 1.5 इंच अतिरिक्त कपड़ा छोड़ा जाता है जिससे आप भविष्य में कभी भी आसानी से नाप ढीला या टाइट करा सकें।"
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
     </section>
   );
 }

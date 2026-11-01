@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
-import { Check, Wand2, UploadCloud, Camera, Trash2, RefreshCw, Eye, X, Sparkles, Layers } from "lucide-react";
+import { Check, Wand2, UploadCloud, Camera, Trash2, RefreshCw, Eye, X, Sparkles, Layers, Scissors, Palette } from "lucide-react";
 import DesignCodeDropdown from "../DesignCodeDropdown.jsx";
 import { useLanguage } from "../../context/LanguageContext.jsx";
+import { FABRICS } from "../../config/fashionCatalog.js";
 
 export default function OutfitSelectionStep({
   outfitTypes,
@@ -189,24 +190,27 @@ export default function OutfitSelectionStep({
     }
   };
 
+  // Selected fabric info
+  const selectedFabric = outfit.fabricType || "own_fabric";
+
   return (
     <section className="step-card rounded-[28px] border bg-white p-6 md:p-8 space-y-7">
       {/* 1. HEADER */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3.5 pb-2 border-b border-[#f0e4d8]">
         <span className="step-icon">
-          <Wand2 size={18} />
+          <Scissors size={20} />
         </span>
         <div>
           <p className="step-eyebrow">
-            {t("STEP 03 · YOUR OUTFIT", "चरण 03 · आपका परिधान")}
+            {t("STEP 03 · YOUR OUTFIT & FABRIC", "चरण 03 · आपका परिधान व कपड़ा")}
           </p>
           <h2 className="text-[25px] font-semibold text-[var(--primary-dark)]">
-            {t("What shall we stitch?", "क्या सिलवाना चाहते हैं?")}
+            {t("What shall we stitch for you?", "क्या सिलवाना चाहते हैं?")}
           </h2>
           <p className="text-[13px] text-[var(--text-light)]">
             {t(
-              "Choose an outfit to see the right design and measurement options",
-              "सही डिज़ाइन और नाप के विकल्प देखने के लिए परिधान चुनें।"
+              "Select your garment and cloth material to preview tailored designs and measurement options.",
+              "सही डिज़ाइन और नाप के विकल्प देखने के लिए अपना परिधान व कपड़ा चुनें।"
             )}
           </p>
         </div>
@@ -286,7 +290,7 @@ export default function OutfitSelectionStep({
                   >
                     {selected ? (
                       <>
-                        <Check size={14} strokeWidth={3} /> {t("Selected", "चयनित")}
+                        <Check size={14} strokeWidth={3} /> {t("Selected Garment", "चयनित परिधान")}
                       </>
                     ) : (
                       t("Select Outfit", "चुनें")
@@ -305,7 +309,99 @@ export default function OutfitSelectionStep({
         </p>
       )}
 
-      {/* 3. DESIGN SELECTION: STUDIO DESIGNS OR CUSTOM PHOTO */}
+      {/* ----------------------------------------------------------------- */}
+      {/* 3. FABRIC & CLOTH MATERIAL SELECTION (CLOTH-THEMATIC & EXTENSIBLE) */}
+      {/* ----------------------------------------------------------------- */}
+      <div className="rounded-2xl border-2 border-dashed border-[#dfcdbe] bg-[#fdfbf8] p-4 sm:p-5 shadow-2xs space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-[#ece1d5]">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--primary)] text-white text-xs font-bold">
+              🧵
+            </span>
+            <div>
+              <h3 className="font-serif text-[16px] font-bold text-[var(--primary-dark)]">
+                {t("Fabric & Cloth Details", "कपड़ा व फ़ैब्रिक विवरण")}
+              </h3>
+              <p className="text-[11.5px] text-stone-500">
+                {t(
+                  "Choose whether you are sending your own cloth or picking atelier fabric",
+                  "अपने कपड़े का प्रकार चुनें या बताएं कि आप अपना कपड़ा भेजेंगी।"
+                )}
+              </p>
+            </div>
+          </div>
+          <span className="text-[10.5px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200">
+            {t("✦ Cloth Customization", "✦ फ़ैब्रिक सिलाई")}
+          </span>
+        </div>
+
+        {/* FABRIC CHIPS GRID */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+          {FABRICS.map((fab) => {
+            const isFabSelected = (outfit.fabricType || "own_fabric") === fab.id;
+            const fabName = lang === "hi" ? fab.hi : fab.en;
+            return (
+              <button
+                type="button"
+                key={fab.id}
+                onClick={() => setOutfit({ ...outfit, fabricType: fab.id })}
+                className={`flex flex-col justify-between p-3 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                  isFabSelected
+                    ? "border-[var(--primary)] bg-white ring-2 ring-[var(--primary)]/15 shadow-sm transform -translate-y-0.5"
+                    : "border-[#e8ddd2] bg-white hover:border-[#c9b29f] hover:bg-[#fffdfa]"
+                }`}
+              >
+                <div className="flex items-center justify-between w-full mb-1.5">
+                  <span className="text-[17px]">{fab.icon}</span>
+                  {isFabSelected && (
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--primary)] text-white text-[10px]">
+                      ✓
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <p className="text-[12.5px] font-bold text-stone-900 leading-snug">
+                    {fabName}
+                  </p>
+                  <p className="text-[10.5px] text-stone-500 line-clamp-1 mt-0.5">
+                    {lang === "hi" ? fab.descHi : fab.desc}
+                  </p>
+                </div>
+                <div className="mt-2 pt-1 border-t border-stone-100 flex items-center justify-between">
+                  <span className="text-[9.5px] font-bold text-[var(--secondary)]">
+                    {fab.tag}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* OPTIONAL FABRIC COLOR / SPECIFICATION INPUT */}
+        <div className="pt-2">
+          <label className="form-field">
+            <span className="text-[12px] font-bold text-stone-700 flex items-center gap-1.5">
+              <Palette size={13} className="text-[var(--secondary)]" />
+              <span>{t("Fabric Color or Texture Details", "कपड़े का रंग व विवरण")}</span>
+              <small className="text-[10.5px] font-normal text-stone-400">
+                {t("(Optional)", "(वैकल्पिक)")}
+              </small>
+            </span>
+            <input
+              type="text"
+              value={outfit.fabricColor || ""}
+              onChange={(e) => setOutfit({ ...outfit, fabricColor: e.target.value })}
+              placeholder={t(
+                "e.g., Royal Blue Raw Silk with zari border, Bottle Green Cotton...",
+                "जैसे: गहरा नीला सिल्क गोटा बॉर्डर के साथ, या हरा कॉटन..."
+              )}
+              className="bg-white"
+            />
+          </label>
+        </div>
+      </div>
+
+      {/* 4. DESIGN SELECTION: STUDIO DESIGNS OR CUSTOM PHOTO */}
       <div className="rounded-2xl border-2 border-[#e8ded2] bg-[#fdfbf9] p-4 sm:p-6 shadow-2xs space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#ece2d6]">
           <div>
@@ -466,7 +562,7 @@ export default function OutfitSelectionStep({
         </div>
       </div>
 
-      {/* 4. NUMBER OF PIECES */}
+      {/* 5. NUMBER OF PIECES */}
       <div className="p-4 sm:p-5 rounded-2xl bg-[#faf6f2] border border-[#ebdcd0]">
         <label className="form-field m-0">
           <div className="flex items-center justify-between mb-1">
@@ -494,10 +590,10 @@ export default function OutfitSelectionStep({
         </label>
       </div>
 
-      {/* 5. SPECIAL REQUESTS (OPTIONAL) */}
+      {/* 6. SPECIAL TAILORING REQUESTS (OPTIONAL) */}
       <label className="form-field">
         <span className="font-bold text-[13px] text-stone-800">
-          {t("Special requests", "कोई विशेष निर्देश")}{" "}
+          {t("Special tailoring requests", "कोई विशेष सिलाई निर्देश")}{" "}
           <small className="text-[11px] font-normal text-stone-500">
             {t("(Optional)", "(वैकल्पिक)")}
           </small>
@@ -506,8 +602,8 @@ export default function OutfitSelectionStep({
           value={outfit.specialReq || ""}
           onChange={(event) => setOutfit({ ...outfit, specialReq: event.target.value })}
           placeholder={t(
-            "Latkan, piping, border, deep gala, or finishing details...",
-            "लटकन, पाइपिंग, बॉर्डर, या कोई विशेष काम..."
+            "Latkan, contrast piping, zari border, deep gala, or lining requirements...",
+            "लटकन, पाइपिंग, गोटा बॉर्डर, अस्तर (lining), या कोई विशेष काम..."
           )}
           rows={3}
         />

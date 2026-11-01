@@ -20,6 +20,7 @@ import {
   resolveSleeveDesign,
   resolveFrontNeck,
   resolveBackNeck,
+  resolveFabric,
 } from "../config/fashionCatalog.js";
 
 const MEASURE_LABELS = {
@@ -149,6 +150,7 @@ export default function OrderReceiptModal({ order, onClose }) {
   const landmark = order.delivery?.landmark || order.customer?.landmark || "";
 
   // Lookups for selected outfit and styling
+  const fabricInfo = resolveFabric(order.outfit?.fabricType);
   const outfitInfo = lookupItem(OUTFIT_CATALOG, order.outfit?.type, order.outfit?.type, "परिधान", "./images/outfits/02_kurti.jpg");
   const designCodeInfo = order.outfit?.designCode ? DESIGN_CODE_CATALOG[order.outfit.designCode] : null;
 
@@ -368,6 +370,31 @@ export default function OrderReceiptModal({ order, onClose }) {
                     {tr(`Quantity: ${order.outfit?.pieces || 1} Piece(s)`, `संख्या: ${order.outfit?.pieces || 1} थान / पीस`)}
                   </span>
                 </div>
+              </div>
+
+              {/* FABRIC & MATERIAL SPECIFICATION */}
+              <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-white border border-[#ebdcd0] shadow-2xs">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--primary)] text-white text-[12px] font-bold">
+                    {fabricInfo?.icon || "🧵"}
+                  </span>
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 block">
+                      {tr("Fabric & Cloth Material", "कपड़ा व फ़ैब्रिक")}
+                    </span>
+                    <span className="text-[13.5px] font-bold text-stone-900">
+                      {receiptLang === "hi" ? fabricInfo?.nameHi : fabricInfo?.name}
+                    </span>
+                    {order.outfit?.fabricColor && (
+                      <span className="text-[11.5px] text-stone-600 block mt-0.5">
+                        <b>{tr("Color / Texture:", "रंग / विवरण:")}</b> {order.outfit.fabricColor}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <span className="text-[10.5px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200">
+                  {fabricInfo?.tag}
+                </span>
               </div>
 
               {/* 2. DESIGN CODE */}

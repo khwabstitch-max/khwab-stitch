@@ -1,0 +1,79 @@
+[
+  {
+    "id": "own_fabric",
+    "en": "Customer's Own Fabric",
+    "hi": "मेरा अपना कपड़ा (खरीदा हुआ)",
+    "desc": "I will provide / send my own unstitched cloth piece",
+    "descHi": "मैं सिलाई के लिए अपना कपड़ा स्वयं भेजूंगी/दूंगी",
+    "tag": "✂️ Most Common",
+    "color": "#8b5e3c",
+    "pattern": "custom",
+    "icon": "📦"
+  },
+  {
+    "id": "cotton",
+    "en": "Pure Handloom Cotton",
+    "hi": "शुद्ध सूती (कॉटन)",
+    "desc": "Soft, breathable, comfortable daily & office wear",
+    "descHi": "आरामदायक, हवादार और हर मौसम के अनुकूल",
+    "tag": "🌿 Breathable",
+    "color": "#e07a5f",
+    "pattern": "weave",
+    "icon": "🧵"
+  },
+  {
+    "id": "silk",
+    "en": "Raw Silk & Chanderi",
+    "hi": "रेशम व चंदेरी सिल्क",
+    "desc": "Rich sheen, royal festive elegance & wedding celebrations",
+    "descHi": "शानदार चमक, शादी-विवाह व त्योहारों की पहली पसंद",
+    "tag": "✨ Festive Royal",
+    "color": "#d4af37",
+    "pattern": "sheen",
+    "icon": "🪡"
+  },
+  {
+    "id": "georgette",
+    "en": "Flowy Georgette & Chiffon",
+    "hi": "जॉर्जेट व शिफॉन",
+    "desc": "Lightweight, beautiful fall & graceful drape",
+    "descHi": "हल्का, सुंदर फॉल और खूबसूरत ड्रेप",
+    "tag": "🌸 Graceful Drape",
+    "color": "#d9829b",
+    "pattern": "flow",
+    "icon": "👗"
+  },
+  {
+    "id": "linen",
+    "en": "Premium Linen Blend",
+    "hi": "प्रीमियम लिनन",
+    "desc": "Sophisticated texture, breathable & modern luxury",
+    "descHi": "शानदार टेक्सचर, आधुनिक व एलीगेंट लुक",
+    "tag": "🍃 Modern Chic",
+    "color": "#769f8d",
+    "pattern": "linen",
+    "icon": "🧶"
+  },
+  {
+    "id": "organza",
+    "en": "Crisp Designer Organza",
+    "hi": "डिज़ाइनर ओर्गेंज़ा",
+    "desc": "Translucent, trending delicate designer aesthetic",
+    "descHi": "पारदर्शी, ट्रेंडी व नाज़ुक डिज़ाइनर स्टाइल",
+    "tag": "💎 Trendsetter",
+    "color": "#a29bfe",
+    "pattern": "sheer",
+    "icon": "✦"
+  },
+  {
+    "id": "velvet",
+    "en": "Royal Velvet & Brocade",
+    "hi": "रॉयल मखमली व ब्रोकेड",
+    "desc": "Opulent heavy texture, winter weddings & bridal blouses",
+    "descHi": "राजसी भारी टेक्सचर, ब्राइडल व विंटर शादियों के लिए",
+    "tag": "👑 Bridal Luxury",
+    "color": "#6a0572",
+    "pattern": "plush",
+    "icon": "👑"
+  }
+]

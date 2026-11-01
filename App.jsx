@@ -206,7 +206,8 @@ export default function App() {
   });
   const [outfit, setOutfit] = useState({
     type: "", pieces: "1", designCode: "", refPhoto: "", specialReq: "",
-    uploadedPhoto: "", uploadedPhotoName: "", uploadedPhotoSize: ""
+    uploadedPhoto: "", uploadedPhotoName: "", uploadedPhotoSize: "",
+    fabricType: "own_fabric", fabricColor: ""
   });
   const [design, setDesign] = useState({
     neckFront: "",
@@ -1173,6 +1174,8 @@ export default function App() {
                         uploadedPhoto: "",
                         uploadedPhotoName: "",
                         uploadedPhotoSize: "",
+                        fabricType: "own_fabric",
+                        fabricColor: "",
                       });
                       setDesign({
                         neckFront: "",

@@ -152,3 +152,22 @@ khwabStitch/
 ```
 बस! पूरी वेबसाइट, हेडर, फुटर, पीडीएफ रसीद और एडमिन में नया लोगो और ब्रांड जानकारी अपने आप अपडेट हो जाएगी।
 
+
+---
+
+## 7. नया कपड़ा / फ़ैब्रिक कैसे जोड़ें? (How to Add or Extend Fabrics)
+*उदाहरण: नया फ़ैब्रिक "Chanderi Silk" जोड़ना*
+
+1. **`catalog/fabrics.json`** खोलें और नई प्रविष्टि जोड़ें:
+```json
+{
+  "id": "chanderi",
+  "name": "Chanderi Silk",
+  "nameHi": "चंदेरी सिल्क",
+  "icon": "✨",
+  "tag": "✨ Shimmer & Sheer / हल्का व चमकदार",
+  "desc": "Traditional handloom sheer texture with subtle zari gloss",
+  "descHi": "हल्का पारदर्शी टेक्सचर, बारीक ज़री चमक और शाही लुक"
+}
+```
+2. बस! Step 03 में नया फ़ैब्रिक कार्ड, आइकन, टैग, रसीद और ऑर्डर विवरण में अपने आप तुरंत सक्रिय हो जाएगा।

@@ -19,6 +19,7 @@ import neckBackData from "../catalog/neckBack.json";
 import sleeveLengthsData from "../catalog/sleeveLengths.json";
 import sleeveDesignsData from "../catalog/sleeveDesigns.json";
 import measurementConfigsData from "../catalog/measurementConfigs.json";
+import fabricsData from "../catalog/fabrics.json";
 
 // 1. BRAND CONFIG
 export const BRAND_CONFIG = brandData;
@@ -30,6 +31,9 @@ export const FRONT_NECKLINES = neckFrontData;
 export const BACK_NECKLINES = neckBackData;
 export const SLEEVE_LENGTHS = sleeveLengthsData;
 export const SLEEVE_DESIGNS = sleeveDesignsData;
+export const FABRICS = fabricsData;
+export const FABRIC_MAP = Object.fromEntries(FABRICS.map((f) => [f.id, f]));
+export const resolveFabric = (id) => FABRIC_MAP[id] || FABRICS[0];
 
 // 3. MEASUREMENT CONFIGS & GUIDE IMAGES
 export const MEASUREMENT_CONFIGS = Object.fromEntries(

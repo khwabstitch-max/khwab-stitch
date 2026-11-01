@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Check, ZoomIn, Eye, Sparkles, RefreshCw, X, ChevronRight, UploadCloud, Trash2, Camera } from "lucide-react";
+import { Check, ZoomIn, Eye, Sparkles, RefreshCw, X, ChevronRight, UploadCloud, Trash2, Camera, Scissors, Sparkle } from "lucide-react";
 import DesignArt from "../DesignArt.jsx";
 import { useLanguage } from "../../context/LanguageContext.jsx";
 
@@ -10,6 +10,17 @@ import {
   SLEEVE_DESIGN_PHOTOS,
   DEFAULT_SLEEVE_LENGTH_BY_OUTFIT,
 } from "../../config/fashionCatalog.js";
+
+
+const POPULAR_TRIMS = [
+  { id: "gotta_patti", en: "Gotta Patti Lace", hi: "गोटा पट्टी लेस", icon: "✨" },
+  { id: "piping", en: "Contrast Piping", hi: "कॉन्ट्रास्ट पाइपिंग", icon: "🧵" },
+  { id: "latkan", en: "Handcrafted Latkan", hi: "डिज़ाइनर लटकन", icon: "🪡" },
+  { id: "potli", en: "Potli Buttons", hi: "पोटली बटन", icon: "🔘" },
+  { id: "mirror", en: "Mirror Work Border", hi: "मिरर वर्क बॉर्डर", icon: "🪞" },
+  { id: "scallop", en: "Cutwork / Scallop Border", hi: "कटवर्क / स्कैलप बॉर्डर", icon: "✂️" },
+  { id: "dori", en: "Back Dori & Tassels", hi: "डोरी व लटकन", icon: "🎗️" },
+];
 
 function ChoiceGroup({
   title,
@@ -562,29 +573,31 @@ export default function DesignSelectionStep({
       {/* Main Design Section */}
       <section className="step-card rounded-[28px] border bg-white p-6 md:p-8 shadow-sm">
         {/* Step Header */}
-        <div className="mb-7 flex flex-wrap items-center justify-between gap-4 border-b border-[#f2e7e1] pb-5">
+        <div className="mb-7 flex flex-wrap items-center justify-between gap-4 border-b border-[#ebdcd0] pb-5">
           <div className="flex items-center gap-3.5">
-            <span className="step-icon">
-              <Sparkles size={20} />
+            <span className="step-icon bg-[var(--primary)] text-white">
+              <Scissors size={20} />
             </span>
             <div>
               <p className="step-eyebrow">
-                {t("STEP 04 · CHOOSE YOUR DESIGN", "चरण 04 · डिज़ाइन चुनें")}
+                {t("STEP 04 · CHOOSE YOUR DESIGN & CUT", "चरण 04 · डिज़ाइन व कटिंग")}
               </p>
               <h2 className="font-serif text-[24px] sm:text-[27px] font-bold text-[var(--primary-dark)] leading-tight">
-                {t("Choose your design", "अपना डिज़ाइन चुनें")}
+                {t("Choose your neckline & sleeve styling", "अपना डिज़ाइन व सिलाई स्टाइल चुनें")}
               </h2>
               <p className="mt-0.5 text-[13px] text-[var(--text-light)]">
                 {t(
-                  "Tap a style to select it, or use the preview button to view it larger",
-                  "स्टाइल चुनने के लिए कार्ड पर टैप करें"
+                  "Tap any style to select, preview on mannequin, or upload your own reference photo",
+                  "मास्टर दर्जी द्वारा तैयार किए गए गले व बाज़ू के डिज़ाइन चुनें या अपनी फ़ोटो अपलोड करें"
                 )}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 rounded-full bg-[#fbf5f0] px-3.5 py-1 text-[11px] font-bold text-[var(--primary)] border border-[#eedfd6]">
-            <span>{t("Bespoke Tailoring", "कस्टम सिलाई")}</span>
+          <div className="flex items-center gap-2">
+            <span className="woven-cloth-label">
+              ✂️ {t("Master Tailored Cut", "मास्टर कटिंग")}
+            </span>
           </div>
         </div>
 
@@ -694,41 +707,127 @@ export default function DesignSelectionStep({
           onPreview={onPreview}
         />
 
-        {/* Additional Fitting and Notes */}
-        <div className="mt-8 pt-6 border-t border-[#f0e7df] grid gap-5 md:grid-cols-2">
-          <label className="form-field">
-            <span>{t("Preferred fit", "सिलाई की फ़िटिंग")}</span>
-            <select
-              value={design.fit}
-              onChange={(event) => setDesign({ ...design, fit: event.target.value })}
-              className="font-medium cursor-pointer"
-            >
-              <option value="Regular">{t("Regular Fit (Comfortable)", "सामान्य / रेगुलर फ़िट (आरामदायक)")}</option>
-              <option value="Fitted">{t("Fitted (Tight Fit)", "फ़िटेड (Tight Fit / चिपकी हुई)")}</option>
-              <option value="Relaxed">{t("Relaxed", "रिलैक्स्ड (थोड़ी ढीली)")}</option>
-              <option value="Loose">{t("Loose", "ढीली")}</option>
-              <option value="Oversized">{t("Oversized", "ओवरसाइज़्ड (बहुत ढीली)")}</option>
-              <option value="As per Photo">{t("As per Photo", "फ़ोटो जैसी")}</option>
-              <option value="Need Guidance">{t("Need Guidance from Masterji", "मास्टर जी से सलाह")}</option>
-            </select>
-          </label>
+                {/* TAILORING EMBELLISHMENTS & TRIMS (INTERACTIVE CLOTH CHIPS) */}
+        <div className="mt-8 pt-6 border-t border-[#ebdcd0] space-y-5">
+          <div className="rounded-2xl border-2 border-dashed border-[#dfcdbe] bg-[#fdfbf8] p-4 sm:p-5 shadow-2xs space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[var(--primary)] text-white text-[11px] font-bold">
+                  ✨
+                </span>
+                <div>
+                  <h4 className="font-serif text-[15px] font-bold text-[var(--primary-dark)]">
+                    {t("Tailoring Trims & Embellishments", "गोटा, लेस, पाइपिंग व लटकन")}
+                  </h4>
+                  <p className="text-[11.5px] text-stone-500">
+                    {t(
+                      "Tap to add custom trims to your garment specifications",
+                      "अपने परिधान में विशेष काम जोड़ने के लिए विकल्प चुनें"
+                    )}
+                  </p>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--secondary)] bg-white px-2.5 py-0.5 rounded-full border border-[#e2d4c7]">
+                {t("1-Tap Add", "1-क्लिक चयन")}
+              </span>
+            </div>
 
-          <label className="form-field">
-            <span>
-              {t("Extra design notes", "अन्य विशेष निर्देश")}{" "}
-              <small className="text-[11px] font-normal text-stone-500">
-                {t("(Optional)", "(वैकल्पिक)")}
-              </small>
-            </span>
-            <input
-              value={design.additionalInstructions}
-              onChange={(event) => setDesign({ ...design, additionalInstructions: event.target.value })}
-              placeholder={t(
-                "Gotta patti, lace, contrast piping, latkan...",
-                "गोटा पट्टी, लेस, पाइपिंग, लटकन..."
-              )}
-            />
-          </label>
+            {/* Trims Chips */}
+            <div className="flex flex-wrap gap-2 pt-1">
+              {POPULAR_TRIMS.map((trim) => {
+                const label = lang === "hi" ? trim.hi : trim.en;
+                const isSelected = (design.additionalInstructions || "").includes(label) ||
+                  (design.additionalInstructions || "").includes(trim.en) ||
+                  (design.additionalInstructions || "").includes(trim.hi);
+
+                const toggleTrim = () => {
+                  let current = design.additionalInstructions || "";
+                  if (isSelected) {
+                    // Remove
+                    let updated = current
+                      .replace(new RegExp(`,?\\s*${trim.en}`, "gi"), "")
+                      .replace(new RegExp(`,?\\s*${trim.hi}`, "gi"), "")
+                      .trim()
+                      .replace(/^,\s*/, "")
+                      .replace(/,\s*$/, "");
+                    setDesign({ ...design, additionalInstructions: updated });
+                  } else {
+                    // Add
+                    let updated = current.trim();
+                    if (updated && !updated.endsWith(",")) {
+                      updated += ", ";
+                    } else if (updated) {
+                      updated += " ";
+                    }
+                    updated += label;
+                    setDesign({ ...design, additionalInstructions: updated });
+                  }
+                };
+
+                return (
+                  <button
+                    type="button"
+                    key={trim.id}
+                    onClick={toggleTrim}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-bold transition-all cursor-pointer border ${
+                      isSelected
+                        ? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-sm scale-102"
+                        : "bg-white text-stone-700 border-[#dfcdbe] hover:border-[var(--primary)] hover:bg-[#fff9f6]"
+                    }`}
+                  >
+                    <span>{trim.icon}</span>
+                    <span>{label}</span>
+                    {isSelected && (
+                      <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-white/30 text-[9px]">
+                        ✓
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Fitting Preference & Custom Text Notes */}
+          <div className="grid gap-5 md:grid-cols-2">
+            <label className="form-field">
+              <span className="text-[12.5px] font-bold text-stone-800 flex items-center gap-1.5">
+                <span>✂️</span>
+                <span>{t("Preferred fit", "सिलाई की फ़िटिंग")}</span>
+              </span>
+              <select
+                value={design.fit}
+                onChange={(event) => setDesign({ ...design, fit: event.target.value })}
+                className="font-medium cursor-pointer bg-white"
+              >
+                <option value="Regular">{t("Regular Fit (Comfortable)", "सामान्य / रेगुलर फ़िट (आरामदायक)")}</option>
+                <option value="Fitted">{t("Fitted (Tight Fit)", "फ़िटेड (Tight Fit / चिपकी हुई)")}</option>
+                <option value="Relaxed">{t("Relaxed", "रिलैक्स्ड (थोड़ी ढीली)")}</option>
+                <option value="Loose">{t("Loose", "ढीली")}</option>
+                <option value="Oversized">{t("Oversized", "ओवरसाइज़्ड (बहुत ढीली)")}</option>
+                <option value="As per Photo">{t("As per Photo", "फ़ोटो जैसी")}</option>
+                <option value="Need Guidance">{t("Need Guidance from Masterji", "मास्टर जी से सलाह")}</option>
+              </select>
+            </label>
+
+            <label className="form-field">
+              <span className="text-[12.5px] font-bold text-stone-800 flex items-center justify-between">
+                <span>{t("Tailoring notes & finishing details", "सिलाई व फ़िनिशिंग के निर्देश")}</span>
+                <small className="text-[11px] font-normal text-stone-500">
+                  {t("(Optional)", "(वैकल्पिक)")}
+                </small>
+              </span>
+              <input
+                value={design.additionalInstructions || ""}
+                onChange={(event) => setDesign({ ...design, additionalInstructions: event.target.value })}
+                placeholder={t(
+                  "e.g., Gotta patti border on sleeves, deep neckline, contrast dori...",
+                  "जैसे: बाज़ू पर गोटा पट्टी, गहरा गला, मैचिंग डोरी व लटकन..."
+                )}
+                className="bg-white"
+              />
+            </label>
+          </div>
         </div>
       </section>
 
