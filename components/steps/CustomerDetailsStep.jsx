@@ -280,7 +280,34 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
           />
         </label>
 
-        {/* 5. City */}
+        {/* 5. State */}
+        <div className="form-field">
+          <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-[var(--primary-dark)] mb-1">
+            <Building size={14} className="text-[var(--primary)]" />
+            <span>{t("State", "राज्य")}</span>
+            <i aria-hidden="true" className="text-red-500 font-bold">*</i>
+          </span>
+          <div className="relative">
+            <select
+              required
+              value={customer.state || ""}
+              onChange={(e) => handleStateChange(e.target.value)}
+              className="w-full appearance-none rounded-xl border border-[#eedfd6] bg-[#fffdfb] px-3.5 py-3 text-[13.5px] font-medium pr-10 outline-none focus:border-[var(--primary)] focus:bg-white cursor-pointer"
+            >
+              <option value="">{t("Select State...", "राज्य चुनें...")}</option>
+              {INDIAN_STATES.map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-stone-500">
+              <ChevronDown size={18} />
+            </div>
+          </div>
+        </div>
+
+        {/* 6. City */}
         <div className="form-field">
           <div className="flex items-center justify-between mb-1">
             <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-[var(--primary-dark)]">
@@ -338,33 +365,6 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
               className="rounded-xl border border-[#eedfd6] bg-[#fffdfb] px-3.5 py-3 text-[13.5px] transition-all focus:border-[var(--primary)] focus:bg-white"
             />
           )}
-        </div>
-
-        {/* 6. State */}
-        <div className="form-field">
-          <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-[var(--primary-dark)] mb-1">
-            <Building size={14} className="text-[var(--primary)]" />
-            <span>{t("State", "राज्य")}</span>
-            <i aria-hidden="true" className="text-red-500 font-bold">*</i>
-          </span>
-          <div className="relative">
-            <select
-              required
-              value={customer.state || ""}
-              onChange={(e) => handleStateChange(e.target.value)}
-              className="w-full appearance-none rounded-xl border border-[#eedfd6] bg-[#fffdfb] px-3.5 py-3 text-[13.5px] font-medium pr-10 outline-none focus:border-[var(--primary)] focus:bg-white cursor-pointer"
-            >
-              <option value="">{t("Select State...", "राज्य चुनें...")}</option>
-              {INDIAN_STATES.map((st) => (
-                <option key={st} value={st}>
-                  {st}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-stone-500">
-              <ChevronDown size={18} />
-            </div>
-          </div>
         </div>
 
         {/* 7. PIN Code */}
