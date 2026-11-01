@@ -1,42 +1,47 @@
 import React, { useState } from "react";
 import {
   Ruler,
-  Truck,
   PhoneCall,
   Sparkles,
   Maximize2,
   ChevronDown,
-  CheckCircle2,
   Clock,
-  ShieldCheck,
-  FileEdit,
 } from "lucide-react";
 import BlouseMeasurementSketch from "../BlouseMeasurementSketch.jsx";
 import { MEASUREMENT_GUIDES } from "../../config/fashionCatalog.js";
+import { useLanguage } from "../../context/LanguageContext.jsx";
 
 const methodOptions = [
   {
     id: "self_measurement",
-    label: "Self measurement / खुद से नाप लेकर",
-    tag: "Accurate Fit / सटीक नाप",
+    en: "Self measurement",
+    hi: "खुद से नाप लेकर",
+    tagEn: "Accurate Fit",
+    tagHi: "सटीक नाप",
     type: "self",
   },
   {
     id: "local_tailor",
-    label: "From local tailor / दर्जी से नाप करवाकर",
-    tag: "Professional / दर्जी से",
+    en: "From local tailor",
+    hi: "दर्जी से नाप करवाकर",
+    tagEn: "Professional",
+    tagHi: "दर्जी से",
     type: "self",
   },
   {
     id: "send_clothes",
-    label: "I will send my stitched sample clothes for measurement / मैं अपने सिले हुए कपड़े नापने के लिए भेजूंगी",
-    tag: "Stitched Sample Clothes / सिले कपड़े भेजूंगी",
+    en: "I will send my stitched sample clothes for measurement",
+    hi: "मैं अपने सिले हुए कपड़े नापने के लिए भेजूंगी",
+    tagEn: "Stitched Sample Clothes",
+    tagHi: "सिले कपड़े भेजूंगी",
     type: "courier",
   },
   {
     id: "video_call",
-    label: "Need help on video call / वीडियो कॉल पर मदद चाहिए (जल्दी ही संपर्क करेंगे)",
-    tag: "Master Tailor Help / जल्दी संपर्क",
+    en: "Need help on video call (Master tailor will connect shortly)",
+    hi: "वीडियो कॉल पर मदद चाहिए (जल्दी ही संपर्क करेंगे)",
+    tagEn: "Master Tailor Help",
+    tagHi: "जल्दी संपर्क",
     type: "videocall",
   },
 ];
@@ -49,13 +54,15 @@ export default function MeasurementsStep({
   customer,
   openLightbox,
 }) {
+  const { lang, t } = useLanguage();
   const [showSketchModal, setShowSketchModal] = useState(false);
 
   const updateMeasurements = (updates) => setMeasurements({ ...measurements, ...updates });
 
-  const currentMethod = measurements.provideMethod || methodOptions[0].label;
+  const currentMethod = measurements.provideMethod || "self_measurement";
 
   const isCourier =
+    currentMethod === "send_clothes" ||
     currentMethod.includes("भेजूंगी") ||
     currentMethod.includes("भेजूँगी") ||
     currentMethod.includes("सिले") ||
@@ -64,6 +71,7 @@ export default function MeasurementsStep({
     currentMethod.includes("sample clothes");
 
   const isVideoCall =
+    currentMethod === "video_call" ||
     currentMethod.includes("वीडियो कॉल") ||
     currentMethod.includes("video call") ||
     currentMethod.includes("help on video");
@@ -76,7 +84,6 @@ export default function MeasurementsStep({
   const isBlouse = outfit.type === "Blouse";
   const outfitGuideImg =
     MEASUREMENT_GUIDES?.[outfit.type] ||
-    measurementConfigs?.[outfit.type]?.guideImage ||
     "./images/measurement_guides/measurement_guide_kurti.png";
   const kurtiSketchImg = outfitGuideImg;
 
@@ -88,9 +95,9 @@ export default function MeasurementsStep({
   const handleZoomSketch = () => {
     if (openLightbox && !isBlouse) {
       openLightbox(
-        `${outfitTitle} Measurement Guide / नाप का रेखाचित्र`,
+        t(`${outfitTitle} Measurement Guide`, `${outfitTitle} नाप का रेखाचित्र`),
         kurtiSketchImg,
-        "Follow points 1 to 10 on diagram / चित्र में 1 से 10 तक के बिंदुओं के अनुसार नाप लें"
+        t("Follow points 1 to 10 on diagram", "चित्र में 1 से 10 तक के बिंदुओं के अनुसार नाप लें")
       );
     } else {
       setShowSketchModal(true);
@@ -106,18 +113,29 @@ export default function MeasurementsStep({
             <Ruler size={18} />
           </span>
           <div>
-            <p className="step-eyebrow">STEP 05 · YOUR MEASUREMENTS / आपके नाप</p>
+            <p className="step-eyebrow">
+              {t("STEP 05 · YOUR MEASUREMENTS", "चरण 05 · आपके नाप")}
+            </p>
             <h2 className="text-[24px] font-bold text-[var(--primary-dark)]">
               {outfit.type
-                ? `${outfit.type} Measurements / ${outfit.type} का नाप`
-                : "Your measurements / आपके नाप"}
+                ? t(`${outfit.type} Measurements`, `${outfit.type} का नाप`)
+                : t("Your measurements", "आपके नाप")}
             </h2>
             <p className="text-[13px] text-[var(--text-light)]">
               {isSelfMeasure
-                ? `Refer to the measurement diagram to enter your exact ${outfitTitle} size / रेखाचित्र के अनुसार नाप भरें`
+                ? t(
+                    `Refer to the measurement diagram to enter your exact ${outfitTitle} size`,
+                    `रेखाचित्र के अनुसार अपना सटीक ${outfitTitle} नाप भरें`
+                  )
                 : isCourier
-                ? `You will send your stitched sample clothes for measurement / आप नाप के लिए अपने सिले हुए कपड़े भेजेंगे`
-                : `Live video call assistance with our master tailor / मास्टर दर्जी जल्दी ही आपसे वीडियो कॉल पर संपर्क करेंगे`}
+                ? t(
+                    "You will send your stitched sample clothes for measurement",
+                    "आप नाप के लिए अपने सिले हुए कपड़े भेजेंगे"
+                  )
+                : t(
+                    "Live video call assistance with our master tailor",
+                    "मास्टर दर्जी जल्दी ही आपसे वीडियो कॉल पर संपर्क करेंगे"
+                  )}
             </p>
           </div>
         </div>
@@ -133,7 +151,7 @@ export default function MeasurementsStep({
                 className={measurements.unit === unit ? "is-active" : ""}
                 onClick={() => updateMeasurements({ unit })}
               >
-                {unit === "inch" ? "Inches / इंच" : "CM / सेमी"}
+                {unit === "inch" ? t("Inches", "इंच") : t("CM", "सेमी")}
               </button>
             ))}
           </div>
@@ -149,23 +167,31 @@ export default function MeasurementsStep({
                 htmlFor="measurement-method-select"
                 className="block text-[13px] font-bold text-[var(--primary-dark)]"
               >
-                How will you provide your measurements? / नाप कैसे देंगे?
+                {t("How will you provide your measurements?", "नाप कैसे देंगे?")}
               </label>
               <span className="rounded-full bg-[#f4e8e1] px-2.5 py-0.5 text-[10px] font-bold text-[var(--primary)] uppercase tracking-wider">
-                4 Options / 4 विकल्प
+                {t("4 Options", "4 विकल्प")}
               </span>
             </div>
 
             <div className="relative mt-2">
               <select
                 id="measurement-method-select"
-                value={currentMethod}
+                value={
+                  methodOptions.find(
+                    (m) =>
+                      m.id === currentMethod ||
+                      m.en === currentMethod ||
+                      m.hi === currentMethod ||
+                      currentMethod.includes(m.id)
+                  )?.id || methodOptions[0].id
+                }
                 onChange={handleMethodChange}
-                className="w-full appearance-none rounded-xl border-2 border-[#e6d0c4] bg-white px-4 py-3.5 pr-10 text-[13.5px] font-semibold text-[var(--primary-dark)] shadow-sm outline-none transition-all focus:border-[var(--primary)] focus:ring-3 focus:ring-[rgba(107,38,54,0.15)]"
+                className="w-full appearance-none rounded-xl border-2 border-[#e6d0c4] bg-white px-4 py-3.5 pr-10 text-[13.5px] font-semibold text-[var(--primary-dark)] shadow-sm outline-none transition-all focus:border-[var(--primary)] focus:ring-3 focus:ring-[rgba(107,38,54,0.15)] cursor-pointer"
               >
                 {methodOptions.map((opt) => (
-                  <option key={opt.id} value={opt.label}>
-                    {opt.label}
+                  <option key={opt.id} value={opt.id}>
+                    {lang === "hi" ? opt.hi : opt.en}
                   </option>
                 ))}
               </select>
@@ -175,36 +201,58 @@ export default function MeasurementsStep({
             </div>
 
             <p className="mt-2 text-[11.5px] text-[var(--text-light)]">
-              {isSelfMeasure && "📏 नीचे दिए गए रेखाचित्र (Measurement Sketch) को देखकर नाप भरें।"}
-              {isVideoCall && "📹 हमारे मास्टर दर्जी जल्दी ही आपसे संपर्क करेंगे (नाप भरने की ज़रूरत नहीं)।"}
+              {isSelfMeasure &&
+                t(
+                  "📏 Follow the diagram below to enter your measurements.",
+                  "📏 नीचे दिए गए रेखाचित्र (Measurement Sketch) को देखकर नाप भरें।"
+                )}
+              {isVideoCall &&
+                t(
+                  "📹 Our master tailor will contact you shortly (No manual entry required).",
+                  "📹 हमारे मास्टर दर्जी जल्दी ही आपसे संपर्क करेंगे (नाप भरने की ज़रूरत नहीं)।"
+                )}
+              {isCourier &&
+                t(
+                  "📦 Send your best fitting sample clothes to our atelier address.",
+                  "📦 अपने सबसे अच्छी फ़िटिंग वाले पुराने कपड़े हमारे पते पर भेजें।"
+                )}
             </p>
           </div>
 
-          {/* VIEW 1: SEND CLOTHES (Option 3: मैं अपने कपड़े भेजूंगी) */}
-          {/* NO MEASUREMENT PHOTO, NO MEASUREMENT INPUT FIELDS, NO PICKUP NOTICE */}
+          {/* VIEW 1: SEND CLOTHES */}
           {isCourier && (
             <div className="mb-6 space-y-4">
-              {/* OPTIONAL SPECIAL INSTRUCTIONS BOX FOR SENDING CLOTHES */}
               <div className="rounded-2xl border border-[#eedfd6] bg-white p-5 shadow-xs">
                 <label className="block text-[13px] font-bold text-[var(--primary-dark)] mb-1">
-                  Any special notes or fitting instructions? / कोई विशेष निर्देश? (Optional)
+                  {t(
+                    "Any special notes or fitting instructions?",
+                    "कोई विशेष निर्देश?"
+                  )}{" "}
+                  <small className="text-[11px] font-normal text-stone-500">
+                    {t("(Optional)", "(वैकल्पिक)")}
+                  </small>
                 </label>
                 <p className="text-[11.5px] text-[var(--text-light)] mb-2.5">
-                  e.g., Any notes about the fabric or fitting / जैसे: कपड़े या नाप से संबंधित कोई विशेष बात
+                  {t(
+                    "e.g., Any notes about the fabric or fitting",
+                    "जैसे: कपड़े या नाप से संबंधित कोई विशेष बात"
+                  )}
                 </p>
                 <textarea
                   rows={2}
                   value={measurements.notes || ""}
                   onChange={(e) => updateMeasurements({ notes: e.target.value })}
-                  placeholder="Type any instructions here... / कोई विशेष निर्देश यहाँ लिखें..."
+                  placeholder={t(
+                    "Type any instructions here...",
+                    "कोई विशेष निर्देश यहाँ लिखें..."
+                  )}
                   className="w-full rounded-xl border border-[#eedfd6] p-3 text-[12.5px] outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[rgba(107,38,54,0.1)]"
                 />
               </div>
             </div>
           )}
 
-          {/* VIEW 2: VIDEO CALL ASSISTANCE (Option 4: वीडियो कॉल पर मदद चाहिए) */}
-          {/* NO MEASUREMENT PHOTO, NO MEASUREMENT INPUT FIELDS */}
+          {/* VIEW 2: VIDEO CALL ASSISTANCE */}
           {isVideoCall && (
             <div className="mb-6 space-y-4">
               <div className="overflow-hidden rounded-2xl border-2 border-[#b87333] bg-gradient-to-br from-[#fff7f0] via-[#fffdfa] to-[#fdede2] p-6 shadow-sm">
@@ -215,60 +263,76 @@ export default function MeasurementsStep({
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="text-[17px] font-bold text-[#6b2636]">
-                        Master Tailor Video Assistance / वीडियो कॉल पर मास्टर दर्जी की मदद
+                        {t(
+                          "Master Tailor Video Assistance",
+                          "वीडियो कॉल पर मास्टर दर्जी की मदद"
+                        )}
                       </h3>
                       <span className="flex items-center gap-1 rounded-full bg-[#965342] px-2.5 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider">
-                        <Clock size={11} /> Quick Assistance
+                        <Clock size={11} /> {t("Quick Assistance", "जल्दी संपर्क")}
                       </span>
                     </div>
 
                     <p className="mt-2.5 text-[13px] leading-relaxed text-[#4a2e2b]">
-                      <strong>English:</strong> Need guidance taking measurements? Our bespoke customizer & senior
-                      master tailor will connect with you on video call via WhatsApp / Phone (
-                      <span className="font-semibold text-[#6b2636]">
-                        {customer?.whatsapp || customer?.phone || "your contact number"}
-                      </span>
-                      ) shortly to guide you through every measurement
-                      step-by-step!
-                    </p>
-
-                    <p className="mt-2 text-[12.5px] leading-relaxed text-[#5c3732]">
-                      <strong>हिंदी:</strong> यदि आपको नाप लेने में किसी भी मदद या वीडियो कॉल की ज़रूरत है, तो ऑर्डर
-                      हमारे वरिष्ठ मास्टर दर्जी <strong>जल्दी ही आपसे संपर्क करेंगे</strong> और आपके दिए गए नंबर (
-                      <span className="font-semibold text-[#6b2636]">
-                        {customer?.whatsapp || customer?.phone || "दिए गए नंबर"}
-                      </span>
-                      ) पर वीडियो कॉल करेंगे और स्क्रीन पर एक-एक नाप आसानी से लेने में आपकी पूरी मदद करेंगे।
+                      {lang === "hi" ? (
+                        <>
+                          यदि आपको नाप लेने में किसी भी मदद या वीडियो कॉल की ज़रूरत है, तो हमारे वरिष्ठ मास्टर दर्जी{" "}
+                          <strong>जल्दी ही आपसे संपर्क करेंगे</strong> और आपके दिए गए नंबर (
+                          <span className="font-semibold text-[#6b2636]">
+                            {customer?.whatsapp || customer?.phone || "दिए गए नंबर"}
+                          </span>
+                          ) पर वीडियो कॉल करके एक-एक नाप आसानी से लेने में आपकी पूरी मदद करेंगे।
+                        </>
+                      ) : (
+                        <>
+                          Need guidance taking measurements? Our bespoke customizer & senior master tailor will connect with you on video call via WhatsApp / Phone (
+                          <span className="font-semibold text-[#6b2636]">
+                            {customer?.whatsapp || customer?.phone || "your contact number"}
+                          </span>
+                          ) shortly to guide you through every measurement step-by-step!
+                        </>
+                      )}
                     </p>
 
                     <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl bg-white/90 p-3 border border-[#eedfd6]">
                       <Sparkles size={16} className="text-amber-700" />
                       <span className="text-[12px] font-bold text-amber-900">
-                        Video Call Confirmed · मास्टर जी जल्दी ही आपसे संपर्क करके नाप नोट कर लेंगे।
+                        {t(
+                          "Video Call Confirmed · Tailor will connect shortly to record size",
+                          "वीडियो कॉल कन्फर्म · मास्टर जी जल्दी ही आपसे संपर्क करके नाप नोट कर लेंगे।"
+                        )}
                       </span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* OPTIONAL PREFERRED TIME NOTE FOR VIDEO CALL */}
+              {/* OPTIONAL PREFERRED TIME NOTE */}
               <div className="rounded-2xl border border-[#eedfd6] bg-white p-4 shadow-xs">
                 <label className="block text-[12.5px] font-bold text-[var(--primary-dark)] mb-1">
-                  Preferred time for video call? / वीडियो कॉल के लिए आपका पसंदीदा समय? (Optional)
+                  {t(
+                    "Preferred time for video call?",
+                    "वीडियो कॉल के लिए आपका पसंदीदा समय?"
+                  )}{" "}
+                  <small className="text-[11px] font-normal text-stone-500">
+                    {t("(Optional)", "(वैकल्पिक)")}
+                  </small>
                 </label>
                 <textarea
                   rows={2}
                   value={measurements.notes || ""}
                   onChange={(e) => updateMeasurements({ notes: e.target.value })}
-                  placeholder="e.g., Call between 3 PM to 5 PM / जैसे: दोपहर 3 से 5 बजे के बीच कॉल करें..."
+                  placeholder={t(
+                    "e.g., Call between 3 PM to 5 PM...",
+                    "जैसे: दोपहर 3 से 5 बजे के बीच कॉल करें..."
+                  )}
                   className="w-full rounded-xl border border-[#eedfd6] p-3 text-[12.5px] outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[rgba(107,38,54,0.1)]"
                 />
               </div>
             </div>
           )}
 
-          {/* VIEW 3: SELF MEASUREMENT & LOCAL TAILOR (Option 1 & Option 2) */}
-          {/* SHOWS MEASUREMENT SKETCH PHOTO AND MEASUREMENT INPUT BOXES */}
+          {/* VIEW 3: SELF MEASUREMENT & LOCAL TAILOR */}
           {isSelfMeasure && (
             <>
               {/* MEASUREMENT REFERENCE SKETCH BOX */}
@@ -280,10 +344,16 @@ export default function MeasurementsStep({
                     </span>
                     <div>
                       <h3 className="text-[14px] font-bold text-[var(--primary-dark)]">
-                        {outfitTitle} Measurement Guide / {outfitTitle} नाप लेने का रेखाचित्र
+                        {t(
+                          `${outfitTitle} Measurement Guide`,
+                          `${outfitTitle} नाप लेने का रेखाचित्र`
+                        )}
                       </h3>
                       <p className="text-[11px] text-[var(--text-light)]">
-                        Refer to the diagram below to take exact measurements / चित्र के अनुसार आसानी से सही नाप लें
+                        {t(
+                          "Refer to the diagram below to take exact measurements",
+                          "चित्र के अनुसार आसानी से सही नाप लें"
+                        )}
                       </p>
                     </div>
                   </div>
@@ -291,9 +361,9 @@ export default function MeasurementsStep({
                   <button
                     type="button"
                     onClick={handleZoomSketch}
-                    className="flex items-center gap-1.5 rounded-full border border-[#d6beaf] bg-white px-3 py-1.5 text-[11px] font-bold text-[var(--primary-dark)] shadow-2xs hover:bg-[#faf4ef]"
+                    className="flex items-center gap-1.5 rounded-full border border-[#d6beaf] bg-white px-3 py-1.5 text-[11px] font-bold text-[var(--primary-dark)] shadow-2xs hover:bg-[#faf4ef] cursor-pointer"
                   >
-                    <Maximize2 size={13} /> Enlarge / बड़ा देखें
+                    <Maximize2 size={13} /> {t("Enlarge", "बड़ा देखें")}
                   </button>
                 </div>
 
@@ -314,27 +384,33 @@ export default function MeasurementsStep({
                           <button
                             type="button"
                             onClick={handleZoomSketch}
-                            className="absolute bottom-5 right-5 flex items-center gap-1 rounded-full bg-black/70 px-3 py-1.5 text-[11px] font-bold text-white shadow-md backdrop-blur-xs transition-opacity hover:bg-black"
+                            className="absolute bottom-5 right-5 flex items-center gap-1 rounded-full bg-black/70 px-3 py-1.5 text-[11px] font-bold text-white shadow-md backdrop-blur-xs transition-opacity hover:bg-black cursor-pointer"
                           >
-                            <Maximize2 size={13} /> Click to Enlarge / बड़ा देखें
+                            <Maximize2 size={13} /> {t("Click to Enlarge", "बड़ा देखें")}
                           </button>
                         </div>
                       )}
                     </div>
 
-                    {/* RIGHT: NUMBERED QUICK GUIDE / REFERENCE POINTS */}
+                    {/* RIGHT: NUMBERED QUICK GUIDE */}
                     <div className="lg:col-span-6">
                       <div className="rounded-xl border border-[#eedfd6] bg-white p-4 shadow-2xs">
                         <h4 className="mb-3 flex items-center gap-2 text-[13px] font-bold text-[var(--primary-dark)]">
                           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#f4e8e1] text-[10px] text-[var(--primary)] font-bold">
                             i
                           </span>
-                          <span>Guide: How each point is measured / किस बिंदु को कैसे नापें</span>
+                          <span>
+                            {t(
+                              "Guide: How each point is measured",
+                              "किस बिंदु को कैसे नापें"
+                            )}
+                          </span>
                         </h4>
 
                         <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1 text-[11.5px]">
                           {measurementFields.map((field, idx) => {
                             const pointNum = field.num || idx + 1;
+                            const fieldLabel = lang === "hi" ? (field.hi || field.en) : field.en;
                             return (
                               <div
                                 key={field.key}
@@ -345,7 +421,7 @@ export default function MeasurementsStep({
                                 </span>
                                 <div className="flex-1">
                                   <span className="font-bold text-[var(--primary-dark)]">
-                                    {field.en} / {field.hi}
+                                    {fieldLabel}
                                   </span>
                                   {field.help && (
                                     <span className="block text-[11px] text-[var(--text-light)]">
@@ -359,8 +435,12 @@ export default function MeasurementsStep({
                         </div>
 
                         <div className="mt-3 rounded-lg bg-[#faf5f0] p-2.5 text-[11px] text-[#70483c] border border-[#f0dfd5]">
-                          💡 <strong>सुझाव / Tip:</strong> किसी अच्छे फिटिंग वाले पुराने कपड़े को समतल मेज़ पर रखकर
-                          इंची टेप से नाप लें।
+                          💡{" "}
+                          <strong>{t("Tip:", "सुझाव:")}</strong>{" "}
+                          {t(
+                            "Lay a well-fitted old garment flat on a table and measure with an inch tape.",
+                            "किसी अच्छे फिटिंग वाले पुराने कपड़े को समतल मेज़ पर रखकर इंची टेप से नाप लें।"
+                          )}
                         </div>
                       </div>
                     </div>
@@ -371,16 +451,20 @@ export default function MeasurementsStep({
               {/* DYNAMIC MEASUREMENT INPUT FIELDS */}
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="text-[15px] font-bold text-[var(--primary-dark)]">
-                  Enter Measurements / नाप दर्ज करें
+                  {t("Enter Measurements", "नाप दर्ज करें")}
                 </h3>
                 <span className="text-[12px] font-bold text-[var(--primary)]">
-                  Unit: {measurements.unit === "inch" ? "Inches (इंच)" : "Centimeters (सेमी)"}
+                  {t(
+                    `Unit: ${measurements.unit === "inch" ? "Inches" : "Centimeters"}`,
+                    `इकाई: ${measurements.unit === "inch" ? "इंच" : "सेमी"}`
+                  )}
                 </span>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 {measurementFields.map((field, idx) => {
                   const pointNum = field.num || idx + 1;
+                  const fieldLabel = lang === "hi" ? (field.hi || field.en) : field.en;
                   return (
                     <label
                       className="form-field relative rounded-2xl border border-[#eedfd6] bg-[#fffdfb] p-3.5 transition-all focus-within:border-[var(--primary)] focus-within:bg-white focus-within:shadow-sm"
@@ -391,9 +475,7 @@ export default function MeasurementsStep({
                           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--primary)] text-[10px] font-bold text-white">
                             {pointNum}
                           </span>
-                          <span>
-                            {field.en} / {field.hi}
-                          </span>
+                          <span>{fieldLabel}</span>
                         </span>
                       </div>
 
@@ -414,7 +496,7 @@ export default function MeasurementsStep({
                           }
                           placeholder="e.g. 36"
                         />
-                        <span>{measurements.unit === "inch" ? "in / इंच" : "cm / सेमी"}</span>
+                        <span>{measurements.unit === "inch" ? t("in", "इंच") : t("cm", "सेमी")}</span>
                       </div>
                     </label>
                   );
@@ -425,11 +507,11 @@ export default function MeasurementsStep({
         </>
       ) : (
         <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-[13px] text-amber-800 font-semibold">
-          Please choose an outfit first / कृपया पहले परिधान चुनें।
+          {t("Please choose an outfit first.", "कृपया पहले परिधान चुनें।")}
         </p>
       )}
 
-      {/* LIGHTBOX MODAL FOR BLOUSE / ENLARGED SKETCH */}
+      {/* LIGHTBOX MODAL */}
       {showSketchModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-xs"
@@ -441,12 +523,15 @@ export default function MeasurementsStep({
           >
             <div className="mb-4 flex items-center justify-between border-b pb-3">
               <h3 className="text-[17px] font-bold text-[var(--primary-dark)]">
-                {outfitTitle} Measurement Guide / नाप का रेखाचित्र
+                {t(
+                  `${outfitTitle} Measurement Guide`,
+                  `${outfitTitle} नाप का रेखाचित्र`
+                )}
               </h3>
               <button
                 type="button"
                 onClick={() => setShowSketchModal(false)}
-                className="rounded-full bg-stone-100 p-2 text-stone-600 hover:bg-stone-200"
+                className="rounded-full bg-stone-100 p-2 text-stone-600 hover:bg-stone-200 cursor-pointer"
               >
                 ✕
               </button>
@@ -466,9 +551,9 @@ export default function MeasurementsStep({
               <button
                 type="button"
                 onClick={() => setShowSketchModal(false)}
-                className="rounded-full bg-[var(--primary)] px-6 py-2 text-[13px] font-bold text-white shadow-md"
+                className="rounded-full bg-[var(--primary)] px-6 py-2 text-[13px] font-bold text-white shadow-md cursor-pointer"
               >
-                Close / बंद करें
+                {t("Close", "बंद करें")}
               </button>
             </div>
           </div>

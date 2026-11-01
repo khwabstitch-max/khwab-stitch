@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   User,
   Phone,
@@ -7,11 +7,11 @@ import {
   Building,
   Compass,
   Hash,
-  CheckCircle2,
   AlertCircle,
   ChevronDown,
   X,
 } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext.jsx";
 
 // List of all Indian States & Union Territories
 export const INDIAN_STATES = [
@@ -73,12 +73,12 @@ export const STATE_CITIES = {
 };
 
 export default function CustomerDetailsStep({ customer, setCustomer }) {
+  const { t } = useLanguage();
   const [cityMode, setCityMode] = useState("dropdown"); // 'dropdown' | 'custom'
 
   const handleChange = (field, value) => {
     setCustomer((prev) => {
       const updated = { ...prev, [field]: value };
-      // Keep combined cityState in sync
       const currentCity = field === "city" ? value : prev.city || "";
       const currentState = field === "state" ? value : prev.state || "";
       updated.cityState = currentCity && currentState ? `${currentCity}, ${currentState}` : currentCity || currentState;
@@ -89,7 +89,6 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
   // WhatsApp input cleaner: numeric only, strictly 10 digits
   const handlePhoneChange = (raw) => {
     let digits = (raw || "").replace(/\D/g, "");
-    // If user pasted or typed with 91 country code (when > 10 digits total)
     if (digits.length > 10 && digits.startsWith("91")) {
       digits = digits.slice(2);
     } else if (digits.length > 10 && digits.startsWith("0")) {
@@ -108,7 +107,6 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
   const handleStateChange = (selectedState) => {
     setCustomer((prev) => {
       const updated = { ...prev, state: selectedState };
-      // If city belongs to a different state, reset city
       const stateCities = STATE_CITIES[selectedState] || [];
       if (!stateCities.includes(prev.city)) {
         updated.city = stateCities[0] || "";
@@ -133,24 +131,29 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
             <User size={20} />
           </span>
           <div>
-            <p className="step-eyebrow">STEP 02 · YOUR DETAILS & ADDRESS / आपकी जानकारी व पता</p>
+            <p className="step-eyebrow">
+              {t("STEP 02 · YOUR DETAILS & ADDRESS", "चरण 02 · आपकी जानकारी व पता")}
+            </p>
             <h2 className="font-serif text-[23px] sm:text-[27px] font-bold text-[var(--primary-dark)] leading-tight">
-              Let’s get to know you / अपने बारे में बताएं
+              {t("Let’s get to know you", "अपने बारे में बताएं")}
             </h2>
             <p className="text-[13px] text-[var(--text-light)] mt-0.5">
-              Fill in your contact and doorstep delivery address / फ़िटिंग व डिलीवरी के लिए आवश्यक जानकारी भरें
+              {t(
+                "Fill in your contact and doorstep delivery address",
+                "फ़िटिंग व डिलीवरी के लिए आवश्यक जानकारी भरें"
+              )}
             </p>
           </div>
         </div>
       </div>
 
-      {/* FORM FIELDS - EXACT ORDER REQUESTED BY USER */}
+      {/* FORM FIELDS */}
       <div className="grid gap-5 md:grid-cols-2">
-        {/* 1. Full Name / पूरा नाम * */}
+        {/* 1. Full Name */}
         <label className="form-field">
           <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-[var(--primary-dark)]">
             <User size={14} className="text-[var(--primary)]" />
-            <span>Full Name / पूरा नाम</span>
+            <span>{t("Full Name", "पूरा नाम")}</span>
             <i aria-hidden="true" className="text-red-500 font-bold">*</i>
           </span>
           <input
@@ -159,17 +162,17 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
             required
             value={customer.name || ""}
             onChange={(e) => handleChange("name", e.target.value)}
-            placeholder="e.g. Sunita Sharma / जैसे: सुनीता शर्मा"
+            placeholder={t("e.g. Sunita Sharma", "जैसे: सुनीता शर्मा")}
             className="rounded-xl border border-[#eedfd6] bg-[#fffdfb] px-3.5 py-3 text-[13.5px] transition-all focus:border-[var(--primary)] focus:bg-white"
           />
         </label>
 
-        {/* 2. WhatsApp Number / वॉट्सऐप नंबर * (10 Digits Strict Check) */}
+        {/* 2. WhatsApp Number (10 Digits Strict Check) */}
         <label className="form-field">
           <span className="flex items-center justify-between text-[12.5px] font-bold text-[var(--primary-dark)]">
             <span className="flex items-center gap-1.5">
               <Phone size={14} className="text-[var(--primary)]" />
-              <span>WhatsApp Number / वॉट्सऐप नंबर</span>
+              <span>{t("WhatsApp Number", "वॉट्सऐप नंबर")}</span>
               <i aria-hidden="true" className="text-red-500 font-bold">*</i>
             </span>
             {phoneLength > 0 && (
@@ -180,7 +183,9 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
                     : "bg-amber-100 text-amber-800 border border-amber-200"
                 }`}
               >
-                {isPhoneValid ? "✓ 10 Digits Valid" : `${phoneLength}/10 Digits (10 अंक आवश्यक)`}
+                {isPhoneValid
+                  ? t("✓ 10 Digits Valid", "✓ 10 अंक मान्य")
+                  : t(`${phoneLength}/10 Digits`, `${phoneLength}/10 अंक (10 अंक आवश्यक)`)}
               </span>
             )}
           </span>
@@ -206,7 +211,7 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
               maxLength={10}
               value={customer.whatsapp || ""}
               onChange={(e) => handlePhoneChange(e.target.value)}
-              placeholder="9876543210 (10 अंक)"
+              placeholder={t("9876543210 (10 digits)", "9876543210 (10 अंक)")}
               className="w-full bg-transparent px-3.5 py-3 text-[14px] font-mono tracking-wider text-stone-900 outline-none placeholder:text-stone-400 placeholder:font-sans placeholder:tracking-normal"
             />
             {phoneLength > 0 && (
@@ -214,7 +219,7 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
                 type="button"
                 onClick={() => handleChange("whatsapp", "")}
                 className="px-3 text-stone-400 hover:text-stone-700 flex items-center justify-center transition-colors cursor-pointer"
-                title="Clear / साफ़ करें"
+                title={t("Clear", "साफ़ करें")}
                 aria-label="Clear WhatsApp Number"
               >
                 <X size={15} />
@@ -224,19 +229,26 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
           {phoneLength > 0 && !isPhoneValid && (
             <p className="text-[11px] font-semibold text-amber-700 mt-1 flex items-center gap-1">
               <AlertCircle size={12} />
-              <span>Please enter 10 digits ({10 - phoneLength} left) / कृपया 10 अंकों का नंबर दर्ज करें ({10 - phoneLength} अंक बाकी)।</span>
+              <span>
+                {t(
+                  `Please enter 10 digits (${10 - phoneLength} left)`,
+                  `कृपया 10 अंकों का नंबर दर्ज करें (${10 - phoneLength} अंक बाकी)।`
+                )}
+              </span>
             </p>
           )}
         </label>
 
-        {/* 3. Email Address / ईमेल एड्रेस (Optional) */}
+        {/* 3. Email Address (Optional) */}
         <label className="form-field md:col-span-2">
           <span className="flex items-center justify-between text-[12.5px] font-bold text-[var(--primary-dark)]">
             <span className="flex items-center gap-1.5">
               <Mail size={14} className="text-[var(--primary)]" />
-              <span>Email Address / ईमेल एड्रेस</span>
+              <span>{t("Email Address", "ईमेल एड्रेस")}</span>
             </span>
-            <small className="text-[11px] font-normal text-stone-500">(Optional / वैकल्पिक)</small>
+            <small className="text-[11px] font-normal text-stone-500">
+              {t("(Optional)", "(वैकल्पिक)")}
+            </small>
           </span>
           <input
             type="email"
@@ -248,11 +260,11 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
           />
         </label>
 
-        {/* 4. Full Delivery Address / पूरा डिलीवरी पता * */}
+        {/* 4. Full Delivery Address */}
         <label className="form-field md:col-span-2">
           <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-[var(--primary-dark)]">
             <MapPin size={14} className="text-[var(--primary)]" />
-            <span>Full Delivery Address / पूरा डिलीवरी पता</span>
+            <span>{t("Full Delivery Address", "पूरा डिलीवरी पता")}</span>
             <i aria-hidden="true" className="text-red-500 font-bold">*</i>
           </span>
           <textarea
@@ -260,17 +272,20 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
             rows={2}
             value={customer.address || ""}
             onChange={(e) => handleChange("address", e.target.value)}
-            placeholder="House/Flat number, building name, street, colony / मकान नंबर, बिल्डिंग का नाम, गली, मोहल्ला..."
+            placeholder={t(
+              "House/Flat number, building name, street, colony...",
+              "मकान नंबर, बिल्डिंग का नाम, गली, मोहल्ला..."
+            )}
             className="rounded-xl border border-[#eedfd6] bg-[#fffdfb] p-3 text-[13px] leading-relaxed transition-all focus:border-[var(--primary)] focus:bg-white"
           />
         </label>
 
-        {/* 5. City / शहर * (Dropdown with Custom Input Option) */}
+        {/* 5. City */}
         <div className="form-field">
           <div className="flex items-center justify-between mb-1">
             <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-[var(--primary-dark)]">
               <Compass size={14} className="text-[var(--primary)]" />
-              <span>City / शहर</span>
+              <span>{t("City", "शहर")}</span>
               <i aria-hidden="true" className="text-red-500 font-bold">*</i>
             </span>
             <button
@@ -278,7 +293,9 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
               onClick={() => setCityMode(cityMode === "dropdown" ? "custom" : "dropdown")}
               className="text-[11px] font-semibold text-[var(--primary)] hover:underline cursor-pointer"
             >
-              {cityMode === "dropdown" ? "Type other city / शहर लिखें" : "Select from list / सूची से चुनें"}
+              {cityMode === "dropdown"
+                ? t("Type other city", "अन्य शहर लिखें")
+                : t("Select from list", "सूची से चुनें")}
             </button>
           </div>
 
@@ -297,13 +314,15 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
                 }}
                 className="w-full appearance-none rounded-xl border border-[#eedfd6] bg-[#fffdfb] px-3.5 py-3 text-[13.5px] font-medium pr-10 outline-none focus:border-[var(--primary)] focus:bg-white cursor-pointer"
               >
-                <option value="">Select City / शहर चुनें...</option>
+                <option value="">{t("Select City...", "शहर चुनें...")}</option>
                 {availableCities.map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
                 ))}
-                <option value="__OTHER__">✍️ Other City / अन्य शहर (Type below)...</option>
+                <option value="__OTHER__">
+                  {t("✍️ Other City (Type below)...", "✍️ अन्य शहर (नीचे लिखें)...")}
+                </option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-stone-500">
                 <ChevronDown size={18} />
@@ -315,17 +334,17 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
               required
               value={customer.city || ""}
               onChange={(e) => handleChange("city", e.target.value)}
-              placeholder="e.g. Jaipur, New Delhi, Lucknow / शहर का नाम"
+              placeholder={t("e.g. Jaipur, New Delhi, Lucknow...", "जैसे: जयपुर, नई दिल्ली, लखनऊ...")}
               className="rounded-xl border border-[#eedfd6] bg-[#fffdfb] px-3.5 py-3 text-[13.5px] transition-all focus:border-[var(--primary)] focus:bg-white"
             />
           )}
         </div>
 
-        {/* 6. State / राज्य * (Full Indian States Dropdown) */}
+        {/* 6. State */}
         <div className="form-field">
           <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-[var(--primary-dark)] mb-1">
             <Building size={14} className="text-[var(--primary)]" />
-            <span>State / राज्य</span>
+            <span>{t("State", "राज्य")}</span>
             <i aria-hidden="true" className="text-red-500 font-bold">*</i>
           </span>
           <div className="relative">
@@ -335,7 +354,7 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
               onChange={(e) => handleStateChange(e.target.value)}
               className="w-full appearance-none rounded-xl border border-[#eedfd6] bg-[#fffdfb] px-3.5 py-3 text-[13.5px] font-medium pr-10 outline-none focus:border-[var(--primary)] focus:bg-white cursor-pointer"
             >
-              <option value="">Select State / राज्य चुनें...</option>
+              <option value="">{t("Select State...", "राज्य चुनें...")}</option>
               {INDIAN_STATES.map((st) => (
                 <option key={st} value={st}>
                   {st}
@@ -348,12 +367,12 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
           </div>
         </div>
 
-        {/* 7. PIN Code / पिन कोड * */}
+        {/* 7. PIN Code */}
         <label className="form-field">
           <span className="flex items-center justify-between text-[12.5px] font-bold text-[var(--primary-dark)]">
             <span className="flex items-center gap-1.5">
               <Hash size={14} className="text-[var(--primary)]" />
-              <span>PIN Code / पिन कोड</span>
+              <span>{t("PIN Code", "पिन कोड")}</span>
               <i aria-hidden="true" className="text-red-500 font-bold">*</i>
             </span>
             {pinLength > 0 && (
@@ -364,7 +383,9 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
                     : "bg-amber-100 text-amber-800 border border-amber-200"
                 }`}
               >
-                {isPinValid ? "✓ 6 Digits Valid" : `${pinLength}/6 Digits`}
+                {isPinValid
+                  ? t("✓ 6 Digits Valid", "✓ 6 अंक मान्य")
+                  : t(`${pinLength}/6 Digits`, `${pinLength}/6 अंक`)}
               </span>
             )}
           </span>
@@ -374,7 +395,7 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
             maxLength={6}
             value={customer.pin || ""}
             onChange={(e) => handlePinChange(e.target.value)}
-            placeholder="e.g. 302001 (6 अंकों का पिन कोड)"
+            placeholder={t("e.g. 302001 (6 digits)", "जैसे: 302001 (6 अंक)")}
             className={`rounded-xl border px-3.5 py-3 text-[13.5px] font-mono tracking-wider transition-all focus:bg-white ${
               pinLength > 0 && !isPinValid
                 ? "border-amber-400 bg-amber-50/30 focus:border-amber-500"
@@ -385,28 +406,35 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
           />
         </label>
 
-        {/* 8. Nearby Landmark / पास का लैंडमार्क (Optional) */}
+        {/* 8. Nearby Landmark (Optional) */}
         <label className="form-field">
           <span className="flex items-center justify-between text-[12.5px] font-bold text-[var(--primary-dark)]">
             <span className="flex items-center gap-1.5">
               <Building size={14} className="text-[var(--primary)]" />
-              <span>Nearby Landmark / पास का लैंडमार्क</span>
+              <span>{t("Nearby Landmark", "पास का लैंडमार्क")}</span>
             </span>
-            <small className="text-[11px] font-normal text-stone-500">(Optional / वैकल्पिक)</small>
+            <small className="text-[11px] font-normal text-stone-500">
+              {t("(Optional)", "(वैकल्पिक)")}
+            </small>
           </span>
           <input
             type="text"
             value={customer.landmark || ""}
             onChange={(e) => handleChange("landmark", e.target.value)}
-            placeholder="Near temple, hospital, school, or market..."
+            placeholder={t(
+              "Near temple, hospital, school, or market...",
+              "मंदिर, अस्पताल, स्कूल या बाज़ार के पास..."
+            )}
             className="rounded-xl border border-[#eedfd6] bg-[#fffdfb] px-3.5 py-3 text-[13.5px] transition-all focus:border-[var(--primary)] focus:bg-white"
           />
         </label>
       </div>
 
       <div className="mt-6 rounded-xl bg-[#fdf9f6] p-3 text-center text-[11.5px] text-[var(--text-light)] border border-[#f0e3db]">
-        ✦ All tailor communications, WhatsApp fittings, and delivery status will be sent to your WhatsApp number.
-        / फ़िटिंग व डिलीवरी संबंधी सभी सूचनाएं आपके वॉट्सऐप नंबर पर भेजी जाएँगी।
+        {t(
+          "✦ All tailor communications, WhatsApp fittings, and delivery status will be sent to your WhatsApp number.",
+          "✦ फ़िटिंग व डिलीवरी संबंधी सभी सूचनाएं आपके वॉट्सऐप नंबर पर भेजी जाएँगी।"
+        )}
       </div>
     </section>
   );

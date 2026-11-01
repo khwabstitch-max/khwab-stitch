@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Check, Eye, ChevronDown, ChevronUp, Sparkles, X, Lock, AlertCircle } from "lucide-react";
-
 import { DESIGN_CODES as CATALOG_DESIGN_CODES, OUTFITS } from "../config/fashionCatalog.js";
+import { useLanguage } from "../context/LanguageContext.jsx";
+
 export { CATALOG_DESIGN_CODES };
 
 export default function DesignCodeDropdown({
@@ -9,6 +10,7 @@ export default function DesignCodeDropdown({
   setOutfit,
   onOpenZoom,
 }) {
+  const { lang, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -42,7 +44,9 @@ export default function DesignCodeDropdown({
   const expectedPrefix = currentOutfit?.designCodePrefix || "";
 
   const prefixLabel = currentOutfit
-    ? `${expectedPrefix}- Codes for ${currentOutfit.en} / ${currentOutfit.hi} के लिए ${expectedPrefix}- कोड`
+    ? (lang === "hi"
+        ? `${currentOutfit.hi} के लिए ${expectedPrefix}- कोड`
+        : `${expectedPrefix}- Codes for ${currentOutfit.en}`)
     : "";
 
   // Filter catalog items to only show codes matching the chosen outfit
@@ -80,46 +84,40 @@ export default function DesignCodeDropdown({
     setOutfit((prev) => ({ ...prev, designCode: "" }));
   };
 
-  // --------------------------------------------------------------------------
-  // CASE 1: NO OUTFIT SELECTED YET -> LOCKED / DISABLED STATE
-  // --------------------------------------------------------------------------
+  // CASE 1: NO OUTFIT SELECTED YET -> LOCKED
   if (!outfit?.type) {
     return (
       <div className="form-field relative">
         <div className="flex items-center justify-between mb-1">
           <span className="font-bold text-[13px] text-stone-700 flex items-center gap-1.5">
             <Lock size={13} className="text-stone-400" />
-            <span>Design code / डिज़ाइन कोड</span>
+            <span>{t("Design code", "डिज़ाइन कोड")}</span>
             <small className="text-[11px] font-normal text-stone-400">
-              (Studio Catalog / कैटलॉग)
+              {t("(Studio Catalog)", "(कैटलॉग डिज़ाइन)")}
             </small>
           </span>
         </div>
 
         <div className="flex items-start gap-2.5 rounded-xl border-2 border-dashed border-[#e6dcd3] bg-[#faf6f2] p-3 text-stone-600 text-[12.5px] leading-relaxed">
           <AlertCircle size={17} className="text-amber-700 shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <p className="text-stone-800">
-              <b>Please select an outfit above first</b> (Blouse, Kurti, or Suit Kameez). Matching <b>(B-, K-, SU-)</b> codes will appear here based on your selection.
-            </p>
-            <p className="text-[12px] text-stone-600">
-              <b>कृपया पहले ऊपर परिधान चुनें</b> (ब्लाउज़, कुर्ती या सूट कमीज़)। आपके चुने हुए परिधान के अनुसार ही यहाँ <b>(B-, K-, SU-)</b> कोड दिखाई देंगे।
-            </p>
-          </div>
+          <p className="text-stone-800">
+            {t(
+              "Please select an outfit above first (Blouse, Kurti, or Suit Kameez). Matching codes will appear here based on your selection.",
+              "कृपया पहले ऊपर परिधान चुनें (ब्लाउज़, कुर्ती या सूट कमीज़)। आपके चुने हुए परिधान के अनुसार ही यहाँ कोड दिखाई देंगे।"
+            )}
+          </p>
         </div>
       </div>
     );
   }
 
-  // --------------------------------------------------------------------------
   // CASE 2: OUTFIT IS SELECTED -> SHOW FILTERED CODES
-  // --------------------------------------------------------------------------
   return (
     <div className="form-field relative" ref={dropdownRef}>
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-1.5">
           <span className="font-bold text-[13px] text-stone-800">
-            Design code / डिज़ाइन कोड
+            {t("Design code", "डिज़ाइन कोड")}
           </span>
           <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#f6eee8] text-[var(--primary)] border border-[#ebdcd0]">
             {prefixLabel}
@@ -132,7 +130,7 @@ export default function DesignCodeDropdown({
             className="text-[11px] text-red-600 hover:underline font-semibold flex items-center gap-0.5 cursor-pointer"
           >
             <X size={12} />
-            <span>Clear / हटाएं</span>
+            <span>{t("Clear", "हटाएं")}</span>
           </button>
         )}
       </div>
@@ -159,11 +157,11 @@ export default function DesignCodeDropdown({
                   {selectedCatalogItem.code}
                 </span>
                 <span className="font-bold text-[13px] text-stone-900 truncate">
-                  {selectedCatalogItem.name}
+                  {lang === "hi" && selectedCatalogItem.hi ? selectedCatalogItem.hi : selectedCatalogItem.name}
                 </span>
               </div>
               <p className="text-[11px] text-stone-500 truncate mt-0.5">
-                {selectedCatalogItem.hi}
+                {lang === "hi" ? selectedCatalogItem.details : (selectedCatalogItem.hi || selectedCatalogItem.details)}
               </p>
             </div>
           </div>
@@ -172,13 +170,18 @@ export default function DesignCodeDropdown({
             <span className="font-bold text-[13px] text-[var(--primary-dark)] bg-stone-100 px-2 py-0.5 rounded">
               {outfit.designCode}
             </span>
-            <span className="text-[12px] text-stone-500 ml-2">Custom Design Code</span>
+            <span className="text-[12px] text-stone-500 ml-2">
+              {t("Custom Design Code", "कस्टम डिज़ाइन कोड")}
+            </span>
           </div>
         ) : (
           <div className="flex items-center gap-2 text-stone-500 py-1">
             <Sparkles size={15} className="text-[var(--secondary)]" />
             <span className="text-[13px]">
-              Select {outfit.type} Design Code ({expectedPrefix}-Codes)... / कोड चुनें
+              {t(
+                `Select ${outfit.type} Design Code (${expectedPrefix}-Codes)...`,
+                `${outfit.type} डिज़ाइन कोड चुनें (${expectedPrefix}-कोड)...`
+              )}
             </span>
           </div>
         )}
@@ -193,7 +196,7 @@ export default function DesignCodeDropdown({
                 if (onOpenZoom) onOpenZoom(selectedCatalogItem.image);
               }}
               className="p-1 rounded-lg hover:bg-stone-100 text-stone-600 hover:text-[var(--primary)] transition-colors cursor-pointer"
-              title="Click to Zoom / बड़ी फ़ोटो देखें"
+              title={t("Click to Zoom", "बड़ी फ़ोटो देखें")}
             >
               <Eye size={17} />
             </button>
@@ -207,9 +210,9 @@ export default function DesignCodeDropdown({
         <div className="absolute left-0 right-0 top-full z-40 mt-1.5 rounded-2xl border-2 border-[#ebdcd0] bg-white p-3 shadow-2xl space-y-2.5 animate-in fade-in zoom-in-95 duration-100">
           <div className="flex items-center justify-between pb-2 border-b border-stone-100 text-[11px] font-bold text-stone-500 uppercase tracking-wider">
             <span>
-              {outfit.type} Designs ({expectedPrefix}-Codes)
+              {outfit.type} {t("Designs", "डिज़ाइन")} ({expectedPrefix}-Codes)
             </span>
-            <span>Zoom & Select</span>
+            <span>{t("Zoom & Select", "ज़ूम व चुनें")}</span>
           </div>
 
           {/* CATALOG ITEMS LIST */}
@@ -231,7 +234,7 @@ export default function DesignCodeDropdown({
                     <div
                       className="relative flex-shrink-0 cursor-pointer group"
                       onClick={() => onOpenZoom && onOpenZoom(item.image)}
-                      title="Click to Zoom Photo / बड़ी फ़ोटो देखने के लिए क्लिक करें"
+                      title={t("Click to Zoom Photo", "बड़ी फ़ोटो देखने के लिए क्लिक करें")}
                     >
                       <img
                         src={item.image}
@@ -250,12 +253,9 @@ export default function DesignCodeDropdown({
                           {item.code}
                         </span>
                         <span className="font-bold text-[13px] text-stone-900 truncate">
-                          {item.name}
+                          {lang === "hi" && item.hi ? item.hi : item.name}
                         </span>
                       </div>
-                      <p className="text-[11.5px] font-semibold text-[var(--secondary)] mt-0.5">
-                        {item.hi}
-                      </p>
                       <p className="text-[11px] text-stone-500 truncate mt-0.5">
                         {item.details}
                       </p>
@@ -267,10 +267,10 @@ export default function DesignCodeDropdown({
                         type="button"
                         onClick={() => onOpenZoom && onOpenZoom(item.image)}
                         className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 text-[11px] font-bold transition-colors cursor-pointer"
-                        title="Zoom / बड़ी फ़ोटो देखें"
+                        title={t("Zoom", "बड़ा देखें")}
                       >
                         <Eye size={13} />
-                        <span className="hidden sm:inline">Zoom</span>
+                        <span className="hidden sm:inline">{t("Zoom", "ज़ूम")}</span>
                       </button>
 
                       <button
@@ -285,10 +285,10 @@ export default function DesignCodeDropdown({
                         {isItemActive ? (
                           <>
                             <Check size={13} strokeWidth={3} />
-                            <span>Selected</span>
+                            <span>{t("Selected", "चयनित")}</span>
                           </>
                         ) : (
-                          <span>Select / चुनें</span>
+                          <span>{t("Select", "चुनें")}</span>
                         )}
                       </button>
                     </div>
@@ -297,12 +297,14 @@ export default function DesignCodeDropdown({
               })
             ) : (
               <p className="text-center text-stone-500 text-[12px] py-4">
-                No catalog items found for {outfit.type} / कोई कैटलॉग डिज़ाइन कोड नहीं मिला।
+                {t(
+                  `No catalog items found for ${outfit.type}`,
+                  `${outfit.type} के लिए कोई कैटलॉग डिज़ाइन कोड नहीं मिला।`
+                )}
               </p>
             )}
           </div>
-
-                  </div>
+        </div>
       )}
     </div>
   );

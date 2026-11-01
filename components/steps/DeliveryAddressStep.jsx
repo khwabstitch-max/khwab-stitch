@@ -1,21 +1,14 @@
 import React, { useState } from "react";
 import {
   MapPin,
-  CheckCircle2,
   Edit2,
-  ShieldCheck,
   User,
   Phone,
   Mail,
-  Sparkles,
-  Scissors,
-  Ruler,
   Eye,
   ZoomIn,
   Tag,
-  Clock,
   Check,
-  Camera,
 } from "lucide-react";
 
 import {
@@ -33,6 +26,7 @@ import {
   resolveFrontNeck,
   resolveBackNeck,
 } from "../../config/fashionCatalog.js";
+import { useLanguage } from "../../context/LanguageContext.jsx";
 
 export default function DeliveryAddressStep({
   customer,
@@ -54,6 +48,7 @@ export default function DeliveryAddressStep({
   measurementConfigs = {},
   openLightbox,
 }) {
+  const { lang, t } = useLanguage();
   const [isEditingAddress, setIsEditingAddress] = useState(false);
 
   // Sync customer address to delivery if empty
@@ -70,7 +65,7 @@ export default function DeliveryAddressStep({
     setCustomer((prev) => ({ ...prev, landmark: value }));
   };
 
-  // Resilient resolvers ensuring photo, name, and length are ALWAYS 100% synced & never blank
+  // Resilient resolvers
   const resolvedOutfit = resolveOutfit(outfit?.type);
   const resolvedFrontNeck = resolveFrontNeck(design?.neckFront, design?.frontPhoto, outfit?.type);
   const resolvedBackNeck = resolveBackNeck(design?.neckBack, design?.backPhoto, outfit?.type);
@@ -85,7 +80,6 @@ export default function DeliveryAddressStep({
   const backNeckPhoto = resolvedBackNeck.photo;
   const sleeveLengthPhoto = resolvedSleeveLength.photo;
   const sleeveDesignPhoto = resolvedSleeveDesign.photo;
-  const outfitPhoto = outfit?.uploadedPhoto || OUTFIT_PHOTOS[outfit?.type] || "./images/outfits/02_kurti.jpg";
 
   const designCodeInfo = outfit?.designCode ? (DESIGN_CODE_MAP[outfit.designCode] || null) : null;
   const designCodePhoto = outfit?.designCode ? (DESIGN_CODE_PHOTOS[outfit.designCode] || "./images/design_codes/K-01.jpg") : null;
@@ -98,9 +92,7 @@ export default function DeliveryAddressStep({
 
   return (
     <section className="step-card rounded-[28px] border bg-white p-5 sm:p-7 md:p-8 shadow-sm space-y-6">
-      {/* ================================================================= */}
-      {/* SECTION 1: LOGO & ATELIER BRANDING (हमारा लोगो वाला) */}
-      {/* ================================================================= */}
+      {/* SECTION 1: LOGO & ATELIER BRANDING */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b-2 border-[#ebdcd0] bg-[#fdfbf9] p-4 sm:p-5 rounded-2xl border border-[#ebdcd0] shadow-2xs">
         <div className="flex items-center gap-3.5">
           <img
@@ -116,24 +108,22 @@ export default function DeliveryAddressStep({
               {BRAND_CONFIG?.name || "Khwab Stitch"}
             </h1>
             <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--secondary)] mt-0.5">
-              {BRAND_CONFIG?.tagline || "Custom Stitching · Your Style · Our Stitches / हमारी कारीगरी"}
+              {t("Where Fabric Becomes Art · Bespoke Atelier", "हमारी कारीगरी · ख़्वाब स्टिच")}
             </p>
           </div>
         </div>
 
         <div className="sm:text-right flex flex-col sm:items-end">
           <span className="inline-block rounded-full bg-[#fbf0f4] text-[var(--primary)] px-3 py-1 font-bold text-[12px] border border-[#f0d5df]">
-            Order at a glance / आपके द्वारा चुनी गई सभी जानकारी
+            {t("Order at a glance", "आपके द्वारा चुनी गई सभी जानकारी")}
           </span>
           <span className="text-[11px] font-bold text-stone-500 mt-1">
-            Section 1 of 3 · Atelier Verification
+            {t("Section 1 of 3 · Atelier Verification", "भाग 1 · विवरण का सत्यापन")}
           </span>
         </div>
       </div>
 
-      {/* ================================================================= */}
-      {/* SECTION 2: DETAIL ABOUT CUSTOMER & ADDRESS (ग्राहक की जानकारी व पता) */}
-      {/* ================================================================= */}
+      {/* SECTION 2: CUSTOMER DETAILS & ADDRESS */}
       <div className="rounded-2xl border-2 border-[#e8ded2] bg-[#fdfbf9] p-4 sm:p-5 shadow-2xs">
         <div className="flex items-center justify-between pb-3 border-b border-[#ece2d6]">
           <div className="flex items-center gap-2">
@@ -141,7 +131,7 @@ export default function DeliveryAddressStep({
               2
             </span>
             <h3 className="font-serif text-[15px] sm:text-[16px] font-bold text-[var(--primary-dark)]">
-              Customer Details & Address / ग्राहक विवरण व डिलीवरी पता
+              {t("Customer Details & Address", "ग्राहक विवरण व डिलीवरी पता")}
             </h3>
           </div>
           <div className="flex items-center gap-2">
@@ -151,7 +141,7 @@ export default function DeliveryAddressStep({
               className="inline-flex items-center gap-1.5 text-[11px] font-bold text-stone-700 hover:text-[var(--primary)] bg-white px-2.5 py-1 rounded-full border border-[#ded2c4] shadow-2xs transition-colors cursor-pointer"
             >
               <Edit2 size={11} />
-              <span>{isEditingAddress ? "Done / पूरा हुआ" : "Quick Edit Address / पता बदलें"}</span>
+              <span>{isEditingAddress ? t("Done", "पूरा हुआ") : t("Quick Edit Address", "पता बदलें")}</span>
             </button>
             <button
               type="button"
@@ -159,7 +149,7 @@ export default function DeliveryAddressStep({
               className="inline-flex items-center gap-1.5 text-[11.5px] font-bold text-[var(--primary)] hover:underline bg-white px-3 py-1 rounded-full border border-[#ded2c4] shadow-2xs transition-colors cursor-pointer"
             >
               <Edit2 size={12} />
-              <span>Edit Details / जानकारी बदलें (Step 2)</span>
+              <span>{t("Edit Details (Step 2)", "जानकारी बदलें (चरण 2)")}</span>
             </button>
           </div>
         </div>
@@ -168,11 +158,11 @@ export default function DeliveryAddressStep({
           {/* Personal Information */}
           <div className="p-3 rounded-xl bg-white border border-[#ebdcd0] space-y-1.5">
             <p className="text-[10.5px] font-extrabold uppercase tracking-wider text-stone-400">
-              Personal Information / व्यक्तिगत जानकारी
+              {t("Personal Information", "व्यक्तिगत जानकारी")}
             </p>
             <div className="flex items-center gap-2 font-bold text-[14.5px] text-stone-900">
               <User size={15} className="text-[var(--primary)] shrink-0" />
-              <span>{customer?.name || "Customer / ग्राहक"}</span>
+              <span>{customer?.name || t("Customer", "ग्राहक")}</span>
             </div>
             <div className="flex items-center gap-2 text-[13px] font-semibold text-stone-700">
               <Phone size={14} className="text-emerald-700 shrink-0" />
@@ -189,7 +179,7 @@ export default function DeliveryAddressStep({
           {/* Delivery Destination Address */}
           <div className="p-3 rounded-xl bg-white border border-[#ebdcd0] space-y-1.5">
             <p className="text-[10.5px] font-extrabold uppercase tracking-wider text-stone-400">
-              Delivery Destination / डिलीवरी पता
+              {t("Delivery Destination", "डिलीवरी पता")}
             </p>
             {isEditingAddress ? (
               <div className="space-y-2 pt-1">
@@ -198,24 +188,24 @@ export default function DeliveryAddressStep({
                   className="w-full rounded-lg border border-stone-300 p-2 text-[12.5px] bg-white focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
                   value={activeAddress}
                   onChange={(e) => handleAddressChange(e.target.value)}
-                  placeholder="House/flat number, street, colony..."
+                  placeholder={t("House/flat number, street, colony...", "मकान नंबर, गली, मोहल्ला...")}
                 />
                 <input
                   type="text"
                   className="w-full rounded-lg border border-stone-300 p-1.5 text-[12px] bg-white"
                   value={activeLandmark}
                   onChange={(e) => handleLandmarkChange(e.target.value)}
-                  placeholder="Landmark (optional)..."
+                  placeholder={t("Landmark (optional)...", "लैंडमार्क (वैकल्पिक)...")}
                 />
               </div>
             ) : (
               <>
                 <p className="text-[13px] font-semibold text-stone-800 leading-snug">
-                  {activeAddress || "No street address entered"}
+                  {activeAddress || t("No street address entered", "पता दर्ज नहीं किया गया")}
                 </p>
                 {activeLandmark && (
                   <p className="text-[12px] text-stone-600">
-                    <span className="font-semibold text-stone-500">Landmark:</span> {activeLandmark}
+                    <span className="font-semibold text-stone-500">{t("Landmark:", "लैंडमार्क:")}</span> {activeLandmark}
                   </p>
                 )}
                 <p className="text-[12.5px] font-semibold text-stone-700 pt-0.5">
@@ -227,9 +217,7 @@ export default function DeliveryAddressStep({
         </div>
       </div>
 
-      {/* ================================================================= */}
-      {/* SECTION 3: STITCHING DETAIL (सिलाई व परिधान का संपूर्ण विवरण) */}
-      {/* ================================================================= */}
+      {/* SECTION 3: STITCHING DETAIL */}
       <div className="rounded-2xl border-2 border-[#e8ded2] bg-[#fdfbf9] p-4 sm:p-5 shadow-2xs space-y-5">
         {/* SECTION 3 HEADER */}
         <div className="flex items-center justify-between pb-3 border-b border-[#ece2d6]">
@@ -238,19 +226,19 @@ export default function DeliveryAddressStep({
               3
             </span>
             <h3 className="font-serif text-[15px] sm:text-[16px] font-bold text-[var(--primary-dark)]">
-              Stitching & Garment Specifications / सिलाई व परिधान का संपूर्ण विवरण
+              {t("Stitching & Garment Specifications", "सिलाई व परिधान का संपूर्ण विवरण")}
             </h3>
           </div>
           <span className="text-[11px] font-bold text-[var(--secondary)] bg-white px-2.5 py-1 rounded-full border border-[#ebdcd0]">
-            Bespoke Tailoring / हस्तनिर्मित
+            {t("Bespoke Tailoring", "हस्तनिर्मित")}
           </span>
         </div>
 
-        {/* 3A: SELECTED OUTFIT & DESIGN REFERENCE (UNIFIED SINGLE SUBSECTION) */}
+        {/* 3A: SELECTED OUTFIT & DESIGN REFERENCE */}
         <div className="rounded-xl border border-[#ebdcd0] bg-white p-3.5 sm:p-4 space-y-3.5">
           <div className="flex items-center justify-between pb-2.5 border-b border-[#f0e7df]">
             <p className="text-[11px] font-extrabold uppercase tracking-wider text-stone-500">
-              Selected Outfit & Design / चुना गया परिधान व डिज़ाइन
+              {t("Selected Outfit & Design", "चुना गया परिधान व डिज़ाइन")}
             </p>
             <button
               type="button"
@@ -258,7 +246,7 @@ export default function DeliveryAddressStep({
               className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--primary)] hover:underline bg-[#fbf5f0] px-2.5 py-0.5 rounded-full border border-[#eedfd6] transition-colors cursor-pointer"
             >
               <Edit2 size={11} />
-              <span>Edit Outfit / परिधान बदलें (Step 3)</span>
+              <span>{t("Edit Outfit (Step 3)", "परिधान बदलें (चरण 3)")}</span>
             </button>
           </div>
 
@@ -266,19 +254,21 @@ export default function DeliveryAddressStep({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2.5">
               <span className="font-serif text-[18px] sm:text-[20px] font-bold text-stone-900">
-                {outfit?.type || "Not selected / चुना नहीं गया"}
+                {lang === "hi"
+                  ? (resolvedOutfit?.hi || outfit?.type || "परिधान")
+                  : (resolvedOutfit?.en || outfit?.type || "Custom Outfit")}
               </span>
               <span className="text-[12px] font-semibold px-2.5 py-0.5 rounded-full bg-[#f8efe7] text-[var(--secondary)] border border-[#ebdcd0]">
-                {resolvedOutfit?.hi || (outfit?.type === "Blouse" ? "ब्लाउज़" : outfit?.type === "Kurti" ? "कुर्ती" : "सूट")}
+                {lang === "hi" ? (resolvedOutfit?.hi || outfit?.type) : (resolvedOutfit?.en || outfit?.type)}
               </span>
             </div>
 
             <span className="text-[12.5px] font-bold text-stone-900 bg-[#fbf5f0] px-3 py-1 rounded-full border border-[#eedfd6]">
-              Quantity / संख्या: <b>{outfit?.pieces || 1} Piece(s) / थान</b>
+              {t(`Quantity: ${outfit?.pieces || 1} Piece(s)`, `संख्या: ${outfit?.pieces || 1} थान / पीस`)}
             </span>
           </div>
 
-          {/* CUSTOMER REFERENCE PHOTO (IF ATTACHED - INTEGRATED DIRECTLY HERE) */}
+          {/* CUSTOMER REFERENCE PHOTO */}
           {outfit?.uploadedPhoto && (
             <div className="rounded-xl border-2 border-emerald-300 bg-emerald-50/60 p-3 sm:p-3.5 flex flex-col sm:flex-row items-center sm:items-start gap-3.5">
               <div className="relative group shrink-0 max-w-[130px] w-full rounded-lg overflow-hidden border border-emerald-300 bg-white">
@@ -292,13 +282,13 @@ export default function DeliveryAddressStep({
                     type="button"
                     onClick={() =>
                       openLightbox(
-                        "Customer Reference Photo",
+                        t("Customer Reference Photo", "आपकी अपलोड की गई फ़ोटो"),
                         outfit.uploadedPhoto,
                         outfit.uploadedPhotoName || "Design Reference"
                       )
                     }
-                    className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity text-white"
-                    title="Zoom / ज़ूम करें"
+                    className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
+                    title={t("Zoom", "ज़ूम करें")}
                   >
                     <ZoomIn size={18} />
                   </button>
@@ -306,10 +296,10 @@ export default function DeliveryAddressStep({
               </div>
               <div className="min-w-0 flex-1 space-y-1 text-center sm:text-left">
                 <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-700 text-white text-[10.5px] font-bold">
-                  📸 Customer Reference Photo / आपकी अपलोड की गई फ़ोटो
+                  {t("📸 Customer Reference Photo", "📸 आपकी अपलोड की गई फ़ोटो")}
                 </span>
                 <p className="text-[12.5px] font-bold text-stone-900 pt-0.5">
-                  {outfit.uploadedPhotoName || "Design Photo Attached"}
+                  {outfit.uploadedPhotoName || t("Design Photo Attached", "डिज़ाइन फ़ोटो संलग्न")}
                 </p>
                 {outfit.uploadedPhotoSize && (
                   <p className="text-[11px] text-stone-600">
@@ -317,23 +307,26 @@ export default function DeliveryAddressStep({
                   </p>
                 )}
                 <p className="text-[11.5px] text-emerald-900 italic">
-                  कारीगर इस फ़ोटो के अनुसार परिधान का डिज़ाइन, कटिंग और सिलाई तैयार करेंगे।
+                  {t(
+                    "Master tailors will handcraft your garment according to this photo.",
+                    "कारीगर इस फ़ोटो के अनुसार परिधान का डिज़ाइन, कटिंग और सिलाई तैयार करेंगे।"
+                  )}
                 </p>
               </div>
             </div>
           )}
 
-          {/* STUDIO DESIGN CODE (IF SELECTED - INTEGRATED DIRECTLY HERE) */}
+          {/* STUDIO DESIGN CODE */}
           {outfit?.designCode && (
             <div className="rounded-xl border border-[#dfd0c4] bg-[#fbf8f5] p-3 sm:p-3.5">
               <div className="flex items-center justify-between pb-2 border-b border-[#ece2d6] mb-2.5">
                 <div className="flex items-center gap-2">
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[var(--primary-dark)] text-white text-[11px] font-mono font-bold">
                     <Tag size={11} />
-                    <span>Design Code: {outfit.designCode}</span>
+                    <span>{t(`Design Code: ${outfit.designCode}`, `डिज़ाइन कोड: ${outfit.designCode}`)}</span>
                   </span>
                   <span className="text-[11.5px] font-bold text-stone-600">
-                    {designCodeInfo?.name || "Studio Catalog Design"}
+                    {lang === "hi" && designCodeInfo?.hi ? designCodeInfo.hi : (designCodeInfo?.name || "Studio Catalog Design")}
                   </span>
                 </div>
                 {designCodePhoto && openLightbox && (
@@ -343,13 +336,13 @@ export default function DeliveryAddressStep({
                       openLightbox(
                         `Design Code ${outfit.designCode}`,
                         designCodePhoto,
-                        "Studio Catalog Selection / कैटलॉग डिज़ाइन"
+                        t("Studio Catalog Selection", "कैटलॉग डिज़ाइन")
                       )
                     }
-                    className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--primary)] hover:underline"
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--primary)] hover:underline cursor-pointer"
                   >
                     <Eye size={12} />
-                    <span>View Photo / फ़ोटो देखें</span>
+                    <span>{t("View Photo", "फ़ोटो देखें")}</span>
                   </button>
                 )}
               </div>
@@ -365,14 +358,14 @@ export default function DeliveryAddressStep({
                       openLightbox(
                         `Design Code ${outfit.designCode}`,
                         designCodePhoto,
-                        "Studio Catalog Selection / कैटलॉग डिज़ाइन"
+                        t("Studio Catalog Selection", "कैटलॉग डिज़ाइन")
                       )
                     }
                   />
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-[12px] text-stone-700">
-                    {designCodeInfo?.details || "Master tailoring according to selected studio design pattern."}
+                    {designCodeInfo?.details || t("Master tailoring according to selected studio design pattern.", "चुने गए कैटलॉग पैटर्न के अनुसार सिलाई की जाएगी।")}
                   </p>
                 </div>
               </div>
@@ -382,16 +375,16 @@ export default function DeliveryAddressStep({
           {/* Tailor Note if any */}
           {outfit?.specialReq && (
             <p className="text-[12px] text-stone-600 italic bg-[#faf7f2] p-2 rounded-lg border border-stone-200 mt-1">
-              <b>Tailor Note / विशेष निर्देश:</b> "{outfit.specialReq}"
+              <b>{t("Tailor Note:", "विशेष निर्देश:")}</b> "{outfit.specialReq}"
             </p>
           )}
         </div>
 
-        {/* 3D: NECKLINE & SLEEVE STYLING BLUEPRINT (4 CARDS WITH PHOTOS) */}
+        {/* 3D: NECKLINE & SLEEVE STYLING BLUEPRINT */}
         <div className="rounded-xl border border-[#ebdcd0] bg-white p-3.5 sm:p-4">
           <div className="flex items-center justify-between pb-2.5 border-b border-[#f0e7df] mb-3">
             <p className="text-[11px] font-extrabold uppercase tracking-wider text-stone-500">
-              ✂️ Neckline & Sleeve Styling / गला, बाज़ू व कटिंग
+              {t("✂️ Neckline & Sleeve Styling", "✂️ गला, बाज़ू व कटिंग")}
             </p>
             <button
               type="button"
@@ -399,7 +392,7 @@ export default function DeliveryAddressStep({
               className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--primary)] hover:underline bg-[#fbf5f0] px-2.5 py-0.5 rounded-full border border-[#eedfd6] transition-colors cursor-pointer"
             >
               <Edit2 size={11} />
-              <span>Edit Styling / डिज़ाइन बदलें (Step 4)</span>
+              <span>{t("Edit Styling (Step 4)", "डिज़ाइन बदलें (चरण 4)")}</span>
             </button>
           </div>
 
@@ -408,7 +401,7 @@ export default function DeliveryAddressStep({
             <div className="rounded-xl border border-[#ebdcd0] bg-[#fdfbf9] p-2.5 flex flex-col justify-between shadow-2xs">
               <div>
                 <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
-                  Front Neck / आगे गला
+                  {t("Front Neck", "आगे गला")}
                 </p>
                 <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
                   <img
@@ -420,12 +413,13 @@ export default function DeliveryAddressStep({
               </div>
               <div>
                 <p className="text-[12px] font-bold text-stone-900 leading-tight">
-                  {resolvedFrontNeck.en}
-                </p>
-                <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
-                  {design?.neckFront === "as-photo" && design?.frontPhoto
-                    ? "✓ कस्टम फ़ोटो अनुसार"
-                    : resolvedFrontNeck.hiScript || resolvedFrontNeck.hi}
+                  {lang === "hi"
+                    ? (design?.neckFront === "as-photo" && design?.frontPhoto
+                        ? "✓ कस्टम फ़ोटो अनुसार"
+                        : resolvedFrontNeck.hiScript || resolvedFrontNeck.hi)
+                    : (design?.neckFront === "as-photo"
+                        ? "✓ As per Photo"
+                        : resolvedFrontNeck.en)}
                 </p>
               </div>
             </div>
@@ -434,7 +428,7 @@ export default function DeliveryAddressStep({
             <div className="rounded-xl border border-[#ebdcd0] bg-[#fdfbf9] p-2.5 flex flex-col justify-between shadow-2xs">
               <div>
                 <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
-                  Back Neck / पीछे गला
+                  {t("Back Neck", "पीछे गला")}
                 </p>
                 <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
                   <img
@@ -446,12 +440,13 @@ export default function DeliveryAddressStep({
               </div>
               <div>
                 <p className="text-[12px] font-bold text-stone-900 leading-tight">
-                  {resolvedBackNeck.en}
-                </p>
-                <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
-                  {design?.neckBack === "as-photo" && design?.backPhoto
-                    ? "✓ कस्टम फ़ोटो अनुसार"
-                    : resolvedBackNeck.hiScript || resolvedBackNeck.hi}
+                  {lang === "hi"
+                    ? (design?.neckBack === "as-photo" && design?.backPhoto
+                        ? "✓ कस्टम फ़ोटो अनुसार"
+                        : resolvedBackNeck.hiScript || resolvedBackNeck.hi)
+                    : (design?.neckBack === "as-photo"
+                        ? "✓ As per Photo"
+                        : resolvedBackNeck.en)}
                 </p>
               </div>
             </div>
@@ -460,7 +455,7 @@ export default function DeliveryAddressStep({
             <div className="rounded-xl border border-[#ebdcd0] bg-[#fdfbf9] p-2.5 flex flex-col justify-between shadow-2xs">
               <div>
                 <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
-                  Sleeve Length / बाज़ू लंबाई
+                  {t("Sleeve Length", "बाज़ू लंबाई")}
                 </p>
                 <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
                   <img
@@ -472,13 +467,15 @@ export default function DeliveryAddressStep({
               </div>
               <div>
                 <p className="text-[12px] font-bold text-stone-900 leading-tight">
-                  {resolvedSleeveLength.en}
-                </p>
-                <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
-                  {resolvedSleeveLength.hiScript || resolvedSleeveLength.hi}
+                  {lang === "hi"
+                    ? (resolvedSleeveLength.hiScript || resolvedSleeveLength.hi)
+                    : resolvedSleeveLength.en}
                 </p>
                 <p className="text-[10.5px] text-stone-600 mt-0.5 font-mono font-bold">
-                  Length: {resolvedSleeveLength.cm || resolvedSleeveLength.length}
+                  {t(
+                    `Length: ${resolvedSleeveLength.cm || resolvedSleeveLength.length}`,
+                    `लंबाई: ${resolvedSleeveLength.cm || resolvedSleeveLength.length}`
+                  )}
                 </p>
               </div>
             </div>
@@ -487,7 +484,7 @@ export default function DeliveryAddressStep({
             <div className="rounded-xl border border-[#ebdcd0] bg-[#fdfbf9] p-2.5 flex flex-col justify-between shadow-2xs">
               <div>
                 <p className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 mb-1">
-                  Sleeve Style / बाज़ू स्टाइल
+                  {t("Sleeve Style", "बाज़ू स्टाइल")}
                 </p>
                 <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-white border border-stone-200 mb-2">
                   <img
@@ -499,12 +496,13 @@ export default function DeliveryAddressStep({
               </div>
               <div>
                 <p className="text-[12px] font-bold text-stone-900 leading-tight">
-                  {resolvedSleeveDesign.en}
-                </p>
-                <p className="text-[11px] font-semibold text-[var(--secondary)] mt-0.5">
-                  {design?.sleeveDesign === "as-photo" && design?.sleevePhoto
-                    ? "✓ कस्टम फ़ोटो अनुसार"
-                    : resolvedSleeveDesign.hiScript || resolvedSleeveDesign.hi}
+                  {lang === "hi"
+                    ? (design?.sleeveDesign === "as-photo" && design?.sleevePhoto
+                        ? "✓ कस्टम फ़ोटो अनुसार"
+                        : resolvedSleeveDesign.hiScript || resolvedSleeveDesign.hi)
+                    : (design?.sleeveDesign === "as-photo"
+                        ? "✓ As per Photo"
+                        : resolvedSleeveDesign.en)}
                 </p>
               </div>
             </div>
@@ -512,7 +510,7 @@ export default function DeliveryAddressStep({
 
           <div className="mt-3 pt-2.5 border-t border-[#f0e7df] flex items-center justify-between">
             <span className="text-[12px] text-stone-600">
-              Fitting Preference / फिटिंग: <b className="text-stone-900">{design?.fit || "Regular Fit"}</b>
+              {t("Fitting Preference:", "सिलाई की फ़िटिंग:")} <b className="text-stone-900">{design?.fit || "Regular"}</b>
             </span>
           </div>
         </div>
@@ -521,7 +519,10 @@ export default function DeliveryAddressStep({
         <div className="rounded-xl border border-[#ebdcd0] bg-white p-3.5 sm:p-4">
           <div className="flex items-center justify-between pb-2.5 border-b border-[#f0e7df] mb-3">
             <p className="text-[11px] font-extrabold uppercase tracking-wider text-stone-500">
-              📏 Measurements / नाप का विवरण ({measurements?.unit || "inch"})
+              {t(
+                `📏 Measurements (${measurements?.unit || "inch"})`,
+                `📏 नाप का विवरण (${measurements?.unit === "cm" ? "सेमी" : "इंच"})`
+              )}
             </p>
             <button
               type="button"
@@ -529,25 +530,37 @@ export default function DeliveryAddressStep({
               className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--primary)] hover:underline bg-[#fbf5f0] px-2.5 py-0.5 rounded-full border border-[#eedfd6] transition-colors cursor-pointer"
             >
               <Edit2 size={11} />
-              <span>Edit Measurements / नाप बदलें (Step 5)</span>
+              <span>{t("Edit Measurements (Step 5)", "नाप बदलें (चरण 5)")}</span>
             </button>
           </div>
 
           <p className="text-[12.5px] font-bold text-[var(--primary-dark)] mb-2.5">
-            Method / तरीका: <span className="text-stone-700 font-semibold">{measurements?.provideMethod || "Self measurement"}</span>
+            {t("Method:", "तरीका:")}{" "}
+            <span className="text-stone-700 font-semibold">
+              {measurements?.provideMethod?.includes("वीडियो कॉल") || measurements?.provideMethod === "video_call"
+                ? t("Video Call Assistance", "वीडियो कॉल पर मदद")
+                : measurements?.provideMethod?.includes("भेजूंगी") || measurements?.provideMethod === "send_clothes"
+                ? t("Sending Stitched Sample Clothes", "सिले हुए कपड़े भेजेंगे")
+                : measurements?.provideMethod?.includes("local") || measurements?.provideMethod === "local_tailor"
+                ? t("From local tailor", "दर्जी से नाप करवाकर")
+                : t("Self measurement", "खुद से नाप लेकर")}
+            </span>
           </p>
 
           {filledMeasurementEntries.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {filledMeasurementEntries.map(([k, v]) => {
                 const cfg = activeMeasurementFields.find((f) => f.key === k);
+                const pointLabel = cfg
+                  ? (lang === "hi" ? `#${cfg.num} ${cfg.hi}` : `#${cfg.num} ${cfg.en}`)
+                  : k;
                 return (
                   <div
                     key={k}
                     className="flex items-center justify-between p-2 rounded-lg bg-[#fdfbf9] border border-[#ebdcd0] text-[12px]"
                   >
-                    <span className="text-stone-600 truncate mr-2" title={cfg?.en || k}>
-                      {cfg ? `#${cfg.num} ${cfg.hi || cfg.en}` : k}:
+                    <span className="text-stone-600 truncate mr-2" title={pointLabel}>
+                      {pointLabel}:
                     </span>
                     <b className="font-mono text-stone-900 bg-white px-2 py-0.5 rounded border border-stone-200">
                       {v} {measurements?.unit || "in"}
@@ -558,17 +571,26 @@ export default function DeliveryAddressStep({
             </div>
           ) : (
             <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[12.5px]">
-              {measurements?.provideMethod?.includes("वीडियो कॉल")
-                ? "📹 Master tailor will contact you shortly on WhatsApp to measure over video call / मास्टर दर्जी नाप के लिए वीडियो कॉल पर संपर्क करेंगे।"
-                : measurements?.provideMethod?.includes("भेजूंगी") || measurements?.provideMethod?.includes("सिले")
-                ? "📦 You will send your stitched sample clothes for measurement / आप नापने के लिए अपने सिले हुए कपड़े भेजेंगी।"
-                : "No manual measurements entered. Click 'Edit Measurements' to fill or request tailor assistance."}
+              {measurements?.provideMethod?.includes("वीडियो कॉल") || measurements?.provideMethod === "video_call"
+                ? t(
+                    "📹 Master tailor will contact you shortly on WhatsApp to measure over video call.",
+                    "📹 मास्टर दर्जी नाप के लिए वीडियो कॉल पर संपर्क करेंगे।"
+                  )
+                : measurements?.provideMethod?.includes("भेजूंगी") || measurements?.provideMethod === "send_clothes"
+                ? t(
+                    "📦 You will send your stitched sample clothes for measurement.",
+                    "📦 आप नापने के लिए अपने सिले हुए कपड़े भेजेंगी।"
+                  )
+                : t(
+                    "No manual measurements entered. Click 'Edit Measurements' to fill or request tailor assistance.",
+                    "कोई नाप दर्ज नहीं किया गया है। नाप भरने के लिए 'नाप बदलें' पर क्लिक करें।"
+                  )}
             </div>
           )}
 
           {measurements?.notes && (
             <p className="mt-2 text-[12px] text-stone-600 italic bg-[#faf7f2] p-2 rounded-lg border border-stone-200">
-              <b>Special Note / निर्देश:</b> "{measurements.notes}"
+              <b>{t("Special Note:", "विशेष निर्देश:")}</b> "{measurements.notes}"
             </p>
           )}
         </div>

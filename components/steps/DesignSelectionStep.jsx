@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Check, ZoomIn, Eye, Sparkles, RefreshCw, X, ChevronRight, UploadCloud, Trash2, Camera } from "lucide-react";
 import DesignArt from "../DesignArt.jsx";
+import { useLanguage } from "../../context/LanguageContext.jsx";
 
 import {
   FRONT_NECK_PHOTOS,
@@ -23,6 +24,9 @@ function ChoiceGroup({
   activeView = "front",
   onToggleView,
 }) {
+  const { lang, t } = useLanguage();
+  const groupTitle = lang === "hi" ? (hindiTitle || title) : title;
+
   return (
     <section className="design-group mb-2">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-2 border-b border-[#f0e7df]">
@@ -32,7 +36,7 @@ function ChoiceGroup({
           </span>
           <div>
             <h3 className="text-[17px] font-bold text-[var(--primary-dark)]">
-              {title} / {hindiTitle}
+              {groupTitle}
             </h3>
           </div>
         </div>
@@ -43,24 +47,24 @@ function ChoiceGroup({
             <button
               type="button"
               onClick={() => onToggleView("front")}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all ${
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all cursor-pointer ${
                 activeView === "front"
                   ? "bg-white text-[var(--primary)] shadow-sm font-extrabold"
                   : "text-[var(--text-light)] hover:text-[var(--text)]"
               }`}
             >
-              <span>👤 Front View / सामने से</span>
+              <span>👤 {t("Front View", "सामने से")}</span>
             </button>
             <button
               type="button"
               onClick={() => onToggleView("side")}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all ${
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all cursor-pointer ${
                 activeView === "side"
                   ? "bg-white text-[var(--primary)] shadow-sm font-extrabold"
                   : "text-[var(--text-light)] hover:text-[var(--text)]"
               }`}
             >
-              <span>🔄 Side View / साइड से</span>
+              <span>🔄 {t("Side View", "साइड से")}</span>
             </button>
           </div>
         )}
@@ -70,6 +74,7 @@ function ChoiceGroup({
       <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4">
         {options.map((option) => {
           const selected = value === option.id;
+          const optionLabel = lang === "hi" ? (option.hiScript || option.hi || option.en) : option.en;
 
           // Determine photo based on section
           let photoSrc = null;
@@ -101,7 +106,7 @@ function ChoiceGroup({
                   <div className="relative h-full w-full overflow-hidden rounded-xl bg-white border border-[#ece3d9] flex items-center justify-center">
                     <img
                       src={photoSrc}
-                      alt={option.en}
+                      alt={optionLabel}
                       className="h-full w-full object-contain object-center transition-transform duration-300 group-hover:scale-105"
                       loading="lazy"
                     />
@@ -125,13 +130,13 @@ function ChoiceGroup({
                 {/* Preview / Zoom Button */}
                 <button
                   type="button"
-                  aria-label={`Preview ${option.en} larger`}
+                  aria-label={`Preview ${optionLabel} larger`}
                   onClick={(e) => {
                     e.stopPropagation();
                     onOpenDetail(option, groupType);
                   }}
-                  className="absolute bottom-2 left-2 flex h-7 w-7 items-center justify-center rounded-lg bg-white/90 text-stone-700 shadow-sm border border-stone-200 hover:bg-[var(--primary)] hover:text-white transition-colors backdrop-blur-xs opacity-80 hover:opacity-100"
-                  title="View Larger / बड़ा देखें"
+                  className="absolute bottom-2 left-2 flex h-7 w-7 items-center justify-center rounded-lg bg-white/90 text-stone-700 shadow-sm border border-stone-200 hover:bg-[var(--primary)] hover:text-white transition-colors backdrop-blur-xs opacity-80 hover:opacity-100 cursor-pointer"
+                  title={t("View Larger", "बड़ा देखें")}
                 >
                   <ZoomIn size={14} />
                 </button>
@@ -141,11 +146,11 @@ function ChoiceGroup({
               <div className="p-3 border-t border-[#f4ece3] bg-white flex flex-col justify-between flex-1">
                 <div>
                   <h4 className="font-serif text-[13.5px] font-bold text-[var(--primary-dark)] group-hover:text-[var(--primary)] transition-colors leading-tight">
-                    {option.en} / {option.hiScript || option.hi}
+                    {optionLabel}
                   </h4>
                   {groupType === "sleeveLength" && option.cm && (
                     <p className="text-[11px] text-[var(--text-light)] mt-1.5">
-                      Length / लंबाई: <b>{option.cm}</b>
+                      {t(`Length: ${option.cm}`, `लंबाई: ${option.cm}`)}
                     </p>
                   )}
                 </div>
@@ -154,11 +159,11 @@ function ChoiceGroup({
                   <span
                     className={`block w-full text-center py-1 rounded-lg text-[10.5px] font-bold transition-all ${
                       selected
-                        ? "bg-[var(--primary)] text-white"
+                        ? "bg-[var(--primary)] text-white shadow-xs"
                         : "bg-[var(--primary-light)]/60 text-[var(--primary)] group-hover:bg-[var(--primary)] group-hover:text-white"
                     }`}
                   >
-                    {selected ? "✓ Selected / चयनित" : "Select / चुनें"}
+                    {selected ? t("✓ Selected", "✓ चयनित") : t("Select", "चुनें")}
                   </span>
                 </div>
               </div>
@@ -170,7 +175,7 @@ function ChoiceGroup({
   );
 }
 
-// Sleek, compact "As per Photo / फोटो जैसा" component with Left title & Right upload button
+// Sleek, compact "As per Photo" component with Left title & Right upload button
 function AsPerPhotoRow({
   groupType,
   titleEn,
@@ -184,10 +189,12 @@ function AsPerPhotoRow({
   onRemove,
   onPreview,
 }) {
+  const { lang, t } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
   const fileInputRef = useRef(null);
   const isUploaded = Boolean(photo);
   const isSelected = designValue === "as-photo";
+  const badgeTitle = lang === "hi" ? (titleHi || titleEn) : titleEn;
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
@@ -210,7 +217,7 @@ function AsPerPhotoRow({
       />
 
       {isUploaded ? (
-        /* 1. UPLOADED & ATTACHED STATE (CLEAN COMPACT PREVIEW & TAILOR NOTE) */
+        /* 1. UPLOADED & ATTACHED STATE */
         <div
           onClick={onSelect}
           className={`relative overflow-hidden rounded-2xl border-2 transition-all duration-200 cursor-pointer ${
@@ -227,18 +234,18 @@ function AsPerPhotoRow({
               </span>
               <div className="flex items-center gap-2 flex-wrap">
                 <h4 className="font-serif text-[14px] font-bold text-[var(--primary-dark)]">
-                  As per Photo / फोटो जैसा
+                  {t("As per Photo", "फोटो जैसा")}
                 </h4>
                 <span className="inline-block rounded-md bg-[#f5ede4] px-2 py-0.5 text-[10.5px] font-bold text-[var(--primary)] border border-[#ebdcd0]">
-                  {titleEn} / {titleHi}
+                  {badgeTitle}
                 </span>
                 {isSelected ? (
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2.5 py-0.5 text-[10px] font-bold text-white shadow-2xs">
-                    <Check size={11} strokeWidth={3} /> Selected / चयनित
+                    <Check size={11} strokeWidth={3} /> {t("Selected", "चयनित")}
                   </span>
                 ) : (
                   <span className="text-[11px] font-bold text-stone-500">
-                    (Click to select / चुनने के लिए क्लिक करें)
+                    {t("(Click to select)", "(चुनने के लिए क्लिक करें)")}
                   </span>
                 )}
               </div>
@@ -254,7 +261,7 @@ function AsPerPhotoRow({
                 className="h-8 px-3.5 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white text-[11px] font-bold inline-flex items-center gap-1 shadow-2xs transition-colors cursor-pointer"
               >
                 <UploadCloud size={13} />
-                <span>Change Photo / फ़ोटो बदलें</span>
+                <span>{t("Change Photo", "फ़ोटो बदलें")}</span>
               </button>
               <button
                 type="button"
@@ -263,10 +270,10 @@ function AsPerPhotoRow({
                   onRemove();
                 }}
                 className="h-8 px-3 rounded-full text-red-600 hover:text-red-700 hover:bg-red-50 text-[11px] font-bold inline-flex items-center gap-1 transition-colors cursor-pointer"
-                title="Remove Photo / फ़ोटो हटाएं"
+                title={t("Remove", "हटाएं")}
               >
                 <Trash2 size={13} />
-                <span>Remove / हटाएं</span>
+                <span>{t("Remove", "हटाएं")}</span>
               </button>
             </div>
           </div>
@@ -276,21 +283,21 @@ function AsPerPhotoRow({
             <div className="relative group shrink-0">
               <img
                 src={photo}
-                alt={`Custom ${titleEn}`}
+                alt={`Custom ${badgeTitle}`}
                 className="h-16 w-16 sm:h-18 sm:w-18 rounded-xl object-contain border border-[#ebdcd0] bg-[#faf7f2] shadow-2xs cursor-zoom-in"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onPreview && onPreview(`Custom ${titleEn} Photo / ${titleHi}`, photo, photoName);
+                  onPreview && onPreview(t(`Custom ${titleEn} Photo`, `कस्टम ${titleHi} फ़ोटो`), photo, photoName);
                 }}
               />
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onPreview && onPreview(`Custom ${titleEn} Photo / ${titleHi}`, photo, photoName);
+                  onPreview && onPreview(t(`Custom ${titleEn} Photo`, `कस्टम ${titleHi} फ़ोटो`), photo, photoName);
                 }}
-                className="absolute bottom-1 right-1 h-5 w-5 rounded-full bg-black/75 text-white flex items-center justify-center text-[10px] shadow-sm"
-                title="Enlarge / बड़ा देखें"
+                className="absolute bottom-1 right-1 h-5 w-5 rounded-full bg-black/75 text-white flex items-center justify-center text-[10px] shadow-sm cursor-pointer"
+                title={t("Enlarge", "बड़ा देखें")}
               >
                 <Eye size={11} />
               </button>
@@ -299,7 +306,7 @@ function AsPerPhotoRow({
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2 py-0.5 rounded-md flex items-center gap-1">
-                  <Check size={12} strokeWidth={3} /> Photo Ready / फ़ोटो संलग्न है
+                  <Check size={12} strokeWidth={3} /> {t("Photo Ready", "फ़ोटो संलग्न है")}
                 </span>
                 {photoSize && (
                   <span className="text-[11px] text-stone-500 font-medium">({photoSize})</span>
@@ -309,8 +316,10 @@ function AsPerPhotoRow({
                 {photoName || `custom-${groupType}.jpg`}
               </p>
               <p className="text-[11.5px] text-stone-500 mt-0.5 leading-relaxed">
-                Our master tailor will stitch the {titleEn.toLowerCase()} exactly according to this photo.
-                / मास्टर दर्जी ठीक इसी फ़ोटो के अनुसार आपका {titleHi} तैयार करेंगे।
+                {t(
+                  `Our master tailor will stitch the ${titleEn.toLowerCase()} exactly according to this photo.`,
+                  `मास्टर दर्जी ठीक इसी फ़ोटो के अनुसार आपका ${titleHi} तैयार करेंगे।`
+                )}
               </p>
             </div>
 
@@ -322,9 +331,9 @@ function AsPerPhotoRow({
                   onSelect();
                 }}
                 className="w-full sm:w-auto h-8.5 px-4 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-[11.5px] font-bold border border-red-200 transition-all cursor-pointer"
-                title="Deselect / हटाएं"
+                title={t("Deselect", "हटाएं")}
               >
-                Deselect / हटाएं
+                {t("Deselect", "हटाएं")}
               </button>
             ) : (
               <button
@@ -335,13 +344,13 @@ function AsPerPhotoRow({
                 }}
                 className="w-full sm:w-auto h-8.5 px-4 rounded-xl bg-stone-100 hover:bg-[var(--primary)] text-stone-700 hover:text-white text-[11.5px] font-bold transition-all cursor-pointer"
               >
-                Select This / यह चुनें
+                {t("Select This", "यह चुनें")}
               </button>
             )}
           </div>
         </div>
       ) : isExpanded ? (
-        /* 2. EXPANDED DROPZONE (WHEN OPENED TO BROWSE) */
+        /* 2. EXPANDED DROPZONE */
         <div className="relative overflow-hidden rounded-2xl border-2 border-dashed border-[var(--primary)]/45 bg-[#fffbf7] p-3.5 sm:p-4 shadow-xs transition-all">
           <div className="flex items-center justify-between gap-3 border-b border-[#eeddd0] pb-2.5 mb-3">
             <div className="flex items-center gap-2">
@@ -349,10 +358,10 @@ function AsPerPhotoRow({
                 <Camera size={14} />
               </span>
               <h4 className="font-serif text-[14px] font-bold text-[var(--primary-dark)]">
-                As per Photo / फोटो जैसा
+                {t("As per Photo", "फोटो जैसा")}
               </h4>
               <span className="inline-block rounded-md bg-[#f5ede4] px-2 py-0.5 text-[10.5px] font-bold text-[var(--primary)] border border-[#ebdcd0]">
-                {titleEn} / {titleHi}
+                {badgeTitle}
               </span>
             </div>
             <button
@@ -360,7 +369,7 @@ function AsPerPhotoRow({
               onClick={() => setIsExpanded(false)}
               className="text-[11.5px] text-stone-500 hover:text-stone-800 font-bold px-2 py-1 rounded hover:bg-stone-100 cursor-pointer"
             >
-              ✕ Close / बंद करें
+              {t("✕ Close", "✕ बंद करें")}
             </button>
           </div>
 
@@ -373,16 +382,22 @@ function AsPerPhotoRow({
             </div>
             <div className="text-left">
               <p className="text-[12.5px] font-bold text-[var(--primary-dark)]">
-                Click here to browse & upload reference photo for {titleEn} / अपने {titleHi} का फ़ोटो चुनने के लिए क्लिक करें
+                {t(
+                  `Click here to browse & upload reference photo for ${titleEn}`,
+                  `अपने ${titleHi} का फ़ोटो चुनने के लिए क्लिक करें`
+                )}
               </p>
               <p className="text-[11px] text-[var(--text-light)]">
-                Supports JPG, PNG, WEBP (Max 10 MB) · Automatic size optimization
+                {t(
+                  "Supports JPG, PNG, WEBP (Max 10 MB) · Automatic size optimization",
+                  "JPG, PNG, WEBP समर्थित · स्वतः आकार अनुकूलन"
+                )}
               </p>
             </div>
           </div>
         </div>
       ) : (
-        /* 3. SLEEK COMPACT DEFAULT ROW (LOW HEIGHT AS REQUESTED) */
+        /* 3. SLEEK COMPACT DEFAULT ROW */
         <div
           onClick={() => {
             setIsExpanded(true);
@@ -395,7 +410,6 @@ function AsPerPhotoRow({
           }`}
         >
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 sm:px-4 sm:py-2.5">
-            {/* Left: As per Photo / फोटो जैसा with section title */}
             <div className="flex items-center gap-3">
               <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--primary-light)]/80 text-[var(--primary)] text-[14px] shrink-0 group-hover:scale-105 transition-transform">
                 <Camera size={16} />
@@ -403,19 +417,22 @@ function AsPerPhotoRow({
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h4 className="font-serif text-[14px] font-bold text-[var(--primary-dark)]">
-                    As per Photo / फोटो जैसा
+                    {t("As per Photo", "फोटो जैसा")}
                   </h4>
                   <span className="inline-block rounded-md bg-[#f5ede4] px-2 py-0.5 text-[10.5px] font-bold text-[var(--primary)] border border-[#ebdcd0]">
-                    {titleEn} / {titleHi}
+                    {badgeTitle}
                   </span>
                 </div>
                 <p className="text-[11.5px] text-[var(--text-light)] mt-0.5">
-                  Upload reference photo for {titleEn} / अपने {titleHi} का फ़ोटो अपलोड करें
+                  {t(
+                    `Upload reference photo for ${titleEn}`,
+                    `अपने ${titleHi} का फ़ोटो अपलोड करें`
+                  )}
                 </p>
               </div>
             </div>
 
-            {/* Right: Upload Photo / फ़ोटो चुनें button */}
+            {/* Right: Upload Photo button */}
             <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
               <button
                 type="button"
@@ -427,7 +444,7 @@ function AsPerPhotoRow({
                 className="w-full sm:w-auto h-8.5 px-4 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white text-[11.5px] font-bold flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
               >
                 <UploadCloud size={14} />
-                <span>Upload Photo / फ़ोटो चुनें</span>
+                <span>{t("Upload Photo", "फ़ोटो चुनें")}</span>
               </button>
             </div>
           </div>
@@ -447,17 +464,16 @@ export default function DesignSelectionStep({
   sleeveLengthData,
   sleeveDesign,
 }) {
+  const { lang, t } = useLanguage();
   const [sleeveLengthView, setSleeveLengthView] = useState("front");
   const [sleeveDesignView, setSleeveDesignView] = useState("side");
   const [detailModal, setDetailModal] = useState(null);
-
-// Defaults applied cleanly when proceeding or uploading
 
   // Unified image compressor & state setter for custom reference photos
   const handlePhotoProcess = (groupType, file) => {
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      alert("Please choose an image file (JPG, PNG, WEBP) / कृपया इमेज फ़ाइल ही चुनें।");
+      alert(t("Please choose an image file (JPG, PNG, WEBP)", "कृपया इमेज फ़ाइल ही चुनें।"));
       return;
     }
 
@@ -516,7 +532,7 @@ export default function DesignSelectionStep({
         }
       };
       img.onerror = () => {
-        alert("Could not load image / इमेज लोड नहीं हो सकी, कृपया दूसरी फ़ोटो आज़माएं।");
+        alert(t("Could not load image, please try another photo.", "इमेज लोड नहीं हो सकी, कृपया दूसरी फ़ोटो आज़माएं।"));
       };
       img.src = e.target.result;
     };
@@ -552,22 +568,27 @@ export default function DesignSelectionStep({
               <Sparkles size={20} />
             </span>
             <div>
-              <p className="step-eyebrow">STEP 04 · CHOOSE YOUR DESIGN / डिज़ाइन चुनें</p>
+              <p className="step-eyebrow">
+                {t("STEP 04 · CHOOSE YOUR DESIGN", "चरण 04 · डिज़ाइन चुनें")}
+              </p>
               <h2 className="font-serif text-[24px] sm:text-[27px] font-bold text-[var(--primary-dark)] leading-tight">
-                Choose your design / अपना डिज़ाइन चुनें
+                {t("Choose your design", "अपना डिज़ाइन चुनें")}
               </h2>
               <p className="mt-0.5 text-[13px] text-[var(--text-light)]">
-                Tap a style to select it, or use the preview button to view it larger / स्टाइल चुनने के लिए कार्ड पर टैप करें
+                {t(
+                  "Tap a style to select it, or use the preview button to view it larger",
+                  "स्टाइल चुनने के लिए कार्ड पर टैप करें"
+                )}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-1.5 rounded-full bg-[#fbf5f0] px-3.5 py-1 text-[11px] font-bold text-[var(--primary)] border border-[#eedfd6]">
-            <span>Bespoke Tailoring / कस्टम सिलाई</span>
+            <span>{t("Bespoke Tailoring", "कस्टम सिलाई")}</span>
           </div>
         </div>
 
-        {/* 1. FRONT NECKLINE (STUDIO CATALOG PHOTOS) */}
+        {/* 1. FRONT NECKLINE */}
         <ChoiceGroup
           title="Front neckline"
           hindiTitle="गले का अगला डिज़ाइन"
@@ -592,7 +613,7 @@ export default function DesignSelectionStep({
           onPreview={onPreview}
         />
 
-        {/* 2. BACK NECKLINE (STUDIO CATALOG PHOTOS) */}
+        {/* 2. BACK NECKLINE */}
         <ChoiceGroup
           title="Back neckline"
           hindiTitle="गले का पिछला डिज़ाइन"
@@ -617,8 +638,8 @@ export default function DesignSelectionStep({
           onPreview={onPreview}
         />
 
-        {/* 3. SLEEVE LENGTH (WITH FRONT & SIDE VIEW TOGGLE + CATALOG PHOTOS) */}
-<ChoiceGroup
+        {/* 3. SLEEVE LENGTH */}
+        <ChoiceGroup
           title="Sleeve length"
           hindiTitle="बाज़ू की लंबाई"
           icon="↟"
@@ -645,7 +666,7 @@ export default function DesignSelectionStep({
           onPreview={onPreview}
         />
 
-        {/* 4. SLEEVE DESIGN (WITH FRONT & SIDE VIEW TOGGLE + STUDIO PHOTOS) */}
+        {/* 4. SLEEVE DESIGN */}
         <ChoiceGroup
           title="Sleeve design"
           hindiTitle="बाज़ू का डिज़ाइन"
@@ -676,28 +697,36 @@ export default function DesignSelectionStep({
         {/* Additional Fitting and Notes */}
         <div className="mt-8 pt-6 border-t border-[#f0e7df] grid gap-5 md:grid-cols-2">
           <label className="form-field">
-            <span>Preferred fit / सिलाई की फ़िटिंग</span>
+            <span>{t("Preferred fit", "सिलाई की फ़िटिंग")}</span>
             <select
               value={design.fit}
               onChange={(event) => setDesign({ ...design, fit: event.target.value })}
-              className="font-medium"
+              className="font-medium cursor-pointer"
             >
-              <option>Fitted / बॉडी से चिपकी (Tight Fit)</option>
-              <option>Regular / सामान्य (Comfortable)</option>
-              <option>Relaxed / थोड़ी ढीली</option>
-              <option>Loose / ढीली</option>
-              <option>Oversized / बहुत ढीली</option>
-              <option>As per Photo / फ़ोटो जैसी</option>
-              <option>Need Guidance / मास्टर जी से सलाह</option>
+              <option value="Regular">{t("Regular Fit (Comfortable)", "सामान्य / रेगुलर फ़िट (आरामदायक)")}</option>
+              <option value="Fitted">{t("Fitted (Tight Fit)", "फ़िटेड (Tight Fit / चिपकी हुई)")}</option>
+              <option value="Relaxed">{t("Relaxed", "रिलैक्स्ड (थोड़ी ढीली)")}</option>
+              <option value="Loose">{t("Loose", "ढीली")}</option>
+              <option value="Oversized">{t("Oversized", "ओवरसाइज़्ड (बहुत ढीली)")}</option>
+              <option value="As per Photo">{t("As per Photo", "फ़ोटो जैसी")}</option>
+              <option value="Need Guidance">{t("Need Guidance from Masterji", "मास्टर जी से सलाह")}</option>
             </select>
           </label>
 
           <label className="form-field">
-            <span>Extra design notes / अन्य विशेष निर्देश <small className="text-[11px] font-normal text-stone-500">(Optional / वैकल्पिक)</small></span>
+            <span>
+              {t("Extra design notes", "अन्य विशेष निर्देश")}{" "}
+              <small className="text-[11px] font-normal text-stone-500">
+                {t("(Optional)", "(वैकल्पिक)")}
+              </small>
+            </span>
             <input
               value={design.additionalInstructions}
               onChange={(event) => setDesign({ ...design, additionalInstructions: event.target.value })}
-              placeholder="Gotta patti, lace, contrast piping, latkan / गोटा पट्टी, लेस, पाइपिंग, लटकन..."
+              placeholder={t(
+                "Gotta patti, lace, contrast piping, latkan...",
+                "गोटा पट्टी, लेस, पाइपिंग, लटकन..."
+              )}
             />
           </label>
         </div>
@@ -717,18 +746,20 @@ export default function DesignSelectionStep({
             <div className="flex items-center justify-between border-b px-6 py-4 bg-[#faf7f2]">
               <div>
                 <h3 className="font-serif text-[18px] font-bold text-[var(--primary-dark)]">
-                  {detailModal.option.en} / {detailModal.option.hiScript || detailModal.option.hi}
+                  {lang === "hi"
+                    ? (detailModal.option.hiScript || detailModal.option.hi)
+                    : detailModal.option.en}
                 </h3>
                 {detailModal.option.cm && (
                   <p className="text-[12px] text-[var(--secondary)] font-semibold mt-0.5">
-                    Length / लंबाई: {detailModal.option.cm}
+                    {t(`Length: ${detailModal.option.cm}`, `लंबाई: ${detailModal.option.cm}`)}
                   </p>
                 )}
               </div>
               <button
                 type="button"
                 onClick={() => setDetailModal(null)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-stone-200 text-stone-700 hover:bg-stone-300 transition-colors"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-stone-200 text-stone-700 hover:bg-stone-300 transition-colors cursor-pointer"
               >
                 <X size={16} />
               </button>
@@ -748,11 +779,17 @@ export default function DesignSelectionStep({
                       />
                     </div>
                     <span className="text-[12px] font-bold text-stone-700">
-                      Crafted on Mannequin with Handcrafted Embroidery / हाथ की बारीक कढ़ाई
+                      {t(
+                        "Crafted on Mannequin with Handcrafted Embroidery",
+                        "हाथ की बारीक कढ़ाई के साथ डमी पर प्रदर्शित"
+                      )}
                     </span>
                   </div>
                   <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200 p-3 text-center text-[12px] text-stone-600">
-                    <b>Neckline Style / स्टाइल:</b> {detailModal.option.en} / {detailModal.option.hiScript || detailModal.option.hi}
+                    <b>{t("Neckline Style:", "स्टाइल:")}</b>{" "}
+                    {lang === "hi"
+                      ? (detailModal.option.hiScript || detailModal.option.hi)
+                      : detailModal.option.en}
                   </div>
                 </div>
               ) : detailModal.groupType === "neckBack" ? (
@@ -770,18 +807,27 @@ export default function DesignSelectionStep({
                       />
                     </div>
                     <span className="text-[12px] font-bold text-stone-700">
-                      Bespoke Tailored Back Design / पीठ का सुंदर और सटीक डिज़ाइन
+                      {t(
+                        "Bespoke Tailored Back Design",
+                        "पीठ का सुंदर और सटीक डिज़ाइन"
+                      )}
                     </span>
                   </div>
                   <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200 p-3 text-center text-[12px] text-stone-600">
-                    <b>Back Style / पिछला स्टाइल:</b> {detailModal.option.en} / {detailModal.option.hiScript || detailModal.option.hi}
+                    <b>{t("Back Style:", "पिछला स्टाइल:")}</b>{" "}
+                    {lang === "hi"
+                      ? (detailModal.option.hiScript || detailModal.option.hi)
+                      : detailModal.option.en}
                   </div>
                 </div>
               ) : detailModal.groupType === "sleeveLength" ? (
                 /* SLEEVE LENGTH */
                 <div>
                   <p className="text-[12px] font-bold text-stone-500 mb-3 uppercase tracking-wider text-center">
-                    Front & Side Studio Views on Mannequin / सामने व साइड का दृश्य
+                    {t(
+                      "Front & Side Studio Views on Mannequin",
+                      "सामने व साइड का दृश्य"
+                    )}
                   </p>
                   <div className="grid grid-cols-2 gap-4">
                     {/* Front Photo */}
@@ -794,7 +840,7 @@ export default function DesignSelectionStep({
                         />
                       </div>
                       <span className="inline-block rounded-full bg-white border border-[#ded3c6] px-3 py-1 text-[11px] font-bold text-stone-700 shadow-2xs">
-                        👤 Front View / सामने से
+                        👤 {t("Front View", "सामने से")}
                       </span>
                     </div>
 
@@ -808,20 +854,27 @@ export default function DesignSelectionStep({
                         />
                       </div>
                       <span className="inline-block rounded-full bg-white border border-[#ded3c6] px-3 py-1 text-[11px] font-bold text-stone-700 shadow-2xs">
-                        🔄 Side View / साइड से
+                        🔄 {t("Side View", "साइड से")}
                       </span>
                     </div>
                   </div>
 
                   <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200 p-3 text-center text-[12px] text-stone-600">
-                    <b>Sleeve Length / लंबाई:</b> {detailModal.option.cm} · <b>Style / स्टाइल:</b> {detailModal.option.en} / {detailModal.option.hiScript || detailModal.option.hi}
+                    <b>{t("Sleeve Length:", "लंबाई:")}</b> {detailModal.option.cm} ·{" "}
+                    <b>{t("Style:", "स्टाइल:")}</b>{" "}
+                    {lang === "hi"
+                      ? (detailModal.option.hiScript || detailModal.option.hi)
+                      : detailModal.option.en}
                   </div>
                 </div>
               ) : detailModal.groupType === "sleeveDesign" ? (
                 /* SLEEVE DESIGN */
                 <div>
                   <p className="text-[12px] font-bold text-stone-500 mb-3 uppercase tracking-wider text-center">
-                    Front & Side Studio Views on Mannequin / सामने व साइड का दृश्य
+                    {t(
+                      "Front & Side Studio Views on Mannequin",
+                      "सामने व साइड का दृश्य"
+                    )}
                   </p>
                   <div className="grid grid-cols-2 gap-4">
                     {/* Front Photo */}
@@ -837,7 +890,7 @@ export default function DesignSelectionStep({
                         />
                       </div>
                       <span className="inline-block rounded-full bg-white border border-[#ded3c6] px-3 py-1 text-[11px] font-bold text-stone-700 shadow-2xs">
-                        👤 Front View / सामने से
+                        👤 {t("Front View", "सामने से")}
                       </span>
                     </div>
 
@@ -854,13 +907,16 @@ export default function DesignSelectionStep({
                         />
                       </div>
                       <span className="inline-block rounded-full bg-white border border-[#ded3c6] px-3 py-1 text-[11px] font-bold text-stone-700 shadow-2xs">
-                        🔄 Side View / साइड से
+                        🔄 {t("Side View", "साइड से")}
                       </span>
                     </div>
                   </div>
 
                   <div className="mt-4 rounded-xl bg-stone-50 border border-stone-200 p-3 text-center text-[12px] text-stone-600">
-                    <b>Sleeve Style / बाज़ू स्टाइल:</b> {detailModal.option.en} / {detailModal.option.hiScript || detailModal.option.hi}
+                    <b>{t("Sleeve Style:", "बाज़ू स्टाइल:")}</b>{" "}
+                    {lang === "hi"
+                      ? (detailModal.option.hiScript || detailModal.option.hi)
+                      : detailModal.option.en}
                   </div>
                 </div>
               ) : null}
@@ -873,9 +929,9 @@ export default function DesignSelectionStep({
                     selectDesign(detailModal.groupType, detailModal.option.id);
                     setDetailModal(null);
                   }}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-6 py-2.5 text-[13px] font-bold text-white shadow-md hover:opacity-95 transition-all"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-6 py-2.5 text-[13px] font-bold text-white shadow-md hover:opacity-95 transition-all cursor-pointer"
                 >
-                  <Check size={16} strokeWidth={3} /> Choose this style / यह स्टाइल चुनें
+                  <Check size={16} strokeWidth={3} /> {t("Choose this style", "यह स्टाइल चुनें")}
                 </button>
               </div>
             </div>

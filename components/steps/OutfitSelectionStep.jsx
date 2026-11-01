@@ -1,9 +1,7 @@
 import { useState, useRef } from "react";
 import { Check, Wand2, UploadCloud, Camera, Trash2, RefreshCw, Eye, X, Sparkles, Layers } from "lucide-react";
-
 import DesignCodeDropdown from "../DesignCodeDropdown.jsx";
-
-
+import { useLanguage } from "../../context/LanguageContext.jsx";
 
 export default function OutfitSelectionStep({
   outfitTypes,
@@ -14,6 +12,7 @@ export default function OutfitSelectionStep({
   setDesign,
   selectionError,
 }) {
+  const { lang, t } = useLanguage();
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [modalImage, setModalImage] = useState(null);
@@ -23,7 +22,7 @@ export default function OutfitSelectionStep({
   const handleFileProcess = (file) => {
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      alert("Please choose an image file (JPG, PNG, WEBP) / कृपया इमेज फ़ाइल ही चुनें।");
+      alert(t("Please choose an image file (JPG, PNG, WEBP)", "कृपया इमेज फ़ाइल ही चुनें।"));
       return;
     }
 
@@ -126,7 +125,7 @@ export default function OutfitSelectionStep({
       };
       img.onerror = () => {
         setCompressing(false);
-        alert("Could not load image / इमेज लोड नहीं हो सकी, कृपया दूसरी फ़ोटो आज़माएं।");
+        alert(t("Could not load image, please try another photo.", "इमेज लोड नहीं हो सकी, कृपया दूसरी फ़ोटो आज़माएं।"));
       };
       img.src = e.target.result;
     };
@@ -192,30 +191,32 @@ export default function OutfitSelectionStep({
 
   return (
     <section className="step-card rounded-[28px] border bg-white p-6 md:p-8 space-y-7">
-      {/* ---------------------------------------------------- */}
-      {/* 1. HEADER: What shall we stitch? / क्या सिलवाना चाहते हैं? */}
-      {/* ---------------------------------------------------- */}
+      {/* 1. HEADER */}
       <div className="flex items-center gap-3">
         <span className="step-icon">
           <Wand2 size={18} />
         </span>
         <div>
-          <p className="step-eyebrow">STEP 03 · YOUR OUTFIT / आपका परिधान</p>
+          <p className="step-eyebrow">
+            {t("STEP 03 · YOUR OUTFIT", "चरण 03 · आपका परिधान")}
+          </p>
           <h2 className="text-[25px] font-semibold text-[var(--primary-dark)]">
-            What shall we stitch? / क्या सिलवाना चाहते हैं?
+            {t("What shall we stitch?", "क्या सिलवाना चाहते हैं?")}
           </h2>
           <p className="text-[13px] text-[var(--text-light)]">
-            Choose an outfit to see the right design and measurement options / सही डिज़ाइन और नाप के विकल्प देखने के लिए परिधान चुनें।
+            {t(
+              "Choose an outfit to see the right design and measurement options",
+              "सही डिज़ाइन और नाप के विकल्प देखने के लिए परिधान चुनें।"
+            )}
           </p>
         </div>
       </div>
 
-      {/* ---------------------------------------------------- */}
       {/* 2. OUTFIT CARDS (3 OPTIONS: Blouse, Kurti, Suit Upper) */}
-      {/* ---------------------------------------------------- */}
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
         {outfitTypes.map((item) => {
           const selected = outfit.type === item.id;
+          const outfitLabel = lang === "hi" ? item.hi : item.en;
           return (
             <button
               type="button"
@@ -234,7 +235,7 @@ export default function OutfitSelectionStep({
               <div className="relative h-56 w-full overflow-hidden bg-[#f7efdf]">
                 <img
                   src={item.image}
-                  alt={item.en}
+                  alt={outfitLabel}
                   className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
                   loading="lazy"
                 />
@@ -268,7 +269,7 @@ export default function OutfitSelectionStep({
               <div className="flex flex-1 flex-col justify-between p-4">
                 <div>
                   <h3 className="font-serif text-[16px] font-bold text-[var(--primary-dark)] group-hover:text-[var(--primary)] transition-colors">
-                    {item.en} / {item.hi}
+                    {outfitLabel}
                   </h3>
                   <p className="mt-1 text-[12px] text-[var(--text-light)] leading-snug">
                     {item.desc}
@@ -285,10 +286,10 @@ export default function OutfitSelectionStep({
                   >
                     {selected ? (
                       <>
-                        <Check size={14} strokeWidth={3} /> Selected / चयनित
+                        <Check size={14} strokeWidth={3} /> {t("Selected", "चयनित")}
                       </>
                     ) : (
-                      "Select Outfit / चुनें"
+                      t("Select Outfit", "चुनें")
                     )}
                   </span>
                 </div>
@@ -304,23 +305,24 @@ export default function OutfitSelectionStep({
         </p>
       )}
 
-      {/* ---------------------------------------------------- */}
       {/* 3. DESIGN SELECTION: STUDIO DESIGNS OR CUSTOM PHOTO */}
-      {/* ---------------------------------------------------- */}
       <div className="rounded-2xl border-2 border-[#e8ded2] bg-[#fdfbf9] p-4 sm:p-6 shadow-2xs space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#ece2d6]">
           <div>
             <h3 className="font-serif text-[16px] sm:text-[17px] font-bold text-[var(--primary-dark)] flex items-center gap-2">
               <Sparkles size={17} className="text-[var(--primary)]" />
-              <span>Design Selection / डिज़ाइन का चयन</span>
+              <span>{t("Design Selection", "डिज़ाइन का चयन")}</span>
             </h3>
             <p className="text-[12px] text-stone-500 mt-0.5">
-              Choose from our studio catalog designs OR upload your own reference photo / हमारी डिज़ाइन में से चुनें या अपनी पसंद का फ़ोटो भेजें।
+              {t(
+                "Choose from our studio catalog designs OR upload your own reference photo",
+                "हमारी डिज़ाइन में से चुनें या अपनी पसंद का फ़ोटो भेजें।"
+              )}
             </p>
           </div>
           {outfit?.type && (
             <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-[var(--primary-light)] text-[var(--primary)] border border-[#ebdcd0]">
-              For: {outfit.type}
+              {t(`For: ${outfit.type}`, `के लिए: ${outfit.type}`)}
             </span>
           )}
         </div>
@@ -330,16 +332,19 @@ export default function OutfitSelectionStep({
           <div className="space-y-2 rounded-xl bg-white p-4 border border-[#ebdcd0] shadow-2xs">
             <div className="flex items-center justify-between">
               <span className="font-bold text-[13px] text-stone-800">
-                Option 1: Choose from Catalog / कैटलॉग डिज़ाइन
+                {t("Option 1: Choose from Catalog", "विकल्प 1: कैटलॉग डिज़ाइन")}
               </span>
               {outfit?.designCode && (
                 <span className="text-[11px] font-bold text-[var(--primary)] bg-[var(--primary-light)] px-2.5 py-0.5 rounded-full border border-[#ebdcd0]">
-                  ✓ Selected: {outfit.designCode}
+                  {t(`✓ Selected: ${outfit.designCode}`, `✓ चयनित: ${outfit.designCode}`)}
                 </span>
               )}
             </div>
             <p className="text-[11.5px] text-stone-500 leading-snug">
-              Ready designer styles crafted for {outfit?.type || "this outfit"}.
+              {t(
+                `Ready designer styles crafted for ${outfit?.type || "this outfit"}.`,
+                `${outfit?.type || "इस परिधान"} के लिए तैयार विशेष डिज़ाइन।`
+              )}
             </p>
             <div className="pt-1">
               <DesignCodeDropdown outfit={outfit} setOutfit={setOutfit} onOpenZoom={(img) => setModalImage(img)} />
@@ -350,16 +355,19 @@ export default function OutfitSelectionStep({
           <div className="space-y-2 rounded-xl bg-white p-4 border border-[#ebdcd0] shadow-2xs">
             <div className="flex items-center justify-between">
               <span className="font-bold text-[13px] text-stone-800">
-                Option 2: Have your own design? / क्या आपके पास डिज़ाइन है?
+                {t("Option 2: Have your own design?", "विकल्प 2: क्या आपके पास डिज़ाइन है?")}
               </span>
               {outfit?.uploadedPhoto && (
                 <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
-                  <Check size={11} strokeWidth={3} /> Selected / चयनित
+                  <Check size={11} strokeWidth={3} /> {t("Selected", "चयनित")}
                 </span>
               )}
             </div>
             <p className="text-[11.5px] text-stone-500 leading-snug">
-              Upload photo from Pinterest, Instagram, or phone / अपनी पसंद का फ़ोटो अपलोड करें।
+              {t(
+                "Upload photo from Pinterest, Instagram, or phone",
+                "अपनी पसंद का फ़ोटो अपलोड करें।"
+              )}
             </p>
 
             {/* Hidden File Input */}
@@ -372,13 +380,13 @@ export default function OutfitSelectionStep({
             />
 
             {outfit.uploadedPhoto ? (
-              /* Uploaded Preview with Active Selected State & Click-to-Deselect */
+              /* Uploaded Preview */
               <div className="rounded-xl border-2 border-emerald-500 bg-emerald-50/40 p-3 shadow-xs">
                 <div className="flex items-center gap-3">
                   <div
                     onClick={() => setModalImage(outfit.uploadedPhoto)}
                     className="group/thumb relative h-16 w-16 flex-shrink-0 cursor-pointer overflow-hidden rounded-lg border border-emerald-300 bg-white shadow-2xs"
-                    title="Click to view full size / बड़ी देखने के लिए क्लिक करें"
+                    title={t("Click to view full size", "बड़ी देखने के लिए क्लिक करें")}
                   >
                     <img
                       src={outfit.uploadedPhoto}
@@ -392,13 +400,13 @@ export default function OutfitSelectionStep({
 
                   <div className="min-w-0 flex-1">
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-700 px-2 py-0.5 text-[10.5px] font-bold text-white">
-                      <Check size={11} strokeWidth={3} /> Selected Photo / चयनित
+                      <Check size={11} strokeWidth={3} /> {t("Selected Photo", "चयनित फ़ोटो")}
                     </span>
                     <p className="mt-0.5 font-bold text-[13px] text-stone-900 truncate">
                       {outfit.uploadedPhotoName || "Custom Design Photo"}
                     </p>
                     <p className="text-[11px] text-stone-500">
-                      {outfit.uploadedPhotoSize || "Image attached"}
+                      {outfit.uploadedPhotoSize || t("Image attached", "फ़ोटो संलग्न")}
                     </p>
                   </div>
 
@@ -408,15 +416,15 @@ export default function OutfitSelectionStep({
                       onClick={() => fileInputRef.current?.click()}
                       className="px-2.5 py-1 rounded-lg bg-white border border-stone-200 text-[11px] font-semibold text-stone-700 hover:bg-stone-50 cursor-pointer"
                     >
-                      Change
+                      {t("Change", "बदलें")}
                     </button>
                     <button
                       type="button"
                       onClick={removePhoto}
                       className="px-2.5 py-1 rounded-lg bg-red-50 border border-red-200 text-[11px] font-bold text-red-600 hover:bg-red-100 cursor-pointer"
-                      title="Deselect / हटाएँ"
+                      title={t("Deselect", "हटाएं")}
                     >
-                      Deselect
+                      {t("Deselect", "हटाएं")}
                     </button>
                   </div>
                 </div>
@@ -440,10 +448,15 @@ export default function OutfitSelectionStep({
                   </div>
                   <div className="text-left">
                     <p className="font-bold text-[13px] text-[var(--primary-dark)]">
-                      {compressing ? "Processing... / फ़ोटो तैयार हो रही है..." : "Upload Photo / फ़ोटो अपलोड करें"}
+                      {compressing
+                        ? t("Processing...", "फ़ोटो तैयार हो रही है...")
+                        : t("Upload Photo", "फ़ोटो अपलोड करें")}
                     </p>
                     <p className="text-[11px] text-stone-500">
-                      Click to choose or take a photo (JPG, PNG, WEBP)
+                      {t(
+                        "Click to choose or take a photo (JPG, PNG, WEBP)",
+                        "फ़ोटो चुनने या खींचने के लिए क्लिक करें"
+                      )}
                     </p>
                   </div>
                 </div>
@@ -453,52 +466,54 @@ export default function OutfitSelectionStep({
         </div>
       </div>
 
-      {/* ---------------------------------------------------- */}
-      {/* 4. NUMBER OF PIECES / कपड़ों की संख्या */}
-      {/* ---------------------------------------------------- */}
+      {/* 4. NUMBER OF PIECES */}
       <div className="p-4 sm:p-5 rounded-2xl bg-[#faf6f2] border border-[#ebdcd0]">
         <label className="form-field m-0">
           <div className="flex items-center justify-between mb-1">
             <span className="font-bold text-[13.5px] text-stone-800 flex items-center gap-1.5">
               <Layers size={15} className="text-[var(--primary)]" />
-              <span>Number of pieces / कपड़ों की संख्या</span>
+              <span>{t("Number of pieces", "कपड़ों की संख्या")}</span>
             </span>
             <span className="text-[11.5px] font-bold px-2.5 py-0.5 rounded-full bg-white text-[var(--primary)] border border-[#ebdcd0]">
-              Total: {outfit.pieces || 1} Piece(s) / पीस
+              {t(`Total: ${outfit.pieces || 1} Piece(s)`, `कुल: ${outfit.pieces || 1} थान / पीस`)}
             </span>
           </div>
           <select
             value={outfit.pieces || "1"}
             onChange={(event) => setOutfit({ ...outfit, pieces: event.target.value })}
-            className="bg-white font-medium"
+            className="bg-white font-medium cursor-pointer"
           >
             {["1", "2", "3", "4", "5+"].map((piece) => (
               <option key={piece} value={piece}>
-                {piece} Piece{piece !== "1" ? "s" : ""} / {piece} कपड़ा
+                {piece === "1"
+                  ? t("1 Piece", "1 कपड़ा (1 पीस)")
+                  : t(`${piece} Pieces`, `${piece} कपड़े (${piece} पीस)`)}
               </option>
             ))}
           </select>
         </label>
       </div>
 
-      {/* ---------------------------------------------------- */}
-      {/* 6. SPECIAL REQUESTS (OPTIONAL) */}
-      {/* ---------------------------------------------------- */}
+      {/* 5. SPECIAL REQUESTS (OPTIONAL) */}
       <label className="form-field">
         <span className="font-bold text-[13px] text-stone-800">
-          Special requests / कोई विशेष निर्देश <small className="text-[11px] font-normal text-stone-500">(Optional / वैकल्पिक)</small>
+          {t("Special requests", "कोई विशेष निर्देश")}{" "}
+          <small className="text-[11px] font-normal text-stone-500">
+            {t("(Optional)", "(वैकल्पिक)")}
+          </small>
         </span>
         <textarea
           value={outfit.specialReq || ""}
           onChange={(event) => setOutfit({ ...outfit, specialReq: event.target.value })}
-          placeholder="Latkan, piping, border, deep gala, or finishing details / लटकन, पाइपिंग, बॉर्डर, या कोई विशेष काम..."
+          placeholder={t(
+            "Latkan, piping, border, deep gala, or finishing details...",
+            "लटकन, पाइपिंग, बॉर्डर, या कोई विशेष काम..."
+          )}
           rows={3}
         />
       </label>
 
-      {/* ---------------------------------------------------- */}
       {/* FULL PHOTO LIGHTBOX MODAL */}
-      {/* ---------------------------------------------------- */}
       {modalImage && (
         <div
           className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
@@ -509,7 +524,9 @@ export default function OutfitSelectionStep({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b px-4 py-3 bg-stone-50">
-              <span className="font-bold text-[14px] text-[var(--text)]">Design Reference Photo / डिज़ाइन रेफ़रेंस फ़ोटो</span>
+              <span className="font-bold text-[14px] text-[var(--text)]">
+                {t("Design Reference Photo", "डिज़ाइन रेफ़रेंस फ़ोटो")}
+              </span>
               <button
                 type="button"
                 onClick={() => setModalImage(null)}

@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { Globe, ShieldCheck } from "lucide-react";
 import { BRAND_CONFIG } from "../config/fashionCatalog.js";
+import { useLanguage } from "../context/LanguageContext.jsx";
 
 const steps = [
   { en: "Welcome", hi: "स्वागत" },
@@ -19,6 +20,7 @@ export default function StepHeader({
   onJumpToSection,
   ordersCount = null,
 }) {
+  const { lang, setLang, t } = useLanguage();
   const progress = (currentSection / steps.length) * 100;
   const clickRef = useRef({ time: 0, count: 0 });
 
@@ -44,7 +46,7 @@ export default function StepHeader({
         <div
           className="brand-lockup cursor-pointer group flex items-center gap-2.5 sm:gap-3 select-none"
           onClick={handleLogoClick}
-          title="Khwab Stitch — Where Fabric Becomes Art"
+          title={t("Khwab Stitch — Where Fabric Becomes Art", "ख़्वाब स्टिच — हमारी कारीगरी")}
         >
           <div className="relative flex-shrink-0">
             <img
@@ -61,29 +63,66 @@ export default function StepHeader({
           </div>
           <div className="min-w-0">
             <strong className="font-serif text-[17px] sm:text-[20px] font-bold text-[var(--primary-dark)] tracking-tight leading-tight block">
-              {activeMode === "admin" ? "Khwab Stitch Atelier" : "Khwab Stitch"}
+              {activeMode === "admin"
+                ? t("Khwab Stitch Atelier", "ख़्वाब स्टिच एटेलियर")
+                : t("Khwab Stitch", "ख़्वाब स्टिच")}
             </strong>
             <small className="block text-[9px] sm:text-[10px] font-semibold tracking-wider uppercase text-[var(--secondary)] truncate">
               {activeMode === "admin"
-                ? "Master Tailor Order Management"
-                : "Where Fabric Becomes Art · ख़्वाब स्टिच"}
+                ? t("Master Tailor Order Management", "मास्टर दर्जी ऑर्डर प्रबंधन")
+                : t("Where Fabric Becomes Art", "हमारी कारीगरी · ख़्वाब स्टिच")}
             </small>
           </div>
         </div>
 
         {/* HEADER RIGHT ACTIONS */}
-        {activeMode === "admin" && (
-          /* IN ADMIN MODE: SWITCH TO CUSTOMER SITE BUTTON */
-          <button
-            type="button"
-            onClick={onNavigateCustomer}
-            className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full bg-[var(--primary)] text-white text-[11.5px] sm:text-[12px] font-bold shadow-xs hover:opacity-95 transition-opacity"
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* LANGUAGE TOGGLE SWITCH (TOP RIGHT) */}
+          <div
+            className="inline-flex items-center rounded-full bg-[#f2eae1] p-0.5 border border-[#e4d8cc] text-[11.5px] font-bold shadow-2xs"
+            role="group"
+            aria-label="Language selector"
           >
-            <Globe size={13} />
-            <span className="hidden sm:inline">Customer Website / वेबसाइट देखें</span>
-            <span className="sm:hidden">वेबसाइट</span>
-          </button>
-        )}
+            <button
+              type="button"
+              onClick={() => setLang("en")}
+              className={`px-2.5 sm:px-3 py-1 rounded-full transition-all cursor-pointer ${
+                lang === "en"
+                  ? "bg-[var(--primary)] text-white shadow-xs font-extrabold"
+                  : "text-stone-600 hover:text-stone-900"
+              }`}
+              title="Switch to English"
+            >
+              English
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang("hi")}
+              className={`px-2.5 sm:px-3 py-1 rounded-full transition-all cursor-pointer ${
+                lang === "hi"
+                  ? "bg-[var(--primary)] text-white shadow-xs font-extrabold"
+                  : "text-stone-600 hover:text-stone-900"
+              }`}
+              title="हिंदी में बदलें"
+            >
+              हिंदी
+            </button>
+          </div>
+
+          {activeMode === "admin" && (
+            <button
+              type="button"
+              onClick={onNavigateCustomer}
+              className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full bg-[var(--primary)] text-white text-[11.5px] sm:text-[12px] font-bold shadow-xs hover:opacity-95 transition-opacity cursor-pointer"
+            >
+              <Globe size={13} />
+              <span className="hidden sm:inline">
+                {t("Customer Website", "वेबसाइट देखें")}
+              </span>
+              <span className="sm:hidden">{t("Website", "वेबसाइट")}</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* CUSTOMER STEP PROGRESS BAR (ONLY ON CUSTOMER PAGE) */}
@@ -91,10 +130,10 @@ export default function StepHeader({
         <div className="step-progress">
           <div className="step-progress__top">
             <span>
-              <b>STEP {currentSection}</b> OF {steps.length} / चरण {currentSection} कुल {steps.length}
+              <b>{t(`STEP ${currentSection}`, `चरण ${currentSection}`)}</b> {t(`OF ${steps.length}`, `कुल ${steps.length}`)}
             </span>
             <span>
-              {steps[currentSection - 1]?.en} / {steps[currentSection - 1]?.hi}
+              {lang === "hi" ? steps[currentSection - 1]?.hi : steps[currentSection - 1]?.en}
             </span>
           </div>
           <div
@@ -110,6 +149,7 @@ export default function StepHeader({
           <nav className="step-progress__steps" aria-label="Order steps">
             {steps.map((step, index) => {
               const number = index + 1;
+              const label = lang === "hi" ? step.hi : step.en;
               return (
                 <button
                   type="button"
@@ -119,13 +159,11 @@ export default function StepHeader({
                     number === currentSection ? " is-current" : ""
                   }${number < currentSection ? " is-complete" : ""}`}
                   aria-current={number === currentSection ? "step" : undefined}
-                  title={`Jump to Step ${number}: ${step.en} / ${step.hi}`}
+                  title={`Jump to Step ${number}: ${label}`}
                 >
                   <i>{number < currentSection ? "✓" : number}</i>
                   <small>
-                    <span>
-                      {step.en} / {step.hi}
-                    </span>
+                    <span>{label}</span>
                   </small>
                 </button>
               );

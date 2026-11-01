@@ -11,6 +11,7 @@ import DeliveryAddressStep from "./components/steps/DeliveryAddressStep.jsx";
 import OrderReceiptModal from "./components/OrderReceiptModal.jsx";
 import AdminDashboard from "./components/AdminDashboard.jsx";
 import AdminLoginPage from "./components/AdminLoginPage.jsx";
+import { useLanguage } from "./context/LanguageContext.jsx";
 
 import {
   BRAND_CONFIG,
@@ -189,6 +190,7 @@ const fetchCloudOrders = async () => {
 };
 
 export default function App() {
+  const { lang, t } = useLanguage();
   // FORM STATE
   const [currentSection, setCurrentSection] = useState(1);
   const [customer, setCustomer] = useState({
@@ -228,7 +230,7 @@ export default function App() {
   });
   const [measurements, setMeasurements] = useState({
     unit: "inch",
-    provideMethod: "Self measurement / खुद से नाप लेकर",
+    provideMethod: "self_measurement",
     values: {},
   });
   const [delivery, setDelivery] = useState({ address: "", landmark: "", deliveryType: "Standard · 7–10 days" });
@@ -622,16 +624,16 @@ export default function App() {
     const digitsOnly = (customer.whatsapp || "").replace(/\D/g, "");
     const clean10 = digitsOnly.length === 12 && digitsOnly.startsWith("91") ? digitsOnly.slice(2) : digitsOnly;
     if (clean10.length !== 10) {
-      alert("कृपया 10 अंकों का मान्य वॉट्सऐप नंबर दर्ज करें · Please enter a valid 10-digit WhatsApp number");
+      alert(t("Please enter a valid 10-digit WhatsApp number", "कृपया 10 अंकों का मान्य वॉट्सऐप नंबर दर्ज करें"));
       setCurrentSection(2);
       return;
     }
     if (![customer.name, customer.address, customer.pin].every((value) => value && value.trim())) {
-      alert("कृपया नाम, पूरा पता और पिन कोड भरें · Please fill in name, address & PIN");
+      alert(t("Please fill in name, address & PIN", "कृपया नाम, पूरा पता और पिन कोड भरें"));
       setCurrentSection(2);
       return;
     }
-    if (!outfit.type) { alert("कृपया परिधान चुनें · Please select an outfit"); setCurrentSection(3); return; }
+    if (!outfit.type) { alert(t("Please select an outfit", "कृपया परिधान चुनें")); setCurrentSection(3); return; }
 
     setBusy(true);
     const combinedCityState = customer.cityState || [customer.city, customer.state].filter(Boolean).join(", ") || customer.city || "Not specified";
@@ -687,7 +689,7 @@ export default function App() {
 
   const validateAndSyncCustomer = () => {
     if (!customer.name?.trim()) {
-      setStepError("कृपया अपना पूरा नाम भरें · Please enter your full name.");
+      setStepError(t("Please enter your full name.", "कृपया अपना पूरा नाम भरें।"));
       return false;
     }
 
@@ -695,29 +697,29 @@ export default function App() {
     const digitsOnly = (customer.whatsapp || "").replace(/\D/g, "");
     const clean10 = digitsOnly.length === 12 && digitsOnly.startsWith("91") ? digitsOnly.slice(2) : digitsOnly;
     if (clean10.length !== 10) {
-      setStepError("कृपया 10 अंकों का मान्य वॉट्सऐप नंबर दर्ज करें · Please enter a valid 10-digit WhatsApp number.");
+      setStepError(t("Please enter a valid 10-digit WhatsApp number.", "कृपया 10 अंकों का मान्य वॉट्सऐप नंबर दर्ज करें।"));
       return false;
     }
 
     if (!customer.address?.trim()) {
-      setStepError("कृपया पूरा डिलीवरी पता भरें · Please enter your full delivery address.");
+      setStepError(t("Please enter your full delivery address.", "कृपया पूरा डिलीवरी पता भरें।"));
       return false;
     }
 
     if (!customer.city?.trim()) {
-      setStepError("कृपया शहर चुनें या लिखें · Please select or enter your city.");
+      setStepError(t("Please select or enter your city.", "कृपया शहर चुनें या लिखें।"));
       return false;
     }
 
     if (!customer.state?.trim()) {
-      setStepError("कृपया राज्य चुनें · Please select your state.");
+      setStepError(t("Please select your state.", "कृपया राज्य चुनें।"));
       return false;
     }
 
     // PIN 6-digit validation
     const pinDigits = (customer.pin || "").replace(/\D/g, "");
     if (pinDigits.length !== 6) {
-      setStepError("कृपया 6 अंकों का सही पिन कोड दर्ज करें · Please enter a valid 6-digit PIN code.");
+      setStepError(t("Please enter a valid 6-digit PIN code.", "कृपया 6 अंकों का सही पिन कोड दर्ज करें।"));
       return false;
     }
 
@@ -745,7 +747,7 @@ export default function App() {
       if (!validateAndSyncCustomer()) return;
     } else if (currentSection === 3) {
       if (!outfit.type) {
-        setStepError("कृपया आगे बढ़ने से पहले परिधान चुनें · Please choose an outfit before continuing.");
+        setStepError(t("Please choose an outfit before continuing.", "कृपया आगे बढ़ने से पहले परिधान चुनें।"));
         return;
       }
     } else if (currentSection === 4) {
@@ -769,7 +771,7 @@ export default function App() {
       if (!validateAndSyncCustomer()) return;
     }
     if (currentSection === 3 && !outfit.type) {
-      setStepError("कृपया आगे बढ़ने से पहले परिधान चुनें · Please choose an outfit before continuing.");
+      setStepError(t("Please choose an outfit before continuing.", "कृपया आगे बढ़ने से पहले परिधान चुनें।"));
       return;
     }
     if (currentSection === 4) {
@@ -860,7 +862,7 @@ export default function App() {
           if (sec === 6) {
             if (currentSection === 2 && !validateAndSyncCustomer()) return;
             if (currentSection === 3 && !outfit.type) {
-              setStepError("कृपया आगे बढ़ने से पहले परिधान चुनें · Please choose an outfit before continuing.");
+              setStepError(t("Please choose an outfit before continuing.", "कृपया आगे बढ़ने से पहले परिधान चुनें।"));
               return;
             }
             setEditingFromReview(false);
@@ -1089,7 +1091,7 @@ export default function App() {
                     <Check size={16} />
                   </span>
                 </div>
-                <h2 className="mt-4 text-[28px] font-bold">Order Confirmed! / ऑर्डर दर्ज हो गया! ✨</h2>
+                <h2 className="mt-4 text-[28px] font-bold">{t("Order Confirmed! ✨", "ऑर्डर दर्ज हो गया! ✨")}</h2>
                 <div className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--primary-light)] font-bold text-[14px]">
                   {successOrder.orderId} • {successOrder.outfit?.type || "Custom Outfit"}
                 </div>
@@ -1103,10 +1105,10 @@ export default function App() {
                       />
                       <div className="text-left">
                         <span className="text-[11px] font-bold text-emerald-700 flex items-center gap-1">
-                          ✓ Custom Design Photo Attached / कस्टम फ़ोटो संलग्न
+                          {t("✓ Custom Design Photo Attached", "✓ कस्टम फ़ोटो संलग्न")}
                         </span>
                         <span className="text-[13px] font-semibold text-[var(--text)]">
-                          {successOrder.outfit.uploadedPhotoName || "Reference Photo"}
+                          {successOrder.outfit.uploadedPhotoName || t("Reference Photo", "रेफ़रेंस फ़ोटो")}
                         </span>
                       </div>
                     </div>
@@ -1125,10 +1127,10 @@ export default function App() {
                       />
                       <div className="text-left">
                         <span className="text-[11px] font-bold text-[var(--primary)] flex items-center gap-1 font-mono">
-                          ✓ Design Code: {successOrder.outfit.designCode}
+                          {t(`✓ Design Code: ${successOrder.outfit.designCode}`, `✓ डिज़ाइन कोड: ${successOrder.outfit.designCode}`)}
                         </span>
                         <span className="text-[13px] font-semibold text-[var(--text)]">
-                          Studio Catalog Selection / कैटलॉग डिज़ाइन
+                          {t("Studio Catalog Selection", "कैटलॉग डिज़ाइन")}
                         </span>
                       </div>
                     </div>
@@ -1146,7 +1148,7 @@ export default function App() {
                     className="flex-1 h-13 rounded-full text-white font-bold text-[14px] flex items-center justify-center gap-2 shadow-lg hover:opacity-95 transition-all cursor-pointer"
                     style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
                   >
-                    <Download size={17} /> Download Slip / PDF (रसीद / PDF प्राप्त करें)
+                    <Download size={17} /> {t("Download Slip / PDF", "रसीद / PDF प्राप्त करें")}
                   </button>
                   <button
                     type="button"
@@ -1202,7 +1204,7 @@ export default function App() {
                     }}
                     className="flex-1 h-12 rounded-full border border-stone-300 bg-white text-stone-800 font-bold text-[13.5px] hover:bg-stone-50 transition-colors"
                   >
-                    New Order + / नया ऑर्डर +
+                    {t("New Order +", "नया ऑर्डर +")}
                   </button>
                 </div>
               </div>
