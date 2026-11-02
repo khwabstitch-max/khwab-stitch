@@ -287,3 +287,11 @@ export const resolveBackNeck = (key, customPhoto = null, outfitType = "Kurti") =
 
   return defaultItem;
 };
+
+export const getAssetUrl = (path) => {
+  if (!path) return "";
+  if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("data:")) return path;
+  const base = (typeof import.meta !== "undefined" && import.meta.env?.BASE_URL) || "/";
+  const cleanPath = path.replace(/^\.?\//, "");
+  return `${base.replace(/\/+$/, "")}/${cleanPath}`;
+};

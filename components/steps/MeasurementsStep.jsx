@@ -7,7 +7,7 @@ import {
   ChevronDown,
   Clock,
 } from "lucide-react";
-import { MEASUREMENT_GUIDES } from "../../config/fashionCatalog.js";
+import { MEASUREMENT_GUIDES, getAssetUrl } from "../../config/fashionCatalog.js";
 import { useLanguage } from "../../context/LanguageContext.jsx";
 
 const methodOptions = [
@@ -82,13 +82,15 @@ export default function MeasurementsStep({
   // Selected outfit label & photo guide info
   const outfitTitle = outfit.type || "Outfit";
   const isBlouse = outfit.type === "Blouse";
-  const outfitGuideImg =
+  const rawGuideImg =
     MEASUREMENT_GUIDES?.[outfit.type] ||
     (outfit.type === "Blouse"
       ? "./images/measurement_guides/measurement_guide_blouse.jpg"
       : (outfit.type === "Suit Upper" || outfit.type === "Suit")
       ? "./images/measurement_guides/measurement_guide_suit.jpg"
       : "./images/measurement_guides/measurement_guide_kurti.jpg");
+
+  const outfitGuideImg = getAssetUrl(rawGuideImg);
 
   const handleMethodChange = (event) => {
     const selected = event.target.value;
@@ -384,6 +386,7 @@ export default function MeasurementsStep({
                           className="mx-auto h-auto max-h-[490px] w-full object-contain cursor-zoom-in rounded-xl transition-transform hover:scale-[1.01]"
                           onClick={handleZoomSketch}
                           onError={(e) => {
+                            e.currentTarget.onerror = null;
                             if (!e.currentTarget.src.includes(".png")) {
                               e.currentTarget.src = outfitGuideImg.replace(".jpg", ".png");
                             }
@@ -555,6 +558,7 @@ export default function MeasurementsStep({
                 alt={`${outfitTitle} Measurement Diagram`}
                 className="mx-auto h-auto max-h-[75vh] w-full object-contain rounded-xl"
                 onError={(e) => {
+                  e.currentTarget.onerror = null;
                   if (!e.currentTarget.src.includes(".png")) {
                     e.currentTarget.src = outfitGuideImg.replace(".jpg", ".png");
                   }

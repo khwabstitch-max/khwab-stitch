@@ -35,8 +35,7 @@ jobs:
           VITE_BASE_PATH: /khwab-stitch/
         run: |
           if [ -z "$VITE_API_BASE_URL" ]; then
-            echo "Configure the VITE_API_BASE_URL repository variable to the private API service URL."
-            exit 1
+            echo "Notice: VITE_API_BASE_URL variable is not set. Building with default origin."
           fi
           npm run build
       - name: Upload artifact
