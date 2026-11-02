@@ -873,47 +873,50 @@ export default function App() {
                   </p>
                 )}
 
-                <div
-                  className="sticky bottom-3 sm:bottom-4 z-20 flex gap-2.5 sm:gap-3 rounded-2xl sm:rounded-[24px] border border-[#e6dacd] bg-white/95 p-2.5 sm:p-3 shadow-xl backdrop-blur-md transition-all"
-                >
-                  <button
-                    type="button"
-                    disabled={currentSection === 2}
-                    onClick={() => {
-                      setStepError("");
-                      setCurrentSection((s) => Math.max(2, s - 1));
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    className="flex-1 h-11 sm:h-12 rounded-full border border-[#ded2c4] bg-white font-bold text-[13px] sm:text-[14px] text-stone-700 flex items-center justify-center gap-1 sm:gap-1.5 disabled:opacity-40 hover:bg-stone-50 transition-colors shadow-2xs cursor-pointer"
-                  >
-                    <ChevronLeft size={16} /> {t("Back", "पीछे")}
-                  </button>
+                {/* FLOATING ACTION BOTTOM BAR */}
+                <div className="sticky bottom-3 sm:bottom-5 z-20 w-full max-w-[560px] mx-auto px-1 sm:px-0">
+                  <div className="flex items-center gap-2.5 sm:gap-3 rounded-full border-2 border-[#eedfd6] bg-white/95 p-1.5 sm:p-2 shadow-2xl backdrop-blur-md">
+                    <button
+                      type="button"
+                      disabled={currentSection === 2}
+                      onClick={() => {
+                        setStepError("");
+                        setCurrentSection((s) => Math.max(2, s - 1));
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                      className="flex-1 h-11 sm:h-12 rounded-full border border-[#ded2c4] bg-[#fdfaf8] font-bold text-[13px] sm:text-[14px] text-stone-700 flex items-center justify-center gap-1.5 shadow-2xs hover:bg-[#f6eee7] hover:text-[var(--primary)] transition-all disabled:opacity-35 disabled:hover:bg-[#fdfaf8] disabled:hover:text-stone-700 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                      <ChevronLeft size={16} />
+                      <span>{t("Back", "पीछे")}</span>
+                    </button>
 
-                  {currentSection < 6 ? (
-                    <button
-                      type="submit"
-                      className="flex-[1.5] sm:flex-[2] h-11 sm:h-12 px-3 rounded-full text-white font-bold text-[13px] sm:text-[14px] flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:opacity-95 transition-opacity cursor-pointer"
-                      style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
-                    >
-                      <span>{t("Next", "आगे बढ़ें")}</span> <ChevronRight size={16} />
-                    </button>
-                  ) : (
-                    <button
-                      type="submit"
-                      disabled={busy}
-                      className="flex-[1.8] sm:flex-[2] h-11 sm:h-12 px-3 rounded-full text-white font-bold text-[13px] sm:text-[14px] flex items-center justify-center gap-1.5 sm:gap-2 shadow-md disabled:opacity-60 hover:opacity-95 transition-opacity cursor-pointer"
-                      style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
-                    >
-                      {busy ? (
-                        <span>{t("Submitting...", "भेजा जा रहा है...")}</span>
-                      ) : (
-                        <>
-                          <Check size={16} />
-                          <span>{t("Confirm & Place Order", "ऑर्डर कन्फर्म करें")}</span>
-                        </>
-                      )}
-                    </button>
-                  )}
+                    {currentSection < 6 ? (
+                      <button
+                        type="submit"
+                        className="flex-1 h-11 sm:h-12 rounded-full text-white font-bold text-[13px] sm:text-[14px] flex items-center justify-center gap-1.5 shadow-md hover:opacity-95 hover:shadow-lg transition-all cursor-pointer"
+                        style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
+                      >
+                        <span>{t("Next", "आगे बढ़ें")}</span>
+                        <ChevronRight size={16} />
+                      </button>
+                    ) : (
+                      <button
+                        type="submit"
+                        disabled={busy}
+                        className="flex-1 h-11 sm:h-12 px-2 sm:px-3 rounded-full text-white font-bold text-[12.5px] sm:text-[14px] flex items-center justify-center gap-1.5 shadow-md disabled:opacity-60 hover:opacity-95 hover:shadow-lg transition-all cursor-pointer"
+                        style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
+                      >
+                        {busy ? (
+                          <span>{t("Submitting...", "भेजा जा रहा है...")}</span>
+                        ) : (
+                          <>
+                            <Check size={16} className="shrink-0" />
+                            <span className="truncate">{t("Confirm & Place Order", "ऑर्डर कन्फर्म करें")}</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </div>
               </form>
             )}
