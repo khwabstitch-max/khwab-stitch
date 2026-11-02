@@ -30,8 +30,8 @@ if (!existsSync(resolve(distRoot, "index.html"))) {
   console.error("Production files are missing. Run `npm run build` first.");
   process.exit(1);
 }
-if (typeof adminPassword !== "string" || adminPassword.length < 16) {
-  console.error("Set ADMIN_PASSWORD to a unique value with at least 16 characters before starting the production server.");
+if (typeof adminPassword !== "string" || adminPassword.trim().length < 6) {
+  console.error("Set ADMIN_PASSWORD to a unique value with at least 6 characters in .env before starting the server.");
   process.exit(1);
 }
 

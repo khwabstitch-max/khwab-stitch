@@ -19,6 +19,9 @@ export default function StepHeader({
   onNavigateAdmin,
   onJumpToSection,
   ordersCount = null,
+  maxCompletedStep = 1,
+  editingFromReview = false,
+  hasSuccessOrder = false,
 }) {
   const { lang, setLang, t } = useLanguage();
   const progress = (currentSection / steps.length) * 100;
@@ -145,29 +148,43 @@ export default function StepHeader({
             aria-label="Order form progress"
             aria-valuemin={1}
             aria-valuemax={steps.length}
-            aria-valuenow={currentSection}
+            aria-valuenow={hasSuccessOrder ? steps.length : currentSection}
           >
-            <span style={{ width: `${progress}%` }} />
+            <span style={{ width: `${hasSuccessOrder ? 100 : progress}%` }} />
           </div>
 
           <nav className="step-progress__steps" aria-label="Order steps">
             {steps.map((step, index) => {
               const number = index + 1;
               const label = lang === "hi" ? step.hi : step.en;
-              const isPast = number < currentSection;
-              const isCurrent = number === currentSection;
+              const isPast = hasSuccessOrder || number < currentSection;
+              const isCurrent = !hasSuccessOrder && number === currentSection;
+              const isUnlocked = !hasSuccessOrder && (number <= maxCompletedStep || (editingFromReview && number === 6));
 
               return (
                 <button
                   type="button"
                   key={step.en}
-                  onClick={() => onJumpToSection && onJumpToSection(number)}
-                  className={`step-progress__step cursor-pointer text-left bg-transparent border-0 p-0 transition-all hover:opacity-90${
+                  disabled={!isUnlocked}
+                  onClick={() => {
+                    if (isUnlocked && onJumpToSection) {
+                      onJumpToSection(number);
+                    }
+                  }}
+                  className={`step-progress__step text-left bg-transparent border-0 p-0 transition-all${
                     isCurrent ? " is-current" : ""
-                  }${isPast ? " is-complete" : ""}`}
+                  }${isPast ? " is-complete" : ""}${
+                    isUnlocked ? " cursor-pointer hover:opacity-90" : " opacity-40 cursor-not-allowed"
+                  }`}
                   aria-current={isCurrent ? "step" : undefined}
                   aria-label={`Step ${number}: ${label}`}
-                  title={`Jump to Step ${number}: ${label}`}
+                  title={
+                    hasSuccessOrder
+                      ? `${label} (${t("Order Confirmed", "ऑर्डर कन्फर्म")})`
+                      : isUnlocked
+                      ? `${t("Go to", "जाएं")} ${label}`
+                      : `${label} (${t("Locked - Complete previous steps first", "बंद - पहले पिछले चरण पूरे करें")})`
+                  }
                 >
                   <i className={isCurrent ? "scale-110 shadow-sm" : ""}>
                     {isPast ? "✓" : isCurrent ? step.icon : number}

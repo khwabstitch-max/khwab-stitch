@@ -78,6 +78,11 @@ export default function App() {
   const { lang, t } = useLanguage();
   // FORM STATE
   const [currentSection, setCurrentSection] = useState(1);
+  const [maxCompletedStep, setMaxCompletedStep] = useState(1);
+
+  useEffect(() => {
+    setMaxCompletedStep((prev) => Math.max(prev, currentSection));
+  }, [currentSection]);
   const [customer, setCustomer] = useState({
     name: "",
     whatsapp: "",
@@ -533,6 +538,7 @@ export default function App() {
       setCustomer(cleanCustomer);
       setSuccessOrder(savedOrder);
       setReceiptOrder(savedOrder);
+      setEditingFromReview(false);
     } catch (error) {
       setStepError(t(
         `Your order could not be saved: ${error.message}. Your details are still on this page; please try again.`,
@@ -702,7 +708,21 @@ export default function App() {
         activeMode={activeRole}
         onNavigateCustomer={navigateToCustomer}
         onNavigateAdmin={navigateToAdmin}
+        maxCompletedStep={maxCompletedStep}
+        editingFromReview={editingFromReview}
+        hasSuccessOrder={Boolean(successOrder)}
         onJumpToSection={(sec) => {
+          // If order is confirmed, do not allow jumping back to wizard steps
+          if (successOrder) return;
+          if (sec === currentSection) return;
+
+          // Only allow jumping forward if step has been unlocked or editing from Review returning to Step 6
+          const isAllowed = sec <= maxCompletedStep || (editingFromReview && sec === 6);
+          if (!isAllowed) {
+            setStepError(t("Please complete each step in order before continuing.", "कृपया क्रमबद्ध रूप से अगले चरण पर बढ़ें।"));
+            return;
+          }
+
           setStepError("");
           if (sec === 6) {
             if (currentSection === 2 && !validateAndSyncCustomer()) return;
@@ -711,7 +731,7 @@ export default function App() {
               return;
             }
             setEditingFromReview(false);
-          } else if (currentSection === 6) {
+          } else if (currentSection === 6 && sec < 6) {
             setEditingFromReview(true);
           }
           setCurrentSection(sec);
@@ -756,7 +776,7 @@ export default function App() {
             )}
 
             {/* EDITING MODE ALERT BANNER WHEN EDITING FROM STEP 6 */}
-            {editingFromReview && currentSection < 6 && (
+            {!successOrder && editingFromReview && currentSection < 6 && (
               <div className="mt-4 mb-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border-2 border-amber-300 bg-amber-50/95 px-4 sm:px-5 py-3.5 shadow-sm">
                 <div className="flex items-center gap-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white font-bold text-base shadow-xs">
@@ -1016,6 +1036,8 @@ export default function App() {
                     onClick={() => {
                       setSuccessOrder(null);
                       setCurrentSection(1);
+                      setMaxCompletedStep(1);
+                      setEditingFromReview(false);
                       setCustomer({
                         name: "",
                         whatsapp: "",
