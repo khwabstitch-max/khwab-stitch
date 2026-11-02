@@ -48,6 +48,8 @@ export default function DeliveryAddressStep({
   sleeveDesign = [],
   measurementConfigs = {},
   openLightbox,
+  privacyConsent,
+  setPrivacyConsent,
 }) {
   const { lang, t } = useLanguage();
   const [isEditingAddress, setIsEditingAddress] = useState(false);
@@ -632,6 +634,22 @@ export default function DeliveryAddressStep({
           )}
         </div>
       </div>
+
+      <label className="flex items-start gap-3 rounded-xl border border-[#dfc5b5] bg-[#fdf8f6] p-4 text-[12.5px] leading-relaxed text-stone-700">
+        <input
+          type="checkbox"
+          required
+          checked={privacyConsent}
+          onChange={(event) => setPrivacyConsent(event.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--primary)]"
+        />
+        <span>
+          {t(
+            "I agree to Khwab Stitch using my contact details, measurements, and design references to discuss and fulfill this custom order.",
+            "मैं इस कस्टम ऑर्डर पर बात करने और उसे पूरा करने के लिए ख़्वाब स्टिच को अपने संपर्क विवरण, नाप और डिज़ाइन फ़ोटो उपयोग करने की सहमति देती हूँ।"
+          )}
+        </span>
+      </label>
     </section>
   );
 }

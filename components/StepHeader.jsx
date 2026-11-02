@@ -166,6 +166,7 @@ export default function StepHeader({
                     isCurrent ? " is-current" : ""
                   }${isPast ? " is-complete" : ""}`}
                   aria-current={isCurrent ? "step" : undefined}
+                  aria-label={`Step ${number}: ${label}`}
                   title={`Jump to Step ${number}: ${label}`}
                 >
                   <i className={isCurrent ? "scale-110 shadow-sm" : ""}>

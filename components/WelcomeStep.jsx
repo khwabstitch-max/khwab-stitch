@@ -155,7 +155,7 @@ export default function WelcomeStep({ onStart }) {
           <span>•</span>
           <span className="flex items-center gap-1">
             <CheckCircle2 size={13} className="text-emerald-700" />
-            {t("Doorstep Delivery", "घर तक सुरक्षित डिलीवरी")}
+            {t("Safe Courier Delivery", "सुरक्षित कूरियर डिलीवरी")}
           </span>
         </div>
       </div>

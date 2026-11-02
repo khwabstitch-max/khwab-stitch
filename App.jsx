@@ -27,31 +27,8 @@ import {
   DESIGN_CODE_PHOTOS,
 } from "./config/fashionCatalog.js";
 
-const CLOUD_BRIDGE_TOPIC = "khwab_atelier_orders_v2_sync";
-const CLOUD_BRIDGE_URL = `https://ntfy.sh/${CLOUD_BRIDGE_TOPIC}`;
-
-// Strip heavy base64 strings so storage & cloud payloads never hit quota/payload limits
-const stripPhotosFromOrder = (order, preservePhotos = false) => {
-  if (!order) return order;
-  if (preservePhotos) return order;
-  return {
-    ...order,
-    outfit: {
-      ...order.outfit,
-      uploadedPhoto: "",
-      hasUploadedPhoto: Boolean(order.outfit?.uploadedPhoto),
-    },
-    design: {
-      ...order.design,
-      frontPhoto: "",
-      backPhoto: "",
-      sleevePhoto: "",
-      hasFrontPhoto: Boolean(order.design?.frontPhoto),
-      hasBackPhoto: Boolean(order.design?.backPhoto),
-      hasSleevePhoto: Boolean(order.design?.sleevePhoto),
-    },
-  };
-};
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
+const apiUrl = (path) => `${API_BASE_URL}${path}`;
 
 const generateOrderWhatsAppText = (o) => {
   if (!o) return "";
@@ -95,98 +72,6 @@ const generateOrderWhatsAppText = (o) => {
   lines.push("━━━━━━━━━━━━━━━━━━━━━━━");
   lines.push("✨ *Khwab Stitch Atelier - Bespoke Tailoring*");
   return lines.filter(Boolean).join("\n");
-};
-
-const syncOrderToCloud = async (order) => {
-  if (!order) return;
-  try {
-    const hasPhotos = Boolean(
-      order.outfit?.uploadedPhoto ||
-      order.design?.frontPhoto ||
-      order.design?.backPhoto ||
-      order.design?.sleevePhoto
-    );
-
-    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-    const timeoutId = controller ? setTimeout(() => controller.abort(), 8000) : null;
-
-    if (hasPhotos) {
-      // Send complete order WITH full reference photos as attachment file via PUT
-      await fetch(CLOUD_BRIDGE_URL, {
-        method: "PUT",
-        headers: {
-          "Title": `Order #${order.orderId || "NEW"} - ${order.customer?.name || "Customer"} (${order.outfit?.type || "Custom Outfit"})`,
-          "Filename": `order_${order.orderId || "new"}.json`,
-          "Tags": "dress,sparkles,shopping_bags,camera",
-          "Priority": "4",
-        },
-        body: JSON.stringify(order),
-        signal: controller ? controller.signal : undefined,
-      });
-    } else {
-      // Lightweight message when no custom photo uploaded
-      await fetch(CLOUD_BRIDGE_URL, {
-        method: "POST",
-        headers: {
-          "Title": `Order #${order.orderId || "NEW"} - ${order.customer?.name || "Customer"} (${order.outfit?.type || "Custom Outfit"})`,
-          "Tags": "dress,sparkles,shopping_bags",
-          "Priority": "4",
-        },
-        body: JSON.stringify(order),
-        signal: controller ? controller.signal : undefined,
-      });
-    }
-    if (timeoutId) clearTimeout(timeoutId);
-  } catch (err) {
-    console.warn("Cloud sync note:", err);
-  }
-};
-
-const fetchCloudOrders = async () => {
-  try {
-    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-    const timeoutId = controller ? setTimeout(() => controller.abort(), 8000) : null;
-    const res = await fetch(`${CLOUD_BRIDGE_URL}/json?poll=1&since=all`, {
-      cache: "no-store",
-      signal: controller ? controller.signal : undefined,
-    });
-    if (timeoutId) clearTimeout(timeoutId);
-    if (!res.ok) return [];
-    const text = await res.text();
-    const lines = text.trim().split("\n");
-    const cloudOrders = [];
-    for (const line of lines) {
-      if (!line.trim()) continue;
-      try {
-        const item = JSON.parse(line);
-        if (item.event === "message") {
-          let parsedOrder = null;
-          // If message has an attachment file (which holds full reference photos), fetch it!
-          if (item.attachment?.url) {
-            try {
-              const attachRes = await fetch(item.attachment.url);
-              if (attachRes.ok) {
-                parsedOrder = await attachRes.json();
-              }
-            } catch {}
-          }
-          // Fallback to inline message body
-          if (!parsedOrder && item.message) {
-            try {
-              parsedOrder = JSON.parse(item.message);
-            } catch {}
-          }
-          if (parsedOrder && parsedOrder.orderId) {
-            cloudOrders.push(parsedOrder);
-          }
-        }
-      } catch {}
-    }
-    return cloudOrders;
-  } catch (e) {
-    console.warn("Could not fetch cloud orders:", e);
-    return [];
-  }
 };
 
 export default function App() {
@@ -234,6 +119,7 @@ export default function App() {
     provideMethod: "self_measurement",
     values: {},
   });
+  const [privacyConsent, setPrivacyConsent] = useState(false);
   const [delivery, setDelivery] = useState({ address: "", landmark: "", deliveryType: "Standard · 7–10 days" });
   const [editingFromReview, setEditingFromReview] = useState(false);
   const [orders, setOrders] = useState([]);
@@ -255,6 +141,7 @@ export default function App() {
   const [adminError, setAdminError] = useState("");
   const [adminBusy, setAdminBusy] = useState(false);
   const [stepError, setStepError] = useState("");
+  const [apiStatus, setApiStatus] = useState("checking");
 
   const navigateToCustomer = () => {
     setActiveRole("customer");
@@ -298,216 +185,99 @@ export default function App() {
     };
   }, []);
 
-  // Load local orders immediately into state on startup
   useEffect(() => {
-    const local = getLocalOrders();
-    if (local && local.length > 0) {
-      setOrders(local);
-    }
-    const savedToken = sessionStorage.getItem("khwab_admin_token");
-    if (savedToken) {
-      setAdminToken(savedToken);
-      reloadRecords(savedToken).catch(() => {
-        sessionStorage.removeItem("khwab_admin_token");
-        setAdminToken("");
-      });
-    }
-
-    // Cross-tab and storage synchronization
-    let ch;
-    try {
-      if (window.BroadcastChannel) {
-        ch = new BroadcastChannel("khwab_orders_channel");
-        ch.onmessage = () => {
-          const updatedLocal = getLocalOrders();
-          setOrders(updatedLocal);
-        };
-      }
-    } catch {}
-
-    const onStorage = (e) => {
-      if (e.key === "khwab_local_orders") {
-        const updatedLocal = getLocalOrders();
-        setOrders(updatedLocal);
+    let active = true;
+    const checkApi = async () => {
+      try {
+        const response = await fetch(apiUrl("/api/health"), { cache: "no-store" });
+        if (!response.ok || (await response.json()).status !== "ok") throw new Error("Order service is unavailable.");
+        if (active) setApiStatus("ready");
+      } catch {
+        if (active) setApiStatus("offline");
       }
     };
-    window.addEventListener("storage", onStorage);
+
+    try {
+      sessionStorage.removeItem("khwab_admin_token");
+    } catch (error) {
+      console.warn("Could not clear the previous admin session from this browser.", error);
+    }
+    checkApi();
+    const interval = window.setInterval(checkApi, 30000);
     return () => {
-      if (ch) ch.close();
-      window.removeEventListener("storage", onStorage);
+      active = false;
+      window.clearInterval(interval);
     };
   }, []);
 
-  // Sync orders whenever switching to admin view
   useEffect(() => {
-    if (activeRole === "admin") {
-      const savedToken = sessionStorage.getItem("khwab_admin_token") || adminToken;
-      reloadRecords(savedToken);
+    if (activeRole === "admin" && adminToken) {
+      reloadRecords(adminToken).catch((error) => setAdminError(error.message));
     }
-  }, [activeRole]);
-
-  const getLocalOrders = () => {
-    try {
-      return JSON.parse(localStorage.getItem("khwab_local_orders") || "[]");
-    } catch {
-      return [];
-    }
-  };
-
-  const saveLocalOrder = (order) => {
-    try {
-      const existing = getLocalOrders();
-      const updated = [order, ...existing.filter((o) => o?.orderId !== order.orderId)];
-      
-      // Multi-tier storage to guarantee localStorage never throws QuotaExceededError
-      try {
-        localStorage.setItem("khwab_local_orders", JSON.stringify(updated));
-      } catch (quotaErr1) {
-        console.warn("Storage quota limit reached, preserving photos on latest 2 orders only:", quotaErr1);
-        const lightweight = updated.map((o, idx) => stripPhotosFromOrder(o, idx < 2));
-        try {
-          localStorage.setItem("khwab_local_orders", JSON.stringify(lightweight));
-        } catch (quotaErr2) {
-          console.warn("Storage quota still exceeded, stripping all base64 photos to guarantee order safety:", quotaErr2);
-          const textOnly = updated.map((o) => stripPhotosFromOrder(o, false));
-          try {
-            localStorage.setItem("khwab_local_orders", JSON.stringify(textOnly));
-          } catch (fatalErr) {
-            localStorage.setItem("khwab_local_orders", JSON.stringify(textOnly.slice(0, 50)));
-          }
-        }
-      }
-
-      // Instantly update React state so admin has it right away
-      setOrders((prev) => {
-        const map = new Map();
-        [order, ...prev].forEach((o) => o?.orderId && map.set(o.orderId, o));
-        return Array.from(map.values()).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      });
-
-      // Broadcast to other open tabs/windows and cloud sync
-      try {
-        syncOrderToCloud(order);
-        if (window.BroadcastChannel) {
-          const ch = new BroadcastChannel("khwab_orders_channel");
-          ch.postMessage({ type: "ORDER_CREATED", order });
-          ch.close();
-        }
-      } catch {}
-    } catch (e) {
-      console.warn("Could not save to localStorage:", e);
-    }
-  };
+  }, [activeRole, adminToken]);
 
   async function apiRequest(url, options = {}) {
     const response = await fetch(url, options);
+    if (!response.headers.get("content-type")?.includes("application/json")) {
+      throw new Error("The secure order service is not configured or is unavailable.");
+    }
     const result = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(result.error || `Request failed (${response.status}).`);
     return result;
   }
 
   async function reloadRecords(token = adminToken) {
-    const activeTok = typeof token === "string" ? token : adminToken;
-    let serverOrders = [];
-    if (activeTok) {
-      try {
-        const result = await apiRequest("/api/admin/orders", {
-          headers: { authorization: `Bearer ${activeTok}` },
-          cache: "no-store",
-        });
-        serverOrders = result.orders || [];
-      } catch (err) {
-        if (err.message?.includes("401") || err.message?.includes("password")) {
-          throw err;
-        }
-        console.warn("Server orders fetch failed (fallback to local & cloud):", err);
-      }
-    }
-
-    // Fetch cloud synced orders across devices
-    const cloudOrders = await fetchCloudOrders();
-    const localOrders = getLocalOrders();
-
-    const map = new Map();
-    // Merge cloud, server, and local orders. Keep richest data if order already exists.
-    [...cloudOrders, ...serverOrders, ...localOrders].forEach((o) => {
-      if (o?.orderId) {
-        const existing = map.get(o.orderId);
-        if (!existing) {
-          map.set(o.orderId, o);
-        } else {
-          map.set(o.orderId, {
-            ...o,
-            ...existing,
-            status: existing.status || o.status || "New",
-            outfit: {
-              ...o.outfit,
-              ...existing.outfit,
-              uploadedPhoto: existing.outfit?.uploadedPhoto || o.outfit?.uploadedPhoto || "",
-            },
-            design: {
-              ...o.design,
-              ...existing.design,
-              frontPhoto: existing.design?.frontPhoto || o.design?.frontPhoto || "",
-              backPhoto: existing.design?.backPhoto || o.design?.backPhoto || "",
-              sleevePhoto: existing.design?.sleevePhoto || o.design?.sleevePhoto || "",
-            },
-          });
-        }
-      }
+    const result = await apiRequest(apiUrl("/api/admin/orders"), {
+      headers: { authorization: `Bearer ${token}` },
+      cache: "no-store",
     });
-
-    const combined = Array.from(map.values()).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    try {
-      localStorage.setItem("khwab_local_orders", JSON.stringify(combined));
-    } catch {}
-
-    setOrders(combined);
-    return combined;
+    const serverOrders = result.orders || [];
+    setOrders(serverOrders);
+    setAdminError("");
+    return serverOrders;
   }
+
+  const saveAdminOrder = async (order) => {
+    const result = await apiRequest(apiUrl("/api/admin/orders"), {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${adminToken}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(order),
+    });
+    const savedOrder = { ...order, orderId: result.orderId, createdAt: result.createdAt };
+    setOrders((previous) => [savedOrder, ...previous.filter((item) => item.orderId !== savedOrder.orderId)]);
+    return savedOrder;
+  };
+
+  const updateOrderStatus = async (orderId, status) => {
+    const result = await apiRequest(apiUrl(`/api/admin/orders/${encodeURIComponent(orderId)}`), {
+      method: "PATCH",
+      headers: {
+        authorization: `Bearer ${adminToken}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ status }),
+    });
+    setOrders((previous) => previous.map((order) => order.orderId === orderId ? result.order : order));
+    return result.order;
+  };
 
   const handleAdminLoginSubmit = async (passwordInput) => {
     setAdminBusy(true);
     setAdminError("");
     try {
       const input = (passwordInput || "").trim();
-      if (!input) {
-        throw new Error("कृपया पासवर्ड दर्ज करें · Please enter admin password.");
-      }
-
-      let authenticated = false;
-      try {
-        const result = await apiRequest("/api/admin/orders", {
-          headers: { authorization: `Bearer ${input}` },
-          cache: "no-store",
-        });
-        authenticated = true;
-        if (result && Array.isArray(result.orders)) {
-          setOrders(result.orders);
-        }
-      } catch (err) {
-        if (err.message?.includes("401") || err.message?.includes("Incorrect")) {
-          throw new Error("Incorrect admin password / गलत पासवर्ड");
-        }
-        // On static GitHub Pages hosting (no backend server), authenticate with atelier password
-        if (input !== "Dhaniya123") {
-          throw new Error("Incorrect admin password / गलत पासवर्ड");
-        }
-        authenticated = true;
-      }
-
-      if (authenticated) {
-        setAdminToken(input);
-        sessionStorage.setItem("khwab_admin_token", input);
-        const local = getLocalOrders();
-        setOrders((prev) => {
-          const map = new Map();
-          [...local, ...prev].forEach((o) => o?.orderId && map.set(o.orderId, o));
-          return Array.from(map.values()).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        });
-      }
+      if (!input) throw new Error("Please enter the admin password.");
+      const result = await apiRequest(apiUrl("/api/admin/orders"), {
+        headers: { authorization: `Bearer ${input}` },
+        cache: "no-store",
+      });
+      setOrders(result.orders || []);
+      setAdminToken(input);
     } catch (error) {
-      setAdminError(error.message || "Incorrect admin password / गलत पासवर्ड");
+      setAdminError(error.message || "Could not sign in. Please try again.");
     } finally {
       setAdminBusy(false);
     }
@@ -515,7 +285,7 @@ export default function App() {
 
   const handleAdminLogout = () => {
     setAdminToken("");
-    sessionStorage.removeItem("khwab_admin_token");
+    setOrders([]);
   };
 
   const refreshOrders = async () => {
@@ -524,7 +294,7 @@ export default function App() {
     try {
       await reloadRecords(adminToken);
     } catch (error) {
-      console.error(error);
+      setAdminError(error.message || "Could not refresh orders.");
     } finally {
       setAdminBusy(false);
     }
@@ -532,67 +302,26 @@ export default function App() {
 
   const downloadOrdersCsv = async () => {
     setAdminBusy(true);
+    setAdminError("");
     try {
-      let downloaded = false;
-      try {
-        const response = await fetch("/api/admin/export.csv", {
-          headers: { authorization: `Bearer ${adminToken}` },
-          cache: "no-store",
-        });
-        if (response.ok) {
-          const file = await response.blob();
-          const url = URL.createObjectURL(file);
-          const anchor = document.createElement("a");
-          anchor.href = url;
-          anchor.download = "khwab-stitch-orders.csv";
-          document.body.appendChild(anchor);
-          anchor.click();
-          anchor.remove();
-          setTimeout(() => URL.revokeObjectURL(url), 1000);
-          downloaded = true;
-        }
-      } catch (e) {
-        console.warn("Server CSV failed, falling back to client-side:", e);
+      const response = await fetch(apiUrl("/api/admin/export.csv"), {
+        headers: { authorization: `Bearer ${adminToken}` },
+        cache: "no-store",
+      });
+      if (!response.ok || !response.headers.get("content-type")?.includes("text/csv")) {
+        const result = await response.json().catch(() => ({}));
+        throw new Error(result.error || `Export failed (${response.status}).`);
       }
-
-      if (!downloaded) {
-        if (orders.length === 0) {
-          alert("No orders available to export / एक्सपोर्ट करने के लिए कोई ऑर्डर नहीं है।");
-          return;
-        }
-        const headers = [
-          "Order ID", "Date", "Language", "Customer Name", "WhatsApp", "Email", "City & State", "PIN",
-          "Outfit", "Pieces", "Fabric Type", "Fabric Color", "Design Code", "Reference Photo", "Special Requests",
-          "Front Neck", "Back Neck", "Sleeve Length", "Sleeve Design", "Fit", "Design Notes",
-          "Measurement Unit", "Measurement Method", "Measurements",
-          "Delivery Address", "Landmark", "Delivery Type", "Payment Mode"
-        ];
-        const rows = orders.map((o) => [
-          o.orderId, o.createdAt, o.language || "en", o.customer?.name, o.customer?.whatsapp, o.customer?.email,
-          o.customer?.cityState, o.customer?.pin, o.outfit?.type, o.outfit?.pieces,
-          o.outfit?.fabricType, o.outfit?.fabricColor, o.outfit?.designCode, o.outfit?.refPhoto,
-          o.outfit?.specialReq, o.design?.neckFront, o.design?.neckBack,
-          o.design?.sleeveLength, o.design?.sleeveDesign, o.design?.fit,
-          o.design?.additionalInstructions, o.measurements?.unit,
-          o.measurements?.provideMethod, JSON.stringify(o.measurements?.values || {}),
-          `"${(o.delivery?.address || "").replace(/"/g, '""')}"`,
-          `"${(o.delivery?.landmark || "").replace(/"/g, '""')}"`,
-          o.delivery?.deliveryType,
-          o.delivery?.paymentMode
-        ]);
-        const csvContent = "\uFEFF" + [headers.join(","), ...rows.map((r) => r.join(","))].join("\r\n");
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "khwab-stitch-orders.csv";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-      }
+      const url = URL.createObjectURL(await response.blob());
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "khwab-stitch-orders.csv";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (error) {
-      alert(`Could not download CSV: ${error.message}`);
+      setAdminError(error.message || "Could not download the order export.");
     } finally {
       setAdminBusy(false);
     }
@@ -628,68 +357,69 @@ export default function App() {
   };
 
   const saveOrder = async () => {
-    // validation
     const digitsOnly = (customer.whatsapp || "").replace(/\D/g, "");
     const clean10 = digitsOnly.length === 12 && digitsOnly.startsWith("91") ? digitsOnly.slice(2) : digitsOnly;
     if (clean10.length !== 10) {
-      alert(t("Please enter a valid 10-digit WhatsApp number", "कृपया 10 अंकों का मान्य वॉट्सऐप नंबर दर्ज करें"));
+      setStepError(t("Please enter a valid 10-digit WhatsApp number.", "कृपया 10 अंकों का मान्य वॉट्सऐप नंबर दर्ज करें।"));
       setCurrentSection(2);
       return;
     }
     if (![customer.name, customer.address, customer.pin].every((value) => value && value.trim())) {
-      alert(t("Please fill in name, address & PIN", "कृपया नाम, पूरा पता और पिन कोड भरें"));
+      setStepError(t("Please fill in your name, address, and PIN.", "कृपया नाम, पूरा पता और पिन कोड भरें।"));
       setCurrentSection(2);
       return;
     }
-    if (!outfit.type) { alert(t("Please select an outfit", "कृपया परिधान चुनें")); setCurrentSection(3); return; }
+    if (!outfit.type) {
+      setStepError(t("Please select an outfit.", "कृपया परिधान चुनें।"));
+      setCurrentSection(3);
+      return;
+    }
+    if (!privacyConsent) {
+      setStepError(t(
+        "Please confirm how your order details will be used before placing the order.",
+        "ऑर्डर देने से पहले कृपया अपनी जानकारी के उपयोग की सहमति दें।"
+      ));
+      return;
+    }
 
     setBusy(true);
-    const combinedCityState = customer.cityState || [customer.city, customer.state].filter(Boolean).join(", ") || customer.city || "Not specified";
+    setStepError("");
     const cleanCustomer = {
       ...customer,
       whatsapp: clean10,
       pin: (customer.pin || "").replace(/\D/g, "").slice(0, 6),
-      cityState: combinedCityState,
-    };
-    setCustomer(cleanCustomer);
-
-    const finalDelivery = {
-      ...delivery,
-      address: delivery.address || customer.address,
-      landmark: delivery.landmark || customer.landmark || "",
+      cityState: customer.cityState || [customer.city, customer.state].filter(Boolean).join(", ") || customer.city || "Not specified",
     };
     const order = {
       customer: cleanCustomer,
       outfit,
       design,
-      measurements: {
-        ...measurements,
-        values: {
-          ...(measurements?.values || {}),
-        },
+      measurements: { ...measurements, values: { ...(measurements?.values || {}) } },
+      privacyConsent: true,
+      delivery: {
+        ...delivery,
+        address: delivery.address || customer.address,
+        landmark: delivery.landmark || customer.landmark || "",
       },
-      delivery: finalDelivery,
       createdAt: new Date().toISOString(),
     };
+
     try {
-      const result = await apiRequest("/api/orders", {
+      const result = await apiRequest(apiUrl("/api/orders"), {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(order),
       });
-      const savedOrder = { ...order, orderId: result.orderId };
-      saveLocalOrder(savedOrder);
-      syncOrderToCloud(savedOrder);
+      const savedOrder = { ...order, orderId: result.orderId, createdAt: result.createdAt };
+      setCustomer(cleanCustomer);
       setSuccessOrder(savedOrder);
       setReceiptOrder(savedOrder);
-    } catch (e) {
-      console.warn("API request failed, saving order locally & syncing to cloud:", e);
-      const fallbackId = `KS${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-      const savedOrder = { ...order, orderId: fallbackId };
-      saveLocalOrder(savedOrder);
-      syncOrderToCloud(savedOrder);
-      setSuccessOrder(savedOrder);
-      setReceiptOrder(savedOrder);
+    } catch (error) {
+      setApiStatus("offline");
+      setStepError(t(
+        `Your order could not be saved: ${error.message}. Your details are still on this page; please try again.`,
+        `आपका ऑर्डर सुरक्षित नहीं हो सका: ${error.message}। आपकी जानकारी इस पेज पर सुरक्षित है; कृपया फिर कोशिश करें।`
+      ));
     } finally {
       setBusy(false);
     }
@@ -810,48 +540,31 @@ export default function App() {
   };
 
   const deleteOrder = async (orderId) => {
-    if (!confirm(`Order ${orderId} delete karein? / क्या आप यह ऑर्डर हटाना चाहते हैं?`)) return;
+    if (!confirm(`Delete order ${orderId}? / क्या आप यह ऑर्डर हटाना चाहते हैं?`)) return;
     setAdminError("");
     try {
-      await apiRequest(`/api/admin/orders/${encodeURIComponent(orderId)}`, {
+      await apiRequest(apiUrl(`/api/admin/orders/${encodeURIComponent(orderId)}`), {
         method: "DELETE",
         headers: { authorization: `Bearer ${adminToken}` },
-      }).catch(() => {});
+      });
+      setOrders((previous) => previous.filter((order) => order.orderId !== orderId));
     } catch (error) {
-      console.warn("Server delete note:", error);
+      setAdminError(error.message || "Could not delete the order.");
     }
-    const local = getLocalOrders().filter((o) => o.orderId !== orderId);
-    localStorage.setItem("khwab_local_orders", JSON.stringify(local));
-    setOrders((prev) => prev.filter((o) => o.orderId !== orderId));
-    try {
-      if (window.BroadcastChannel) {
-        const ch = new BroadcastChannel("khwab_orders_channel");
-        ch.postMessage({ type: "ORDERS_UPDATED" });
-        ch.close();
-      }
-    } catch {}
   };
 
   const clearOrders = async () => {
-    if (!confirm("Saare orders delete karein? / क्या आप सभी ऑर्डर हटाना चाहते हैं?")) return;
+    if (!confirm("Delete all orders? / क्या आप सभी ऑर्डर हटाना चाहते हैं?")) return;
     setAdminError("");
     try {
-      await apiRequest("/api/admin/orders", {
+      await apiRequest(apiUrl("/api/admin/orders"), {
         method: "DELETE",
         headers: { authorization: `Bearer ${adminToken}` },
-      }).catch(() => {});
+      });
+      setOrders([]);
     } catch (error) {
-      console.warn("Server clear note:", error);
+      setAdminError(error.message || "Could not clear the orders.");
     }
-    localStorage.removeItem("khwab_local_orders");
-    setOrders([]);
-    try {
-      if (window.BroadcastChannel) {
-        const ch = new BroadcastChannel("khwab_orders_channel");
-        ch.postMessage({ type: "ORDERS_UPDATED" });
-        ch.close();
-      }
-    } catch {}
   };
 
   return (
@@ -882,14 +595,21 @@ export default function App() {
 
       {/* MAIN */}
       <main className="mx-auto max-w-[1000px] px-3 sm:px-4 md:px-8 pb-28 pt-4">
+        {apiStatus === "offline" && activeRole === "customer" && (
+          <p role="alert" className="mx-auto mb-4 max-w-[1000px] rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+            {t("Order service is temporarily unavailable. Your details will not be submitted until the secure service is back online.", "ऑर्डर सेवा अभी उपलब्ध नहीं है। सुरक्षित सेवा चालू होने तक आपकी जानकारी भेजी नहीं जाएगी।")}
+          </p>
+        )}
         {activeRole === "admin" ? (
           /* MASTER TAILOR ATELIER PAGE (/admin) */
           adminToken ? (
             <AdminDashboard
               orders={orders}
               adminToken={adminToken}
-              onRefresh={reloadRecords}
-              onSaveOrder={saveLocalOrder}
+              onRefresh={refreshOrders}
+              onSaveOrder={saveAdminOrder}
+              onUpdateStatus={updateOrderStatus}
+              errorMessage={adminError}
               onDeleteOrder={deleteOrder}
               onExportCsv={downloadOrdersCsv}
               onOpenReceipt={openReceipt}
@@ -1017,6 +737,8 @@ export default function App() {
                     sleeveDesign={sleeveDesign}
                     measurementConfigs={measurementConfigs}
                     openLightbox={openLightbox}
+                    privacyConsent={privacyConsent}
+                    setPrivacyConsent={setPrivacyConsent}
                   />
                 )}
 
@@ -1053,7 +775,7 @@ export default function App() {
                   ) : (
                     <button
                       type="submit"
-                      disabled={busy}
+                      disabled={busy || apiStatus !== "ready"}
                       className="flex-[1.8] sm:flex-[2] h-11 sm:h-12 px-3 rounded-full text-white font-bold text-[13px] sm:text-[14px] flex items-center justify-center gap-1.5 sm:gap-2 shadow-md disabled:opacity-60 hover:opacity-95 transition-opacity"
                       style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
                     >
@@ -1062,7 +784,13 @@ export default function App() {
                       ) : (
                         <>
                           <Check size={16} />
-                          <span>{t("Confirm & Place Order", "ऑर्डर कन्फर्म करें")}</span>
+                          <span>
+                            {apiStatus === "ready"
+                              ? t("Confirm & Place Order", "ऑर्डर कन्फर्म करें")
+                              : apiStatus === "checking"
+                              ? t("Connecting securely...", "सुरक्षित कनेक्शन हो रहा है...")
+                              : t("Order service unavailable", "ऑर्डर सेवा उपलब्ध नहीं है")}
+                          </span>
                         </>
                       )}
                     </button>
@@ -1197,6 +925,7 @@ export default function App() {
                         provideMethod: "Purani kapde se naap kar",
                         values: {},
                       });
+                      setPrivacyConsent(false);
                       setDelivery({
                         address: "",
                         landmark: "",

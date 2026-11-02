@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: khwab-stitch-orders
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DB_PATH
+        value: /var/data/orders.sqlite
+      - key: ALLOWED_ORIGINS
+        value: https://khwabstitch-max.github.io,https://khwab-stitch-orders.onrender.com
+    disk:
+      name: khwab-stitch-order-data
+      mountPath: /var/data
+      sizeGB: 1

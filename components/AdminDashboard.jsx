@@ -120,8 +120,10 @@ function parseWhatsAppOrder(text) {
 export default function AdminDashboard({
   orders = [],
   adminToken,
+  errorMessage,
   onRefresh,
   onSaveOrder,
+  onUpdateStatus,
   onDeleteOrder,
   onExportCsv,
   onOpenReceipt,
@@ -138,6 +140,8 @@ export default function AdminDashboard({
   const [showImportModal, setShowImportModal] = useState(false);
   const [importTab, setImportTab] = useState("whatsapp"); // 'whatsapp' | 'manual'
   const [whatsappText, setWhatsappText] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [actionBusy, setActionBusy] = useState(false);
   const [manualForm, setManualForm] = useState({
     orderId: "",
     name: "",
@@ -156,7 +160,7 @@ export default function AdminDashboard({
     if (!autoRefresh || !adminToken) return;
     const interval = setInterval(() => {
       if (onRefresh) onRefresh(adminToken);
-    }, 5000);
+    }, 30000);
     return () => clearInterval(interval);
   }, [autoRefresh, adminToken, onRefresh]);
 
@@ -169,18 +173,25 @@ export default function AdminDashboard({
   };
 
   // Advance or change order status
-  const cycleStatus = (order) => {
-    if (!onSaveOrder) return;
+  const cycleStatus = async (order) => {
+    if (!onUpdateStatus) return;
     const current = order.status || "New";
     const currentIndex = STATUS_PIPELINE.findIndex((s) => s.key === current);
     const nextIndex = (currentIndex + 1) % STATUS_PIPELINE.length;
     const nextStatus = STATUS_PIPELINE[nextIndex].key;
-    const updated = { ...order, status: nextStatus };
-    onSaveOrder(updated);
+    setActionError("");
+    setActionBusy(true);
+    try {
+      await onUpdateStatus(order.orderId, nextStatus);
+    } catch (error) {
+      setActionError(error.message || "Could not update order status.");
+    } finally {
+      setActionBusy(false);
+    }
   };
 
   // Handle WhatsApp import
-  const handleImportWhatsApp = (e) => {
+  const handleImportWhatsApp = async (e) => {
     e.preventDefault();
     if (!whatsappText.trim()) return;
     const parsed = parseWhatsAppOrder(whatsappText);
@@ -189,7 +200,16 @@ export default function AdminDashboard({
       return;
     }
     if (onSaveOrder) {
-      onSaveOrder(parsed);
+      setActionError("");
+      setActionBusy(true);
+      try {
+        await onSaveOrder(parsed);
+      } catch (error) {
+        setActionError(error.message || "Could not save this imported order.");
+        return;
+      } finally {
+        setActionBusy(false);
+      }
       setWhatsappText("");
       setShowImportModal(false);
       alert(`Order #${parsed.orderId} successfully imported! / ऑर्डर जोड़ दिया गया!`);
@@ -197,7 +217,7 @@ export default function AdminDashboard({
   };
 
   // Handle Manual Form submit
-  const handleManualSubmit = (e) => {
+  const handleManualSubmit = async (e) => {
     e.preventDefault();
     if (!manualForm.name.trim() || !manualForm.whatsapp.trim()) {
       alert("Please enter customer name and WhatsApp number.");
@@ -249,7 +269,17 @@ export default function AdminDashboard({
     };
 
     if (onSaveOrder) {
-      onSaveOrder(newOrder);
+      setActionError("");
+      setActionBusy(true);
+      try {
+        const savedOrder = await onSaveOrder(newOrder);
+        newOrder.orderId = savedOrder.orderId;
+      } catch (error) {
+        setActionError(error.message || "Could not save this order.");
+        return;
+      } finally {
+        setActionBusy(false);
+      }
       setManualForm({
         orderId: "",
         name: "",
@@ -316,7 +346,7 @@ export default function AdminDashboard({
                 </span>
                 <span className="flex items-center gap-1 text-[11.5px] text-emerald-300 font-semibold">
                   <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                  Live Sync Active
+                  Private order service
                 </span>
               </div>
               <h2 className="font-serif text-[24px] sm:text-[27px] font-bold mt-1 text-white leading-tight">
@@ -421,6 +451,12 @@ export default function AdminDashboard({
           </div>
         </div>
       </section>
+
+      {(errorMessage || actionError) && (
+        <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          {actionError || errorMessage}
+        </p>
+      )}
 
       {/* FILTER & SEARCH BAR */}
       <section className="rounded-2xl border border-[#ebdcd0] bg-white p-4 shadow-sm">
@@ -565,6 +601,7 @@ export default function AdminDashboard({
                         <button
                           type="button"
                           onClick={() => cycleStatus(order)}
+                          disabled={actionBusy}
                           className={`text-[11px] font-extrabold px-2.5 py-1 rounded-full border shadow-2xs transition-all hover:opacity-85 ${currentStatusCfg.bg}`}
                           title="Click to advance order status / स्थिति बदलें"
                         >
@@ -868,6 +905,7 @@ export default function AdminDashboard({
                   </button>
                   <button
                     type="submit"
+                    disabled={actionBusy}
                     className="px-5 py-2 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white text-[12.5px] font-bold shadow-md"
                   >
                     ✓ Parse & Add Order / जोड़ें
@@ -1050,6 +1088,7 @@ export default function AdminDashboard({
                   </button>
                   <button
                     type="submit"
+                    disabled={actionBusy}
                     className="px-5 py-2 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white text-[12.5px] font-bold shadow-md"
                   >
                     ✓ Save Order / सुरक्षित करें

@@ -16,6 +16,7 @@ import {
   Tag,
   ShieldCheck,
   CheckCircle2,
+  Instagram,
 } from "lucide-react";
 
 import {
@@ -299,7 +300,7 @@ export default function OrderReceiptModal({ order, onClose }) {
                     {tr("Where Fabric Becomes Art · Bespoke Atelier", "हमारी कारीगरी · ख़्वाब स्टिच")}
                   </p>
                   <p className="text-[12.5px] text-stone-600 mt-1 font-medium">
-                    {tr("Doorstep Custom Tailoring & Designer Studio", "कस्टम सिलाई व डिज़ाइनर बुटीक")}
+                    {tr("Bespoke Custom Tailoring & Designer Studio", "कस्टम सिलाई व डिज़ाइनर बुटीक")}
                   </p>
                 </div>
               </div>
@@ -324,15 +325,15 @@ export default function OrderReceiptModal({ order, onClose }) {
               </div>
             </div>
 
-            {/* SECTION 2: CUSTOMER PROFILE & DOORSTEP DELIVERY ADDRESS */}
+            {/* SECTION 2: CUSTOMER PROFILE & DELIVERY ADDRESS */}
             <div className="receipt-section-block p-4 sm:p-6 rounded-2xl bg-[#faf6f2] border-2 border-[#ebdcd0] shadow-2xs">
               <h3 className="font-serif text-[16px] sm:text-[17px] font-bold text-[var(--primary-dark)] pb-2.5 border-b border-[#ebdcd0] mb-3.5 flex items-center justify-between">
                 <span className="flex items-center gap-2">
                   <User size={18} className="text-[var(--primary)]" />
-                  <span>{tr("Customer Profile & Doorstep Delivery", "ग्राहक विवरण व डिलीवरी पता")}</span>
+                  <span>{tr("Customer Profile & Delivery Address", "ग्राहक विवरण व डिलीवरी पता")}</span>
                 </span>
                 <span className="text-[12px] font-bold text-[var(--secondary)] bg-white px-3 py-0.5 rounded-full border border-[#ebdcd0]">
-                  {tr("Section 1 of 3", "भाग 1")}
+                  {tr("Section 1 of 2", "भाग 1")}
                 </span>
               </h3>
 
@@ -358,14 +359,7 @@ export default function OrderReceiptModal({ order, onClose }) {
                       <span>{order.customer.email}</span>
                     </p>
                   )}
-                  <div className="pt-2">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-stone-100 text-stone-800 text-[12.5px] font-bold border border-stone-200">
-                      <span>{tr("Payment Mode:", "भुगतान तरीका:")}</span>
-                      <b className="text-[var(--primary-dark)]">
-                        {tr(order.delivery?.paymentMode || "Cash on Delivery", "कैश ऑन डिलीवरी (COD)")}
-                      </b>
-                    </span>
-                  </div>
+                  
                 </div>
 
                 {/* Delivery Address */}
@@ -392,7 +386,7 @@ export default function OrderReceiptModal({ order, onClose }) {
                   <div className="pt-2">
                     <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-1 text-[12px] font-bold text-emerald-900">
                       <Clock size={13} />
-                      <span>{tr(order.delivery?.deliveryType || "Standard Doorstep Delivery · 7-10 Days", "डोरस्टेप डिलीवरी · 7-10 दिन")}</span>
+                      <span>{tr("Standard Delivery · 7–10 Days", "मानक डिलीवरी · 7-10 दिन")}</span>
                     </span>
                   </div>
                 </div>
@@ -411,7 +405,7 @@ export default function OrderReceiptModal({ order, onClose }) {
                   </h3>
                 </div>
                 <span className="text-[12px] font-bold text-[var(--primary)] bg-[#fbf0f4] px-3 py-0.5 rounded-full border border-[#f0d5df]">
-                  {tr("Section 2 of 3", "भाग 2")}
+                  {tr("Section 2 of 2", "भाग 2")}
                 </span>
               </div>
 
@@ -784,81 +778,45 @@ export default function OrderReceiptModal({ order, onClose }) {
               </div>
             </div>
 
-            {/* SECTION 4: WORKSHOP QUALITY CHECKLIST & MASTER TAILOR SIGN-OFF */}
-            <div className="receipt-section-block p-4 sm:p-6 rounded-2xl bg-[#faf6f2] border-2 border-[#ebdcd0] shadow-2xs space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-[#ebdcd0]">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-emerald-700" />
-                  <h4 className="font-serif text-[15px] sm:text-[16px] font-bold text-[var(--primary-dark)] m-0">
-                    {tr("Atelier Workshop Quality Assurance Checklist", "कार्यशाला गुणवत्ता जांच व प्रमाणीकरण")}
-                  </h4>
-                </div>
-                <span className="text-[11.5px] font-bold text-stone-600">
-                  {tr("Section 3 of 3", "भाग 3")}
-                </span>
-              </div>
-
-              {/* 6 Quality Checkpoints */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-[12px] font-semibold text-stone-800">
-                <div className="p-2 rounded-lg bg-white border border-[#ebdcd0] flex items-center gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>{tr("1. Cloth & Lining Inspection", "1. फ़ैब्रिक व अस्तर जांच")}</span>
-                </div>
-                <div className="p-2 rounded-lg bg-white border border-[#ebdcd0] flex items-center gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>{tr("2. Master Pattern Drafting", "2. मास्टर फ़र्मा ड्राफ्टिंग")}</span>
-                </div>
-                <div className="p-2 rounded-lg bg-white border border-[#ebdcd0] flex items-center gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>{tr("3. Precision Scissors Cutting", "3. सटीक कैंची कटिंग")}</span>
-                </div>
-                <div className="p-2 rounded-lg bg-white border border-[#ebdcd0] flex items-center gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>{tr("4. Artisan Hand Stitching", "4. कुशल कारीगरी सिलाई")}</span>
-                </div>
-                <div className="p-2 rounded-lg bg-white border border-[#ebdcd0] flex items-center gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>{tr("5. Steam Ironing & Audit", "5. स्टीम प्रेस व ऑडिट")}</span>
-                </div>
-                <div className="p-2 rounded-lg bg-white border border-[#ebdcd0] flex items-center gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>{tr("6. Safe Doorstep Dispatch", "6. सुरक्षित पैकेजिंग")}</span>
-                </div>
-              </div>
-
-              {/* Signature Lines */}
-              <div className="grid grid-cols-2 gap-4 pt-3 border-t border-[#ebdcd0]">
-                <div className="bg-white p-3 rounded-xl border border-[#ebdcd0] text-center">
-                  <div className="h-9 border-b border-dashed border-stone-400 mb-1" />
-                  <p className="text-[11.5px] font-bold text-stone-700">
-                    {tr("Master Tailor Signature / कारीगर हस्ताक्षर", "मास्टर दर्जी / कारीगर हस्ताक्षर")}
-                  </p>
-                </div>
-                <div className="bg-white p-3 rounded-xl border border-[#ebdcd0] text-center">
-                  <div className="h-9 flex items-center justify-center border-b border-dashed border-stone-400 mb-1 font-mono text-[12px] font-bold text-emerald-800">
-                    [ ATELIER PASSED ✓ ]
-                  </div>
-                  <p className="text-[11.5px] font-bold text-stone-700">
-                    {tr("Quality Inspection Seal / गुणवत्ता मुहर", "गुणवत्ता जांच मुहर")}
-                  </p>
-                </div>
-              </div>
-            </div>
-
             {/* ATELIER FOOTER */}
-            <div className="receipt-section-block pt-4 border-t-2 border-[#ebdcd0] text-center bg-white p-4 rounded-2xl border border-[#ebdcd0]">
-              <p className="font-serif font-bold text-[var(--primary)] text-[15px] sm:text-[16px]">
+            <div className="receipt-section-block pt-4 border-t-2 border-[#ebdcd0] text-center bg-white p-4 sm:p-5 rounded-2xl border border-[#ebdcd0]">
+              <p className="font-serif font-bold text-[var(--primary)] text-[16px] sm:text-[17px]">
                 {tr(
                   "Thank you for choosing Khwab Stitch! Where Fabric Becomes Art.",
                   "ख़्वाब स्टिच चुनने के लिए धन्यवाद! हमारी कारीगरी · आपकी पसंद"
                 )}
               </p>
-              <p className="text-[12px] text-stone-600 mt-1">
+              <p className="text-[13px] sm:text-[13.5px] font-bold text-stone-800 mt-2">
                 {tr(
-                  "For fitting support or order inquiries, WhatsApp us at +91 99999 99999 or visit www.khwabstitch.com",
-                  "फ़िटिंग संबंधी किसी भी सहायता के लिए वॉट्सऐप करें: +91 99999 99999 · www.khwabstitch.com"
+                  "For anything contact us on WhatsApp, or Instagram:",
+                  "किसी भी जानकारी या सहायता के लिए हमें वॉट्सऐप या इंस्टाग्राम पर संपर्क करें:"
                 )}
               </p>
+              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5 mt-2.5 text-[12.5px] sm:text-[13px] font-bold">
+                <a
+                  href={`https://wa.me/91${(BRAND_CONFIG?.helpline || "9876543210").replace(/\D/g, "")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-emerald-900 bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-300 hover:bg-emerald-100 transition-colors"
+                >
+                  <Phone size={14} className="text-emerald-700" />
+                  <span>WhatsApp: {BRAND_CONFIG?.helpline || "+91 98765 43210"}</span>
+                </a>
+                <a
+                  href={`https://instagram.com/${(BRAND_CONFIG?.instagram || "khwabstitch").replace(/^@/, "")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-pink-900 bg-pink-50 px-3.5 py-1.5 rounded-full border border-pink-300 hover:bg-pink-100 transition-colors"
+                >
+                  <Instagram size={14} className="text-pink-700" />
+                  <span>Instagram: {BRAND_CONFIG?.instagram || "@khwabstitch"}</span>
+                </a>
+                {BRAND_CONFIG?.website && (
+                  <span className="inline-flex items-center gap-1.5 text-stone-700 bg-stone-50 px-3.5 py-1.5 rounded-full border border-stone-200">
+                    <span>{BRAND_CONFIG.website}</span>
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>

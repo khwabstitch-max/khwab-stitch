@@ -139,7 +139,7 @@ export default function CustomerDetailsStep({ customer, setCustomer }) {
             </h2>
             <p className="text-[13px] text-[var(--text-light)] mt-0.5">
               {t(
-                "Fill in your contact and doorstep delivery address",
+                "Fill in your contact and delivery address",
                 "फ़िटिंग व डिलीवरी के लिए आवश्यक जानकारी भरें"
               )}
             </p>

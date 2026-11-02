@@ -22,8 +22,12 @@ export default function OutfitSelectionStep({
   // Compress and convert image file to high-efficiency dataURL
   const handleFileProcess = (file) => {
     if (!file) return;
-    if (!file.type.startsWith("image/")) {
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
       alert(t("Please choose an image file (JPG, PNG, WEBP)", "कृपया इमेज फ़ाइल ही चुनें।"));
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      alert(t("Please choose an image smaller than 8 MB.", "कृपया 8 MB से छोटी फ़ोटो चुनें।"));
       return;
     }
 
@@ -89,37 +93,7 @@ export default function OutfitSelectionStep({
           }
         } catch (err) {
           console.error("Image processing error:", err);
-          setOutfit((prev) => ({
-            ...prev,
-            refPhoto: "Upload Design Photo",
-            uploadedPhoto: e.target.result,
-            uploadedPhotoName: file.name,
-            uploadedPhotoSize: `${Math.round(file.size / 1024)} KB`,
-            designCode: "",
-          }));
-
-          if (setDesign) {
-            const rawSize = `${Math.round(file.size / 1024)} KB`;
-            setDesign((prev) => ({
-              ...prev,
-              frontPhoto: e.target.result,
-              frontPhotoName: file.name,
-              frontPhotoSize: rawSize,
-              backPhoto: e.target.result,
-              backPhotoName: file.name,
-              backPhotoSize: rawSize,
-              sleevePhoto: e.target.result,
-              sleevePhotoName: file.name,
-              sleevePhotoSize: rawSize,
-              sleeveLengthPhoto: e.target.result,
-              sleeveLengthPhotoName: file.name,
-              sleeveLengthPhotoSize: rawSize,
-              neckFront: "as-photo",
-              neckBack: "as-photo",
-              sleeveDesign: "as-photo",
-              sleeveLength: "as-photo",
-            }));
-          }
+          alert(t("Could not process this image. Please try another photo.", "इस फ़ोटो को प्रोसेस नहीं किया जा सका। कृपया दूसरी फ़ोटो चुनें।"));
         } finally {
           setCompressing(false);
         }
@@ -129,6 +103,10 @@ export default function OutfitSelectionStep({
         alert(t("Could not load image, please try another photo.", "इमेज लोड नहीं हो सकी, कृपया दूसरी फ़ोटो आज़माएं।"));
       };
       img.src = e.target.result;
+    };
+    reader.onerror = () => {
+      setCompressing(false);
+      alert(t("Could not read this image. Please try another photo.", "फ़ोटो पढ़ी नहीं जा सकी। कृपया दूसरी फ़ोटो चुनें।"));
     };
     reader.readAsDataURL(file);
   };

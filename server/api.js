@@ -7,6 +7,7 @@ const MAX_BODY_BYTES = 10 * 1024 * 1024;
 const MAX_ATTEMPTS = 10;
 const WINDOW_MS = 60 * 1000;
 const outfitTypes = new Set(["Blouse", "Kurti", "Top", "Tunic", "Suit Upper", "Peplum", "Crop Top", "Jacket", "Other"]);
+const orderStatuses = new Set(["New", "Cutting", "Stitching", "Ready", "Delivered"]);
 
 let database;
 const requests = new Map();
@@ -25,6 +26,12 @@ function getDatabase(databasePath) {
     );
   `);
   return database;
+}
+
+export function closeDatabase() {
+  if (!database) return;
+  database.close();
+  database = undefined;
 }
 
 function sendJson(response, status, value) {
@@ -79,23 +86,46 @@ function validateOrder(order) {
   if (!order || typeof order !== "object" || Array.isArray(order)) return "Order details are missing.";
   const customer = order.customer || {};
   const cityState = customer.cityState || [customer.city, customer.state].filter(Boolean).join(", ");
-  const cleanPhone = (customer.whatsapp || "").replace(/\D/g, "");
+  const cleanPhone = typeof customer.whatsapp === "string" ? customer.whatsapp.replace(/\D/g, "") : "";
+  if (order.privacyConsent !== true) return "Please confirm the order privacy notice.";
   if (!customer.name || !validText(customer.name, 120)) {
     return "Please provide customer name.";
   }
-  if (!cleanPhone || cleanPhone.length < 10) {
+  if (cleanPhone.length !== 10) {
     return "Please provide a valid 10-digit WhatsApp number.";
   }
   if (!validText(cityState, 160) && !validText(customer.city, 120)) {
     return "Please provide a city.";
   }
-  if (!customer.pin || String(customer.pin).trim().length < 4) {
+  if (typeof customer.pin !== "string" || !/^\d{6}$/.test(customer.pin)) {
     return "Please provide a valid PIN code.";
   }
   if (!validText(order.outfit?.type, 40) || !outfitTypes.has(order.outfit.type)) {
     return "Please select a valid outfit.";
   }
   if (!validText(order.delivery?.address, 1000)) return "Please enter a delivery address.";
+  return null;
+}
+
+function validateAdminOrder(order) {
+  if (!order || typeof order !== "object" || Array.isArray(order)) return "Order details are missing.";
+  const customer = order.customer || {};
+  const phone = typeof customer.whatsapp === "string" ? customer.whatsapp.replace(/\D/g, "") : "";
+  const cleanPhone = phone.length === 12 && phone.startsWith("91") ? phone.slice(2) : phone;
+  if (!validText(customer.name, 120)) return "Please provide customer name.";
+  if (cleanPhone.length !== 10) return "Please provide a valid 10-digit WhatsApp number.";
+  if (!validText(order.outfit?.type, 40) || !outfitTypes.has(order.outfit.type)) {
+    return "Please select a valid outfit.";
+  }
+  if (order.status !== undefined && !orderStatuses.has(order.status)) {
+    return "Please provide a valid order status.";
+  }
+  if (order.createdAt !== undefined && (typeof order.createdAt !== "string" || Number.isNaN(Date.parse(order.createdAt)))) {
+    return "Please provide a valid order date.";
+  }
+  if (order.orderId && (typeof order.orderId !== "string" || !/^[a-z0-9_-]{1,40}$/i.test(order.orderId))) {
+    return "Please provide a valid order ID.";
+  }
   return null;
 }
 
@@ -157,10 +187,13 @@ function sendCsv(response, orders) {
   response.end(orderCsv(orders));
 }
 
-export function createApiMiddleware({ adminPassword, databasePath } = {}) {
+export function createApiMiddleware({ adminPassword, databasePath, allowedOrigins = "" } = {}) {
   const getStore = () => getDatabase(databasePath);
   const allOrders = () => getStore().prepare("SELECT value FROM orders ORDER BY created_at DESC").all()
     .map((row) => JSON.parse(row.value));
+  const origins = new Set(
+    allowedOrigins.split(",").map((origin) => origin.trim()).filter(Boolean)
+  );
 
   return async function apiMiddleware(request, response, next) {
     const url = new URL(request.url || "/", "http://localhost");
@@ -168,6 +201,23 @@ export function createApiMiddleware({ adminPassword, databasePath } = {}) {
     if (!pathname.startsWith("/api/")) return next();
 
     try {
+      const origin = request.headers.origin;
+      if (origin) {
+        if (!origins.has(origin)) {
+          return sendJson(response, 403, { error: "This website is not allowed to access the order service." });
+        }
+        response.setHeader("access-control-allow-origin", origin);
+        response.setHeader("access-control-allow-methods", "GET, POST, PATCH, DELETE, OPTIONS");
+        response.setHeader("access-control-allow-headers", "Authorization, Content-Type");
+        response.setHeader("access-control-max-age", "600");
+        response.setHeader("vary", "Origin");
+      }
+      if (request.method === "OPTIONS") {
+        if (!origin) return sendJson(response, 400, { error: "An Origin header is required." });
+        response.writeHead(204);
+        return response.end();
+      }
+
       if (pathname === "/api/health" && request.method === "GET") {
         return sendJson(response, 200, { status: "ok" });
       }
@@ -187,16 +237,46 @@ export function createApiMiddleware({ adminPassword, databasePath } = {}) {
             ...cust,
             cityState: cityState || cust.city || "Not specified",
           },
+          privacyConsent: true,
+          privacyConsentAt: new Date().toISOString(),
           orderId: `KS${Date.now().toString(36).toUpperCase()}${randomBytes(3).toString("hex").toUpperCase()}`,
           createdAt: new Date().toISOString(),
         };
         getStore().prepare("INSERT INTO orders (order_id, created_at, value) VALUES (?, ?, ?)")
           .run(order.orderId, order.createdAt, JSON.stringify(order));
-        return sendJson(response, 201, { orderId: order.orderId });
+        return sendJson(response, 201, { orderId: order.orderId, createdAt: order.createdAt });
       }
 
       const isAdminRoute = pathname.startsWith("/api/admin/");
       if (isAdminRoute && !adminAuthorized(request, response, adminPassword)) return;
+
+      if (pathname === "/api/admin/orders" && request.method === "POST") {
+        const submittedOrder = await readJson(request);
+        const validationError = validateAdminOrder(submittedOrder);
+        if (validationError) return sendJson(response, 400, { error: validationError });
+
+        const customer = submittedOrder.customer || {};
+        const digits = customer.whatsapp.replace(/\D/g, "");
+        const order = {
+          ...submittedOrder,
+          customer: { ...customer, whatsapp: digits.length === 12 && digits.startsWith("91") ? digits.slice(2) : digits },
+          orderId: submittedOrder.orderId || `KS${Date.now().toString(36).toUpperCase()}${randomBytes(3).toString("hex").toUpperCase()}`,
+          createdAt: typeof submittedOrder.createdAt === "string" && !Number.isNaN(Date.parse(submittedOrder.createdAt))
+            ? submittedOrder.createdAt
+            : new Date().toISOString(),
+          status: submittedOrder.status || "New",
+        };
+        try {
+          getStore().prepare("INSERT INTO orders (order_id, created_at, value) VALUES (?, ?, ?)")
+            .run(order.orderId, order.createdAt, JSON.stringify(order));
+        } catch (error) {
+          if (error.errcode === 1555 || error.errcode === 2067) {
+            return sendJson(response, 409, { error: "An order with this ID already exists." });
+          }
+          throw error;
+        }
+        return sendJson(response, 201, { orderId: order.orderId, createdAt: order.createdAt });
+      }
 
       if (pathname === "/api/admin/orders" && request.method === "GET") {
         return sendJson(response, 200, { orders: allOrders() });
@@ -210,6 +290,19 @@ export function createApiMiddleware({ adminPassword, databasePath } = {}) {
       }
 
       const deleteMatch = pathname.match(/^\/api\/admin\/orders\/([^/]+)$/);
+      if (deleteMatch && request.method === "PATCH") {
+        const orderId = decodeURIComponent(deleteMatch[1]);
+        const update = await readJson(request);
+        if (!orderStatuses.has(update.status)) {
+          return sendJson(response, 400, { error: "Please provide a valid order status." });
+        }
+        const store = getStore();
+        const row = store.prepare("SELECT value FROM orders WHERE order_id = ?").get(orderId);
+        if (!row) return sendJson(response, 404, { error: "Order not found." });
+        const order = { ...JSON.parse(row.value), status: update.status };
+        store.prepare("UPDATE orders SET value = ? WHERE order_id = ?").run(JSON.stringify(order), orderId);
+        return sendJson(response, 200, { order });
+      }
       if (deleteMatch && request.method === "DELETE") {
         const orderId = decodeURIComponent(deleteMatch[1]);
         const result = getStore().prepare("DELETE FROM orders WHERE order_id = ?").run(orderId);

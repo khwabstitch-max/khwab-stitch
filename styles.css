@@ -34,7 +34,7 @@
 /* AUTHENTIC LUXURY TEXTILE WEAVE BACKGROUND */
 body {
   margin: 0;
-  min-width: 320px;
+  min-width: 0;
   background-color: var(--bg);
   background-image:
     radial-gradient(circle at 100% 0%, rgba(196, 146, 51, 0.07) 0%, transparent 40%),
@@ -383,5 +383,58 @@ h1, h2, h3 { font-family: "Playfair Display", Georgia, serif; letter-spacing: -0
 
   .stylish-watermark {
     opacity: 0.05 !important;
+  }
+}
+
+@media (max-width: 639px) {
+  .step-progress__step small {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .step-header__inner {
+    width: calc(100% - 24px);
+    min-height: 66px;
+    gap: 8px;
+  }
+
+  .brand-lockup {
+    flex: 1 1 0;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .brand-lockup strong {
+    font-size: 17px;
+  }
+
+  .brand-lockup small {
+    display: none;
+  }
+
+  .step-header__inner > div:last-child {
+    gap: 4px;
+  }
+
+  .step-header__inner [role="group"] button {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .step-progress {
+    width: calc(100% - 24px);
+  }
+
+  .step-progress__steps {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0;
+  }
+
+  .step-progress__step {
+    justify-content: center;
+    min-width: 0;
+    gap: 0;
   }
 }

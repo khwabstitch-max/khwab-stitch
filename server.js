@@ -3,13 +3,14 @@ import { createServer } from "node:http";
 import { extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadEnv } from "vite";
-import { createApiMiddleware } from "./server/api.js";
+import { closeDatabase, createApiMiddleware } from "./server/api.js";
 
 const projectRoot = fileURLToPath(new URL(".", import.meta.url));
 const env = loadEnv("production", projectRoot, "");
 const adminPassword = process.env.ADMIN_PASSWORD || env.ADMIN_PASSWORD;
 const distRoot = resolve(projectRoot, "dist");
 const port = Number(process.env.PORT || 3000);
+const allowedOrigins = process.env.ALLOWED_ORIGINS || env.ALLOWED_ORIGINS || "";
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
   ".html": "text/html; charset=utf-8",
@@ -29,13 +30,15 @@ if (!existsSync(resolve(distRoot, "index.html"))) {
   console.error("Production files are missing. Run `npm run build` first.");
   process.exit(1);
 }
-if (!adminPassword) {
-  console.warn("ADMIN_PASSWORD is not configured; order submissions work, but the admin panel is locked.");
+if (typeof adminPassword !== "string" || adminPassword.length < 16) {
+  console.error("Set ADMIN_PASSWORD to a unique value with at least 16 characters before starting the production server.");
+  process.exit(1);
 }
 
 const api = createApiMiddleware({
   adminPassword,
   databasePath: process.env.DB_PATH || env.DB_PATH,
+  allowedOrigins,
 });
 
 function serveStatic(request, response) {
@@ -77,3 +80,12 @@ const server = createServer((request, response) => api(request, response, () => 
 server.listen(port, "0.0.0.0", () => {
   console.log(`Khwab Stitch is listening on http://localhost:${port}`);
 });
+
+const shutdown = () => {
+  server.close(() => {
+    closeDatabase();
+  });
+};
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
