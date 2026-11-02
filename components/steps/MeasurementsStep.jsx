@@ -7,7 +7,6 @@ import {
   ChevronDown,
   Clock,
 } from "lucide-react";
-import BlouseMeasurementSketch from "../BlouseMeasurementSketch.jsx";
 import { MEASUREMENT_GUIDES } from "../../config/fashionCatalog.js";
 import { useLanguage } from "../../context/LanguageContext.jsx";
 

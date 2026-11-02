@@ -46,10 +46,10 @@
       },
       {
         "key": "bottomOpening",
-        "num": "7",
-        "en": "Sleeve Arm (Mori)",
+        "num": "+",
+        "en": "Sleeve Arm / Opening (Mori)",
         "hi": "बाज़ू घेर / मोरी",
-        "help": "बाज़ू का निचला भाग (Point 7)"
+        "help": "बाज़ू का निचला भाग (वैकल्पिक)"
       },
       {
         "key": "underBust",
@@ -121,17 +121,17 @@
       },
       {
         "key": "sleeveLength",
-        "num": "7",
+        "num": "+",
         "en": "Sleeve Length",
         "hi": "बाज़ू की लंबाई",
-        "help": "कंधे से आस्तीन तक (Point 7)"
+        "help": "कंधे से आस्तीन तक (वैकल्पिक)"
       },
       {
         "key": "bottomOpening",
-        "num": "8",
+        "num": "+",
         "en": "Sleeve Arm (Mori)",
         "hi": "बाज़ू घेर / मोरी",
-        "help": "बाज़ू का निचला भाग (Point 8)"
+        "help": "बाज़ू का निचला भाग (वैकल्पिक)"
       },
       {
         "key": "backNeck",
@@ -195,18 +195,18 @@
         "help": "कंधे से नीचे पूरी लंबाई (Point 6)"
       },
       {
-        "key": "sleeveLength",
-        "num": "7",
-        "en": "Sleeve Length",
-        "hi": "बाज़ू की लंबाई",
-        "help": "कंधे से आस्तीन तक (Point 7)"
-      },
-      {
         "key": "sleeveBottom",
-        "num": "8",
+        "num": "7",
         "en": "Sleeve Arm (Mori)",
         "hi": "बाज़ू घेर / मोरी",
-        "help": "बाज़ू का निचला भाग (Point 8)"
+        "help": "बाज़ू का निचला भाग (Point 7)"
+      },
+      {
+        "key": "sleeveLength",
+        "num": "+",
+        "en": "Sleeve Length",
+        "hi": "बाज़ू की लंबाई",
+        "help": "कंधे से आस्तीन तक (वैकल्पिक)"
       },
       {
         "key": "backNeck",
