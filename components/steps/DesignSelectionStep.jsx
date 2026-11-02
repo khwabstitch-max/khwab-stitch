@@ -82,7 +82,7 @@ function ChoiceGroup({
       </div>
 
       {/* Grid of Design Options */}
-      <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-3.5 sm:grid-cols-3 md:grid-cols-4">
         {options.map((option) => {
           const selected = value === option.id;
           const optionLabel = lang === "hi" ? (option.hiScript || option.hi || option.en) : option.en;
@@ -154,9 +154,9 @@ function ChoiceGroup({
               </div>
 
               {/* Card Body - Content & Details */}
-              <div className="p-3 border-t border-[#f4ece3] bg-white flex flex-col justify-between flex-1">
+              <div className="p-2.5 sm:p-3 border-t border-[#f4ece3] bg-white flex flex-col justify-between flex-1">
                 <div>
-                  <h4 className="font-serif text-[13.5px] font-bold text-[var(--primary-dark)] group-hover:text-[var(--primary)] transition-colors leading-tight">
+                  <h4 className="font-serif text-[12.5px] sm:text-[13.5px] font-bold text-[var(--primary-dark)] group-hover:text-[var(--primary)] transition-colors leading-tight">
                     {optionLabel}
                   </h4>
                   {groupType === "sleeveLength" && option.cm && (

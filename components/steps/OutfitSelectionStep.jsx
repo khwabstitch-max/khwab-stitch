@@ -195,10 +195,12 @@ export default function OutfitSelectionStep({
       </div>
 
       {/* 2. OUTFIT CARDS (3 OPTIONS: Blouse, Kurti, Suit Upper) */}
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-3">
         {outfitTypes.map((item) => {
           const selected = outfit.type === item.id;
           const outfitLabel = lang === "hi" ? item.hi : item.en;
+          const outfitDesc = lang === "hi" ? (item.descHi || item.desc) : (item.descEn || item.desc);
+          const outfitBadge = lang === "hi" ? (item.badgeHi || item.badge) : (item.badgeEn || item.badge);
           return (
             <button
               type="button"
@@ -214,7 +216,7 @@ export default function OutfitSelectionStep({
               }`}
             >
               {/* Image Container */}
-              <div className="relative h-56 w-full overflow-hidden bg-[#f7efdf]">
+              <div className="relative h-48 sm:h-52 md:h-56 w-full overflow-hidden bg-[#f7efdf]">
                 <img
                   src={item.image}
                   alt={outfitLabel}
@@ -223,7 +225,7 @@ export default function OutfitSelectionStep({
                 />
 
                 {/* Badge */}
-                {item.badge && (
+                {outfitBadge && (
                   <span
                     className={`absolute top-3 left-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold shadow-md backdrop-blur-sm ${
                       item.popular
@@ -231,7 +233,7 @@ export default function OutfitSelectionStep({
                         : "bg-white/95 text-[var(--text)] border border-[var(--border)]"
                     }`}
                   >
-                    {item.badge}
+                    {outfitBadge}
                   </span>
                 )}
 
@@ -250,11 +252,11 @@ export default function OutfitSelectionStep({
               {/* Content Details */}
               <div className="flex flex-1 flex-col justify-between p-4">
                 <div>
-                  <h3 className="font-serif text-[16px] font-bold text-[var(--primary-dark)] group-hover:text-[var(--primary)] transition-colors">
+                  <h3 className="font-serif text-[16px] sm:text-[17px] font-bold text-[var(--primary-dark)] group-hover:text-[var(--primary)] transition-colors">
                     {outfitLabel}
                   </h3>
-                  <p className="mt-1 text-[12px] text-[var(--text-light)] leading-snug">
-                    {item.desc}
+                  <p className="mt-1 text-[12px] sm:text-[12.5px] text-[var(--text-light)] leading-snug">
+                    {outfitDesc}
                   </p>
                 </div>
 
@@ -347,7 +349,7 @@ export default function OutfitSelectionStep({
                 </div>
                 <div className="mt-2 pt-1 border-t border-stone-100 flex items-center justify-between">
                   <span className="text-[9.5px] font-bold text-[var(--secondary)]">
-                    {fab.tag}
+                    {lang === "hi" ? (fab.tagHi || fab.tag) : (fab.tagEn || fab.tag)}
                   </span>
                 </div>
               </button>

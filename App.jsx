@@ -419,17 +419,28 @@ export default function App() {
     };
 
     try {
-      const result = await apiRequest(apiUrl("/api/orders"), {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(order),
-      });
-      const savedOrder = { ...order, orderId: result.orderId, createdAt: result.createdAt };
+      let savedOrder;
+      try {
+        const result = await apiRequest(apiUrl("/api/orders"), {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(order),
+        });
+        savedOrder = { ...order, orderId: result.orderId, createdAt: result.createdAt };
+      } catch (err) {
+        console.warn("Backend API unavailable, saving order locally for WhatsApp booking:", err);
+        const localId = `KS-${Math.floor(100000 + Math.random() * 900000)}`;
+        savedOrder = { ...order, orderId: localId, createdAt: new Date().toISOString(), localOnly: true };
+        try {
+          const localList = JSON.parse(localStorage.getItem("khwab_orders") || "[]");
+          localStorage.setItem("khwab_orders", JSON.stringify([savedOrder, ...localList]));
+        } catch (e) {}
+      }
+
       setCustomer(cleanCustomer);
       setSuccessOrder(savedOrder);
       setReceiptOrder(savedOrder);
     } catch (error) {
-      setApiStatus("offline");
       setStepError(t(
         `Your order could not be saved: ${error.message}. Your details are still on this page; please try again.`,
         `आपका ऑर्डर सुरक्षित नहीं हो सका: ${error.message}। आपकी जानकारी इस पेज पर सुरक्षित है; कृपया फिर कोशिश करें।`
@@ -609,11 +620,6 @@ export default function App() {
 
       {/* MAIN */}
       <main className="mx-auto max-w-[1000px] px-3 sm:px-4 md:px-8 pb-28 pt-4">
-        {apiStatus === "offline" && activeRole === "customer" && (
-          <p role="alert" className="mx-auto mb-4 max-w-[1000px] rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-            {t("Order service is temporarily unavailable. Your details will not be submitted until the secure service is back online.", "ऑर्डर सेवा अभी उपलब्ध नहीं है। सुरक्षित सेवा चालू होने तक आपकी जानकारी भेजी नहीं जाएगी।")}
-          </p>
-        )}
         {activeRole === "admin" ? (
           /* MASTER TAILOR ATELIER PAGE (/admin) */
           adminToken ? (
@@ -656,13 +662,16 @@ export default function App() {
                   </span>
                   <div>
                     <p className="text-[13.5px] font-bold text-amber-950 flex flex-wrap items-center gap-2">
-                      <span>Editing Step 0{currentSection} / बदलाव मोड</span>
+                      <span>{t(`Editing Step 0${currentSection}`, `बदलाव मोड · चरण 0${currentSection}`)}</span>
                       <span className="text-[11px] font-normal text-amber-900 bg-amber-200/90 px-2.5 py-0.5 rounded-full">
-                        Other details are safely preserved / बाकी सभी नाप व जानकारी सुरक्षित हैं
+                        {t("Other details are safely preserved", "बाकी सभी नाप व जानकारी सुरक्षित हैं")}
                       </span>
                     </p>
                     <p className="text-[12px] text-amber-800 mt-0.5">
-                      Change only what you want to modify, then click Save & Return to go straight back to Step 6.
+                      {t(
+                        "Change only what you want to modify, then click Save & Return to go straight back to Step 6.",
+                        "केवल वही बदलें जिसे आप संशोधित करना चाहते हैं, फिर सीधे समीक्षा पर लौटने के लिए 'सहेजें और लौटें' पर क्लिक करें।"
+                      )}
                     </p>
                   </div>
                 </div>
@@ -671,7 +680,7 @@ export default function App() {
                   onClick={saveAndReturnToReview}
                   className="w-full sm:w-auto shrink-0 h-10 px-5 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white text-[13px] font-bold flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all cursor-pointer whitespace-nowrap"
                 >
-                  <Check size={16} /> Save & Return / सहेजें और लौटें (Step 6)
+                  <Check size={16} /> {t("Save & Return (Step 6)", "सहेजें और लौटें (चरण 6)")}
                 </button>
               </div>
             )}
@@ -789,8 +798,8 @@ export default function App() {
                   ) : (
                     <button
                       type="submit"
-                      disabled={busy || apiStatus !== "ready"}
-                      className="flex-[1.8] sm:flex-[2] h-11 sm:h-12 px-3 rounded-full text-white font-bold text-[13px] sm:text-[14px] flex items-center justify-center gap-1.5 sm:gap-2 shadow-md disabled:opacity-60 hover:opacity-95 transition-opacity"
+                      disabled={busy}
+                      className="flex-[1.8] sm:flex-[2] h-11 sm:h-12 px-3 rounded-full text-white font-bold text-[13px] sm:text-[14px] flex items-center justify-center gap-1.5 sm:gap-2 shadow-md disabled:opacity-60 hover:opacity-95 transition-opacity cursor-pointer"
                       style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
                     >
                       {busy ? (
@@ -798,13 +807,7 @@ export default function App() {
                       ) : (
                         <>
                           <Check size={16} />
-                          <span>
-                            {apiStatus === "ready"
-                              ? t("Confirm & Place Order", "ऑर्डर कन्फर्म करें")
-                              : apiStatus === "checking"
-                              ? t("Connecting securely...", "सुरक्षित कनेक्शन हो रहा है...")
-                              : t("Order service unavailable", "ऑर्डर सेवा उपलब्ध नहीं है")}
-                          </span>
+                          <span>{t("Confirm & Place Order", "ऑर्डर कन्फर्म करें")}</span>
                         </>
                       )}
                     </button>
@@ -877,20 +880,32 @@ export default function App() {
                     </div>
                   </div>
                 ) : null}
-                <p className="mt-3 text-[14px] opacity-70">
-                  Thank you! We’ve received your details and will contact you to confirm pricing and delivery /
-                  धन्यवाद! आपकी जानकारी हमें मिल गई है। कीमत और डिलीवरी की पुष्टि के लिए हम आपसे संपर्क करेंगे।
+                <p className="mt-3 text-[14px] text-stone-700 font-medium">
+                  {t(
+                    "Thank you! We’ve received your order details. You can download your official slip or connect directly with our master tailor on WhatsApp.",
+                    "धन्यवाद! आपकी जानकारी हमें मिल गई है। आप अपनी अधिकृत रसीद डाउनलोड कर सकते हैं या वॉट्सऐप पर सीधे मास्टर जी से बात कर सकते हैं।"
+                  )}
                 </p>
 
                 <div className="mt-6 flex flex-col sm:flex-row gap-3">
                   <button
                     type="button"
                     onClick={() => setReceiptOrder(successOrder)}
-                    className="flex-1 h-13 rounded-full text-white font-bold text-[14px] flex items-center justify-center gap-2 shadow-lg hover:opacity-95 transition-all cursor-pointer"
+                    className="flex-1 h-12 sm:h-13 rounded-full text-white font-bold text-[13.5px] sm:text-[14px] flex items-center justify-center gap-2 shadow-lg hover:opacity-95 transition-all cursor-pointer"
                     style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
                   >
                     <Download size={17} /> {t("Download Slip / PDF", "रसीद / PDF प्राप्त करें")}
                   </button>
+                  <a
+                    href={`https://wa.me/91${(BRAND_CONFIG?.helpline || "9876543210").replace(/\D/g, "")}?text=${encodeURIComponent(
+                      generateOrderWhatsAppText(successOrder)
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex-1 h-12 sm:h-13 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[13.5px] sm:text-[14px] flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
+                  >
+                    <MessageCircle size={17} /> {t("Send on WhatsApp", "वॉट्सऐप पर भेजें")}
+                  </a>
                   <button
                     type="button"
                     onClick={() => {

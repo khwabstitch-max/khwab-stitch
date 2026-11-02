@@ -8,7 +8,11 @@
     "hi": "रॉयल वेलवेट एम्ब्रॉयडर्ड ब्लाउज़",
     "image": "./images/design_codes/B-01.jpg",
     "details": "Sweetheart neckline, golden zardozi embroidery, elbow sleeves, dori back",
-    "tag": "Bridal & Festive / लोकप्रिय",
+    "detailsEn": "Sweetheart neckline, golden zardozi embroidery, elbow sleeves, dori back",
+    "detailsHi": "स्वीटहार्ट गला, सुनहरी ज़रदोज़ी कढ़ाई, कोहनी तक बाज़ू व डोरी बैक",
+    "tag": "Bridal & Festive",
+    "tagEn": "Bridal & Festive",
+    "tagHi": "ब्राइडल व फेस्टिव",
     "popular": true
   },
   {
@@ -20,7 +24,11 @@
     "hi": "क्लासिक साड़ी डिज़ाइनर चोली",
     "image": "./images/design_codes/B-02.jpg",
     "details": "Deep round back with tassels, fitted bust cup padding, clean finish",
-    "tag": "Partywear / पार्टीवियर",
+    "detailsEn": "Deep round back with tassels, fitted bust cup padding, clean finish",
+    "detailsHi": "लटकन के साथ गहरा गोल बैक, फ़िटेड कप पैडिंग व सुंदर सिलाई",
+    "tag": "Partywear",
+    "tagEn": "Partywear",
+    "tagHi": "पार्टीवियर",
     "popular": false
   },
   {
@@ -32,7 +40,11 @@
     "hi": "क्लासिक कॉटन प्रिंटेड कुर्ती",
     "image": "./images/design_codes/K-01.jpg",
     "details": "Mandarin collar, button placket, 3/4 sleeves, straight side-slit cut",
-    "tag": "Studio Signature / सर्वाधिक लोकप्रिय",
+    "detailsEn": "Mandarin collar, button placket, 3/4 sleeves, straight side-slit cut",
+    "detailsHi": "मंदारिन कॉलर, बटन पट्टी, 3/4 बाज़ू व स्ट्रेट साइड-चाक कट",
+    "tag": "Studio Signature",
+    "tagEn": "Studio Signature",
+    "tagHi": "स्टूडियो सिग्नेचर",
     "popular": true
   },
   {
@@ -44,7 +56,11 @@
     "hi": "फ़ेस्टिव एम्ब्रॉयडर्ड स्ट्रेट कुर्ती",
     "image": "./images/design_codes/K-02.jpg",
     "details": "Round neck with V-slit, quarter sleeves, elegant side-slit hem",
-    "tag": "Designer Choice / डिज़ाइनर पसंद",
+    "detailsEn": "Round neck with V-slit, quarter sleeves, elegant side-slit hem",
+    "detailsHi": "वी-कट के साथ गोल गला, क्वार्टर बाज़ू व सुंदर घेरदार कट",
+    "tag": "Designer Choice",
+    "tagEn": "Designer Choice",
+    "tagHi": "डिज़ाइनर पसंद",
     "popular": false
   },
   {
@@ -56,7 +72,11 @@
     "hi": "पारंपरिक पंजाबी स्ट्रेट कमीज़",
     "image": "./images/design_codes/SU-01.jpg",
     "details": "Boat neck with lace border, full sleeves, side chak open slits",
-    "tag": "Popular / लोकप्रिय",
+    "detailsEn": "Boat neck with lace border, full sleeves, side chak open slits",
+    "detailsHi": "लेस बॉर्डर के साथ बोट नेक, पूरी बाज़ू व खुले साइड चाक",
+    "tag": "Popular",
+    "tagEn": "Popular",
+    "tagHi": "लोकप्रिय",
     "popular": true
   },
   {
@@ -68,7 +88,11 @@
     "hi": "कशीदाकारी फ़ेस्टिव ए-लाइन कमीज़",
     "image": "./images/design_codes/SU-02.jpg",
     "details": "Mandarin collar with neck slit, quarter sleeves with border, flared hem",
-    "tag": "Festive / उत्सव",
+    "detailsEn": "Mandarin collar with neck slit, quarter sleeves with border, flared hem",
+    "detailsHi": "कॉलर व गला कट, बॉर्डर वाली बाज़ू व ए-लाइन घेर",
+    "tag": "Festive",
+    "tagEn": "Festive",
+    "tagHi": "उत्सव",
     "popular": false
   }
 ]

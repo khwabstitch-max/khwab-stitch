@@ -7,70 +7,90 @@
         "num": "1",
         "en": "Shoulder Width",
         "hi": "कंधे की चौड़ाई",
-        "help": "एक कंधे से दूसरे कंधे तक (Point 1)"
+        "help": "एक कंधे से दूसरे कंधे तक (Point 1)",
+        "helpEn": "From shoulder tip to shoulder tip (Point 1)",
+        "helpHi": "एक कंधे से दूसरे कंधे तक (Point 1)"
       },
       {
         "key": "frontNeck",
         "num": "2",
         "en": "Neck Depth",
         "hi": "गले की गहराई",
-        "help": "कंधे से आगे गले की गहराई (Point 2)"
+        "help": "कंधे से आगे गले की गहराई (Point 2)",
+        "helpEn": "Shoulder down to front neckline depth (Point 2)",
+        "helpHi": "कंधे से आगे गले की गहराई (Point 2)"
       },
       {
         "key": "bust",
         "num": "3",
         "en": "Around Bust (Chest)",
         "hi": "सीना / चेस्ट",
-        "help": "छाती की पूरी गोलाई (Point 3)"
+        "help": "छाती की पूरी गोलाई (Point 3)",
+        "helpEn": "Circumference around the fullest bust (Point 3)",
+        "helpHi": "छाती की पूरी गोलाई (Point 3)"
       },
       {
         "key": "waist",
         "num": "4",
         "en": "Waist",
         "hi": "कमर",
-        "help": "कमर का निचला भाग (Point 4)"
+        "help": "कमर का निचला भाग (Point 4)",
+        "helpEn": "Circumference at lower waist hem (Point 4)",
+        "helpHi": "कमर का निचला भाग (Point 4)"
       },
       {
         "key": "blouseLength",
         "num": "5",
         "en": "Blouse Length",
         "hi": "ब्लाउज़ की लंबाई",
-        "help": "कंधे से नीचे ब्लाउज़ तक (Point 5)"
+        "help": "कंधे से नीचे ब्लाउज़ तक (Point 5)",
+        "helpEn": "From shoulder top down to blouse bottom (Point 5)",
+        "helpHi": "कंधे से नीचे ब्लाउज़ तक (Point 5)"
       },
       {
         "key": "sleeveLength",
         "num": "6",
         "en": "Sleeve Length",
         "hi": "बाज़ू की लंबाई",
-        "help": "कंधे से आस्तीन तक (Point 6)"
+        "help": "कंधे से आस्तीन तक (Point 6)",
+        "helpEn": "Shoulder joint down to desired sleeve hem (Point 6)",
+        "helpHi": "कंधे से आस्तीन तक (Point 6)"
       },
       {
         "key": "bottomOpening",
         "num": "+",
         "en": "Sleeve Arm / Opening (Mori)",
         "hi": "बाज़ू घेर / मोरी",
-        "help": "बाज़ू का निचला भाग (वैकल्पिक)"
+        "help": "बाज़ू का निचला भाग (वैकल्पिक)",
+        "helpEn": "Circumference of sleeve arm opening (optional)",
+        "helpHi": "बाज़ू का निचला भाग / मोरी (वैकल्पिक)"
       },
       {
         "key": "underBust",
         "num": "+",
         "en": "Under Bust (Bra Line)",
         "hi": "छाती के नीचे (ब्रा लाइन)",
-        "help": "ब्रा लाइन की गोलाई (वैकल्पिक)"
+        "help": "ब्रा लाइन की गोलाई (वैकल्पिक)",
+        "helpEn": "Circumference directly under bust (optional)",
+        "helpHi": "ब्रा लाइन की गोलाई (वैकल्पिक)"
       },
       {
         "key": "backNeck",
         "num": "+",
         "en": "Back Neck Depth",
         "hi": "पीछे गले की गहराई",
-        "help": "कंधे से पीछे गले तक (वैकल्पिक)"
+        "help": "कंधे से पीछे गले तक (वैकल्पिक)",
+        "helpEn": "From shoulder down to back neck depth (optional)",
+        "helpHi": "कंधे से पीछे गले तक (वैकल्पिक)"
       },
       {
         "key": "armhole",
         "num": "+",
         "en": "Armhole Round",
         "hi": "कांख / आर्महोल",
-        "help": "कांख की पूरी गोलाई (वैकल्पिक)"
+        "help": "कांख की पूरी गोलाई (वैकल्पिक)",
+        "helpEn": "Circumference around the armhole (optional)",
+        "helpHi": "कांख की पूरी गोलाई (वैकल्पिक)"
       }
     ]
   },
@@ -82,70 +102,90 @@
         "num": "1",
         "en": "Shoulder Width",
         "hi": "कंधे की चौड़ाई",
-        "help": "एक कंधे से दूसरे कंधे तक (Point 1)"
+        "help": "एक कंधे से दूसरे कंधे तक (Point 1)",
+        "helpEn": "From shoulder tip to shoulder tip (Point 1)",
+        "helpHi": "एक कंधे से दूसरे कंधे तक (Point 1)"
       },
       {
         "key": "frontNeck",
         "num": "2",
         "en": "Neck Depth",
         "hi": "गले की गहराई",
-        "help": "कंधे से आगे गले की गहराई (Point 2)"
+        "help": "कंधे से आगे गले की गहराई (Point 2)",
+        "helpEn": "Shoulder down to front neckline depth (Point 2)",
+        "helpHi": "कंधे से आगे गले की गहराई (Point 2)"
       },
       {
         "key": "bust",
         "num": "3",
         "en": "Around Bust (Chest)",
         "hi": "सीना / चेस्ट",
-        "help": "छाती की पूरी गोलाई (Point 3)"
+        "help": "छाती की पूरी गोलाई (Point 3)",
+        "helpEn": "Circumference around the fullest bust (Point 3)",
+        "helpHi": "छाती की पूरी गोलाई (Point 3)"
       },
       {
         "key": "waist",
         "num": "4",
         "en": "Around Waist",
         "hi": "कमर",
-        "help": "नाभि के ऊपर कमर की गोलाई (Point 4)"
+        "help": "नाभि के ऊपर कमर की गोलाई (Point 4)",
+        "helpEn": "Circumference around natural waist (Point 4)",
+        "helpHi": "नाभि के ऊपर कमर की गोलाई (Point 4)"
       },
       {
         "key": "hip",
         "num": "5",
         "en": "Around Hip",
         "hi": "कूल्हे / हिप",
-        "help": "कूल्हे / हिप की पूरी गोलाई (Point 5)"
+        "help": "कूल्हे / हिप की पूरी गोलाई (Point 5)",
+        "helpEn": "Fullest circumference around hips (Point 5)",
+        "helpHi": "कूल्हे / हिप की पूरी गोलाई (Point 5)"
       },
       {
         "key": "kurtiLength",
         "num": "6",
         "en": "Kurti Length",
         "hi": "कुर्ती की लंबाई",
-        "help": "कंधे से नीचे पूरी लंबाई (Point 6)"
+        "help": "कंधे से नीचे पूरी लंबाई (Point 6)",
+        "helpEn": "From shoulder top down to kurti hem (Point 6)",
+        "helpHi": "कंधे से नीचे पूरी लंबाई (Point 6)"
       },
       {
         "key": "sleeveLength",
         "num": "+",
         "en": "Sleeve Length",
         "hi": "बाज़ू की लंबाई",
-        "help": "कंधे से आस्तीन तक (वैकल्पिक)"
+        "help": "कंधे से आस्तीन तक (वैकल्पिक)",
+        "helpEn": "Shoulder joint down to desired sleeve hem (optional)",
+        "helpHi": "कंधे से आस्तीन तक (वैकल्पिक)"
       },
       {
         "key": "bottomOpening",
         "num": "+",
         "en": "Sleeve Arm (Mori)",
         "hi": "बाज़ू घेर / मोरी",
-        "help": "बाज़ू का निचला भाग (वैकल्पिक)"
+        "help": "बाज़ू का निचला भाग (वैकल्पिक)",
+        "helpEn": "Circumference around sleeve arm opening (optional)",
+        "helpHi": "बाज़ू का निचला भाग / मोरी (वैकल्पिक)"
       },
       {
         "key": "backNeck",
         "num": "+",
         "en": "Back Neck Depth",
         "hi": "पीछे गले की गहराई",
-        "help": "कंधे से पीछे गले की गहराई (वैकल्पिक)"
+        "help": "कंधे से पीछे गले की गहराई (वैकल्पिक)",
+        "helpEn": "Shoulder down to back neck depth (optional)",
+        "helpHi": "कंधे से पीछे गले की गहराई (वैकल्पिक)"
       },
       {
         "key": "armhole",
         "num": "+",
         "en": "Around Armhole",
         "hi": "आर्महोल / कांख",
-        "help": "कांख की पूरी गोलाई (वैकल्पिक)"
+        "help": "कांख की पूरी गोलाई (वैकल्पिक)",
+        "helpEn": "Circumference around the armhole (optional)",
+        "helpHi": "कांख की पूरी गोलाई (वैकल्पिक)"
       }
     ]
   },
@@ -157,70 +197,90 @@
         "num": "1",
         "en": "Shoulder Width",
         "hi": "कंधे की चौड़ाई",
-        "help": "एक कंधे से दूसरे कंधे तक (Point 1)"
+        "help": "एक कंधे से दूसरे कंधे तक (Point 1)",
+        "helpEn": "From shoulder tip to shoulder tip (Point 1)",
+        "helpHi": "एक कंधे से दूसरे कंधे तक (Point 1)"
       },
       {
         "key": "frontNeck",
         "num": "2",
         "en": "Neck Depth",
         "hi": "गले की गहराई",
-        "help": "कंधे से आगे गले तक (Point 2)"
+        "help": "कंधे से आगे गले तक (Point 2)",
+        "helpEn": "Shoulder down to front neckline depth (Point 2)",
+        "helpHi": "कंधे से आगे गले तक (Point 2)"
       },
       {
         "key": "bust",
         "num": "3",
         "en": "Around Bust (Chest)",
         "hi": "सीना / चेस्ट",
-        "help": "छाती की पूरी गोलाई (Point 3)"
+        "help": "छाती की पूरी गोलाई (Point 3)",
+        "helpEn": "Circumference around the fullest bust (Point 3)",
+        "helpHi": "छाती की पूरी गोलाई (Point 3)"
       },
       {
         "key": "waist",
         "num": "4",
         "en": "Around Waist",
         "hi": "कमर",
-        "help": "कमर की गोलाई (Point 4)"
+        "help": "कमर की गोलाई (Point 4)",
+        "helpEn": "Circumference around natural waist (Point 4)",
+        "helpHi": "कमर की गोलाई (Point 4)"
       },
       {
         "key": "hip",
         "num": "5",
         "en": "Around Hip",
         "hi": "कूल्हे / हिप",
-        "help": "कूल्हे / हिप की पूरी गोलाई (Point 5)"
+        "help": "कूल्हे / हिप की पूरी गोलाई (Point 5)",
+        "helpEn": "Fullest circumference around hips (Point 5)",
+        "helpHi": "कूल्हे / हिप की पूरी गोलाई (Point 5)"
       },
       {
         "key": "kameezLength",
         "num": "6",
         "en": "Suit / Kameez Length",
         "hi": "सूट / कमीज़ लंबाई",
-        "help": "कंधे से नीचे पूरी लंबाई (Point 6)"
+        "help": "कंधे से नीचे पूरी लंबाई (Point 6)",
+        "helpEn": "From shoulder top down to kameez hem (Point 6)",
+        "helpHi": "कंधे से नीचे पूरी लंबाई (Point 6)"
       },
       {
         "key": "sleeveBottom",
         "num": "7",
         "en": "Sleeve Arm (Mori)",
         "hi": "बाज़ू घेर / मोरी",
-        "help": "बाज़ू का निचला भाग (Point 7)"
+        "help": "बाज़ू का निचला भाग (Point 7)",
+        "helpEn": "Circumference around sleeve arm opening (Point 7)",
+        "helpHi": "बाज़ू का निचला भाग / मोरी (Point 7)"
       },
       {
         "key": "sleeveLength",
         "num": "+",
         "en": "Sleeve Length",
         "hi": "बाज़ू की लंबाई",
-        "help": "कंधे से आस्तीन तक (वैकल्पिक)"
+        "help": "कंधे से आस्तीन तक (वैकल्पिक)",
+        "helpEn": "Shoulder joint down to desired sleeve hem (optional)",
+        "helpHi": "कंधे से आस्तीन तक (वैकल्पिक)"
       },
       {
         "key": "backNeck",
         "num": "+",
         "en": "Back Neck Depth",
         "hi": "पीछे गले की गहराई",
-        "help": "कंधे से पीछे गले तक (वैकल्पिक)"
+        "help": "कंधे से पीछे गले तक (वैकल्पिक)",
+        "helpEn": "Shoulder down to back neck depth (optional)",
+        "helpHi": "कंधे से पीछे गले तक (वैकल्पिक)"
       },
       {
         "key": "armhole",
         "num": "+",
         "en": "Armhole Round",
         "hi": "आर्महोल / कांख",
-        "help": "कांख की पूरी गोलाई (वैकल्पिक)"
+        "help": "कांख की पूरी गोलाई (वैकल्पिक)",
+        "helpEn": "Circumference around the armhole (optional)",
+        "helpHi": "कांख की पूरी गोलाई (वैकल्पिक)"
       }
     ]
   }

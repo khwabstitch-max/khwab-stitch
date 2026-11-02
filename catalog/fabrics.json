@@ -6,6 +6,8 @@
     "desc": "I will provide / send my own unstitched cloth piece",
     "descHi": "मैं सिलाई के लिए अपना कपड़ा स्वयं भेजूंगी/दूंगी",
     "tag": "✂️ Most Common",
+    "tagEn": "✂️ Most Common",
+    "tagHi": "✂️ सबसे पसंदीदा",
     "color": "#8b5e3c",
     "pattern": "custom",
     "icon": "📦"
@@ -17,6 +19,8 @@
     "desc": "Soft, breathable, comfortable daily & office wear",
     "descHi": "आरामदायक, हवादार और हर मौसम के अनुकूल",
     "tag": "🌿 Breathable",
+    "tagEn": "🌿 Breathable",
+    "tagHi": "🌿 हवादार कॉटन",
     "color": "#e07a5f",
     "pattern": "weave",
     "icon": "🧵"
@@ -28,6 +32,8 @@
     "desc": "Rich sheen, royal festive elegance & wedding celebrations",
     "descHi": "शानदार चमक, शादी-विवाह व त्योहारों की पहली पसंद",
     "tag": "✨ Festive Royal",
+    "tagEn": "✨ Festive Royal",
+    "tagHi": "✨ शाही रेशम",
     "color": "#d4af37",
     "pattern": "sheen",
     "icon": "🪡"
@@ -39,6 +45,8 @@
     "desc": "Lightweight, beautiful fall & graceful drape",
     "descHi": "हल्का, सुंदर फॉल और खूबसूरत ड्रेप",
     "tag": "🌸 Graceful Drape",
+    "tagEn": "🌸 Graceful Drape",
+    "tagHi": "🌸 सुंदर ड्रेप",
     "color": "#d9829b",
     "pattern": "flow",
     "icon": "👗"
@@ -50,6 +58,8 @@
     "desc": "Sophisticated texture, breathable & modern luxury",
     "descHi": "शानदार टेक्सचर, आधुनिक व एलीगेंट लुक",
     "tag": "🍃 Modern Chic",
+    "tagEn": "🍃 Modern Chic",
+    "tagHi": "🍃 आधुनिक व क्लासी",
     "color": "#769f8d",
     "pattern": "linen",
     "icon": "🧶"
@@ -61,6 +71,8 @@
     "desc": "Translucent, trending delicate designer aesthetic",
     "descHi": "पारदर्शी, ट्रेंडी व नाज़ुक डिज़ाइनर स्टाइल",
     "tag": "💎 Trendsetter",
+    "tagEn": "💎 Trendsetter",
+    "tagHi": "💎 ट्रेंडी डिज़ाइनर",
     "color": "#a29bfe",
     "pattern": "sheer",
     "icon": "✦"
@@ -72,6 +84,8 @@
     "desc": "Opulent heavy texture, winter weddings & bridal blouses",
     "descHi": "राजसी भारी टेक्सचर, ब्राइडल व विंटर शादियों के लिए",
     "tag": "👑 Bridal Luxury",
+    "tagEn": "👑 Bridal Luxury",
+    "tagHi": "👑 ब्राइडल व राजसी",
     "color": "#6a0572",
     "pattern": "plush",
     "icon": "👑"

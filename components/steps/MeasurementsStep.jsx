@@ -383,7 +383,7 @@ export default function MeasurementsStep({
                         <img
                           src={outfitGuideImg}
                           alt={`${outfitTitle} Measurement Diagram`}
-                          className="mx-auto h-auto max-h-[490px] w-full object-contain cursor-zoom-in rounded-xl transition-transform hover:scale-[1.01]"
+                          className="mx-auto h-auto max-h-[460px] w-full object-contain cursor-zoom-in rounded-xl transition-transform hover:scale-[1.01]"
                           onClick={handleZoomSketch}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
@@ -423,10 +423,11 @@ export default function MeasurementsStep({
                           </span>
                         </h4>
 
-                        <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1 text-[11.5px]">
+                        <div className="space-y-2 max-h-[380px] lg:max-h-[420px] overflow-y-auto pr-1 text-[11.5px]">
                           {measurementFields.map((field, idx) => {
                             const pointNum = field.num || idx + 1;
                             const fieldLabel = lang === "hi" ? (field.hi || field.en) : field.en;
+                            const fieldHelp = lang === "hi" ? (field.helpHi || field.help) : (field.helpEn || field.help);
                             return (
                               <div
                                 key={field.key}
@@ -439,9 +440,9 @@ export default function MeasurementsStep({
                                   <span className="font-bold text-[var(--primary-dark)]">
                                     {fieldLabel}
                                   </span>
-                                  {field.help && (
+                                  {fieldHelp && (
                                     <span className="block text-[11px] text-[var(--text-light)]">
-                                      {field.help}
+                                      {fieldHelp}
                                     </span>
                                   )}
                                 </div>
@@ -477,13 +478,14 @@ export default function MeasurementsStep({
                 </span>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-3.5 sm:gap-4 grid-cols-1 sm:grid-cols-2">
                 {measurementFields.map((field, idx) => {
                   const pointNum = field.num || idx + 1;
                   const fieldLabel = lang === "hi" ? (field.hi || field.en) : field.en;
+                  const fieldHelp = lang === "hi" ? (field.helpHi || field.help) : (field.helpEn || field.help);
                   return (
                     <label
-                      className="form-field relative rounded-2xl border border-[#eedfd6] bg-[#fffdfb] p-3.5 transition-all focus-within:border-[var(--primary)] focus-within:bg-white focus-within:shadow-sm"
+                      className="form-field relative rounded-2xl border border-[#eedfd6] bg-[#fffdfb] p-3 sm:p-3.5 transition-all focus-within:border-[var(--primary)] focus-within:bg-white focus-within:shadow-sm"
                       key={field.key}
                     >
                       <div className="mb-1.5 flex items-center justify-between gap-2">
@@ -495,9 +497,9 @@ export default function MeasurementsStep({
                         </span>
                       </div>
 
-                      {field.help && (
+                      {fieldHelp && (
                         <p className="mb-2 text-[11px] text-[var(--text-light)]">
-                          {field.help}
+                          {fieldHelp}
                         </p>
                       )}
 

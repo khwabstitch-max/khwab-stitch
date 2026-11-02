@@ -161,7 +161,9 @@ export default function DesignCodeDropdown({
                 </span>
               </div>
               <p className="text-[11px] text-stone-500 truncate mt-0.5">
-                {lang === "hi" ? selectedCatalogItem.details : (selectedCatalogItem.hi || selectedCatalogItem.details)}
+                {lang === "hi"
+                  ? (selectedCatalogItem.detailsHi || selectedCatalogItem.hi || selectedCatalogItem.details)
+                  : (selectedCatalogItem.detailsEn || selectedCatalogItem.details)}
               </p>
             </div>
           </div>
@@ -261,7 +263,9 @@ export default function DesignCodeDropdown({
                           </span>
                         </div>
                         <p className="text-[11.5px] text-stone-500 line-clamp-2 mt-1 leading-snug">
-                          {item.details}
+                          {lang === "hi"
+                            ? (item.detailsHi || item.details)
+                            : (item.detailsEn || item.details)}
                         </p>
                       </div>
                     </div>
