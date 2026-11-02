@@ -348,8 +348,22 @@ export default function App() {
   const showMeasurements = () => {
     return outfit.type ? measurementConfigs[outfit.type] || measurementConfigs.Other : [];
   };
-  const openLightbox = (title, grad, subtitle) => {
-    setLightbox({ open: true, title, grad, subtitle });
+  const openLightbox = (title, gradOrImage, subtitle, image) => {
+    const isImg = typeof gradOrImage === "string" && (
+      gradOrImage.startsWith("./") ||
+      gradOrImage.startsWith("/") ||
+      gradOrImage.startsWith("http") ||
+      gradOrImage.startsWith("data:") ||
+      gradOrImage.includes(".jpg") ||
+      gradOrImage.includes(".png")
+    );
+    if (isImg) {
+      setLightbox({ open: true, title, image: gradOrImage, subtitle });
+    } else if (image) {
+      setLightbox({ open: true, title, image, subtitle });
+    } else {
+      setLightbox({ open: true, title, grad: gradOrImage, subtitle });
+    }
   };
 
   const openReceipt = (order) => {
@@ -955,7 +969,7 @@ export default function App() {
           onClick={() => setLightbox(null)}
         >
           <div
-            className="relative w-full max-w-[560px] rounded-[28px] overflow-hidden bg-white shadow-2xl"
+            className="relative w-full max-w-[880px] rounded-[28px] overflow-hidden bg-white shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {lightbox.image ? (

@@ -56,6 +56,7 @@ export default function MeasurementsStep({
 }) {
   const { lang, t } = useLanguage();
   const [showSketchModal, setShowSketchModal] = useState(false);
+  const [guideView, setGuideView] = useState("outfit");
 
   const updateMeasurements = (updates) => setMeasurements({ ...measurements, ...updates });
 
