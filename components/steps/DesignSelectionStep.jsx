@@ -154,13 +154,13 @@ function ChoiceGroup({
               </div>
 
               {/* Card Body - Content & Details */}
-              <div className="p-2.5 sm:p-3 border-t border-[#f4ece3] bg-white flex flex-col justify-between flex-1">
-                <div>
-                  <h4 className="font-serif text-[12.5px] sm:text-[13.5px] font-bold text-[var(--primary-dark)] group-hover:text-[var(--primary)] transition-colors leading-tight">
+              <div className="p-2.5 sm:p-3 border-t border-[#f4ece3] bg-white flex flex-col justify-between flex-1 text-center">
+                <div className="text-center">
+                  <h4 className="font-serif text-[12.5px] sm:text-[13.5px] font-bold text-[var(--primary-dark)] group-hover:text-[var(--primary)] transition-colors leading-tight text-center">
                     {optionLabel}
                   </h4>
                   {groupType === "sleeveLength" && option.cm && (
-                    <p className="text-[11px] text-[var(--text-light)] mt-1.5">
+                    <p className="text-[11px] text-[var(--text-light)] mt-1.5 text-center">
                       {t(`Length: ${option.cm}`, `लंबाई: ${option.cm}`)}
                     </p>
                   )}

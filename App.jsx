@@ -701,7 +701,7 @@ export default function App() {
   };
 
   return (
-    <div data-safe-area-inset-root className="min-h-screen w-full overflow-x-clip bg-[var(--bg)] text-[var(--text)]"
+    <div data-safe-area-inset-root className="min-h-screen flex flex-col justify-between w-full overflow-x-clip bg-[var(--bg)] text-[var(--text)]"
       style={{ boxSizing: 'border-box', paddingTop: 'var(--safe-area-inset-top)' }}>
       <StepHeader
         currentSection={currentSection}
@@ -741,7 +741,7 @@ export default function App() {
       />
 
       {/* MAIN */}
-      <main className="mx-auto max-w-[1000px] px-3 sm:px-4 md:px-8 pb-28 pt-4">
+      <main className="flex-1 mx-auto max-w-[1000px] w-full px-3 sm:px-4 md:px-8 pb-28 pt-4">
         {activeRole === "admin" ? (
           /* MASTER TAILOR ATELIER PAGE (/admin) */
           adminToken ? (
@@ -1096,13 +1096,77 @@ export default function App() {
               </div>
             )}
 
-            {/* FOOTER */}
-            <footer className="mt-16 text-center text-[12px] text-stone-500 pb-12">
-              <p>© {new Date().getFullYear()} Khwab Stitch · हमारी कारीगरी</p>
-            </footer>
           </>
         )}
       </main>
+
+      {/* GLOBAL LUXURY ATELIER FOOTER */}
+      <footer className="w-full border-t border-[#ebdcd0] bg-[#faf6f2]/90 py-7 sm:py-9 px-4 mt-auto">
+        <div className="mx-auto max-w-[900px] flex flex-col items-center justify-center text-center space-y-3">
+          <div className="flex items-center gap-2 select-none">
+            <img
+              src={BRAND_CONFIG?.logo || "./images/brand/logo.jpg"}
+              alt="Khwab Stitch Logo"
+              className="h-7 w-7 rounded-full object-cover border border-[#c4994d]"
+              onError={(e) => { e.currentTarget.src = "./images/khwabstitch_logo.jpg"; }}
+            />
+            <span className="font-serif font-bold text-[15px] text-[var(--primary-dark)]">
+              {BRAND_CONFIG?.name || "Khwab Stitch"}
+            </span>
+            <span className="text-stone-400">•</span>
+            <span className="text-[12px] font-medium text-stone-600">
+              {t("Where Fabric Becomes Art · Bespoke Atelier", "हमारी कारीगरी · ख़्वाब स्टिच")}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[12.5px] font-semibold text-stone-700">
+            <a
+              href={`https://wa.me/91${(BRAND_CONFIG?.helpline || "9876543210").replace(/\D/g, "")}`}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-[var(--primary)] transition-colors inline-flex items-center gap-1"
+            >
+              <span>WhatsApp: {BRAND_CONFIG?.helpline || "+91 98765 43210"}</span>
+            </a>
+            <span className="text-stone-300 hidden sm:inline">•</span>
+            <a
+              href={`https://instagram.com/${(BRAND_CONFIG?.instagram || "khwabstitch").replace(/^@/, "")}`}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-[var(--primary)] transition-colors inline-flex items-center gap-1"
+            >
+              <span>Instagram: {BRAND_CONFIG?.instagram || "@khwabstitch"}</span>
+            </a>
+            {BRAND_CONFIG?.website && (
+              <>
+                <span className="text-stone-300 hidden sm:inline">•</span>
+                <a
+                  href={BRAND_CONFIG.website.startsWith("http") ? BRAND_CONFIG.website : `https://${BRAND_CONFIG.website}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-[var(--primary)] transition-colors"
+                >
+                  {BRAND_CONFIG.website}
+                </a>
+              </>
+            )}
+            <span className="text-stone-300 hidden sm:inline">•</span>
+            <button
+              type="button"
+              onClick={activeRole === "admin" ? navigateToCustomer : navigateToAdmin}
+              className="text-[var(--primary)] hover:underline text-[12px] font-bold cursor-pointer"
+            >
+              {activeRole === "admin"
+                ? t("Customer Website / ग्राहक वेबसाइट", "ग्राहक वेबसाइट पर जाएं")
+                : t("Master Tailor Portal / कारीगर लॉगिन", "कारीगर पोर्टल")}
+            </button>
+          </div>
+
+          <p className="text-[11.5px] text-stone-500 pt-1">
+            © {new Date().getFullYear()} {BRAND_CONFIG?.name || "Khwab Stitch"}. All rights reserved. {t("Custom Tailoring & Studio", "कस्टम सिलाई व डिज़ाइनर बुटीक")}
+          </p>
+        </div>
+      </footer>
 
       {/* LIGHTBOX */}
       {lightbox?.open && (

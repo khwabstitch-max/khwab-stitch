@@ -250,12 +250,12 @@ export default function OutfitSelectionStep({
               </div>
 
               {/* Content Details */}
-              <div className="flex flex-1 flex-col justify-between p-4">
-                <div>
-                  <h3 className="font-serif text-[16px] sm:text-[17px] font-bold text-[var(--primary-dark)] group-hover:text-[var(--primary)] transition-colors">
+              <div className="flex flex-1 flex-col justify-between p-4 text-center">
+                <div className="text-center">
+                  <h3 className="font-serif text-[16px] sm:text-[17px] font-bold text-[var(--primary-dark)] group-hover:text-[var(--primary)] transition-colors text-center">
                     {outfitLabel}
                   </h3>
-                  <p className="mt-1 text-[12px] sm:text-[12.5px] text-[var(--text-light)] leading-snug">
+                  <p className="mt-1 text-[12px] sm:text-[12.5px] text-[var(--text-light)] leading-snug text-center">
                     {outfitDesc}
                   </p>
                 </div>
