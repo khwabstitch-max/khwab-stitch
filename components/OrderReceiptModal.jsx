@@ -812,9 +812,14 @@ export default function OrderReceiptModal({ order, onClose }) {
                   <span>Instagram: {BRAND_CONFIG?.instagram || "@khwabstitch"}</span>
                 </a>
                 {BRAND_CONFIG?.website && (
-                  <span className="inline-flex items-center gap-1.5 text-stone-700 bg-stone-50 px-3.5 py-1.5 rounded-full border border-stone-200">
+                  <a
+                    href={BRAND_CONFIG.website.startsWith("http") ? BRAND_CONFIG.website : `https://${BRAND_CONFIG.website}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 text-stone-700 bg-stone-50 px-3.5 py-1.5 rounded-full border border-stone-200 hover:bg-stone-100 transition-colors"
+                  >
                     <span>{BRAND_CONFIG.website}</span>
-                  </span>
+                  </a>
                 )}
               </div>
             </div>

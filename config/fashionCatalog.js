@@ -21,8 +21,23 @@ import sleeveDesignsData from "../catalog/sleeveDesigns.json";
 import measurementConfigsData from "../catalog/measurementConfigs.json";
 import fabricsData from "../catalog/fabrics.json";
 
-// 1. BRAND CONFIG
-export const BRAND_CONFIG = brandData;
+// 1. BRAND CONFIG (Reads WhatsApp, Instagram, Website dynamically from .env with catalog fallback)
+export const BRAND_CONFIG = {
+  ...brandData,
+  helpline:
+    (typeof import.meta !== "undefined" &&
+      (import.meta.env?.VITE_WHATSAPP || import.meta.env?.VITE_WHATSAPP_NUMBER)) ||
+    brandData.helpline ||
+    "+91 98765 43210",
+  instagram:
+    (typeof import.meta !== "undefined" && import.meta.env?.VITE_INSTAGRAM) ||
+    brandData.instagram ||
+    "@khwabstitch",
+  website:
+    (typeof import.meta !== "undefined" && import.meta.env?.VITE_WEBSITE) ||
+    brandData.website ||
+    "khwabstitch.com",
+};
 
 // 2. CORE CATALOG DATA ARRAYS
 export const OUTFITS = outfitsData;

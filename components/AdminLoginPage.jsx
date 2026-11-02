@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Lock, ArrowRight, ShieldCheck, ArrowLeft, KeyRound } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext.jsx";
 
 export default function AdminLoginPage({
   onLogin,
@@ -7,6 +8,7 @@ export default function AdminLoginPage({
   adminError,
   adminBusy,
 }) {
+  const { lang, t } = useLanguage();
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e) => {
@@ -31,13 +33,16 @@ export default function AdminLoginPage({
         {/* TITLE */}
         <span className="inline-flex items-center gap-1.5 rounded-full bg-[#fdf5f0] px-3 py-1 text-[11px] font-bold text-[var(--primary)] border border-[#f3ddd1] uppercase tracking-wider mb-2">
           <ShieldCheck size={13} />
-          <span>Atelier Portal / कारीगर पोर्टल</span>
+          <span>{t("Atelier Portal", "कारीगर पोर्टल")}</span>
         </span>
         <h1 className="font-serif text-[23px] sm:text-[26px] font-bold text-[var(--primary-dark)] leading-tight">
-          Master Tailor Sign In
+          {t("Master Tailor Sign In", "मास्टर दर्जी लॉगिन")}
         </h1>
         <p className="mt-1 text-[12.5px] text-[var(--text-light)]">
-          Enter atelier password to manage customer orders / ऑर्डर देखने के लिए पासवर्ड दर्ज करें
+          {t(
+            "Enter atelier password to manage customer orders",
+            "ऑर्डर देखने व प्रबंधित करने के लिए पासवर्ड दर्ज करें"
+          )}
         </p>
 
         {/* ERROR DISPLAY */}
@@ -52,7 +57,7 @@ export default function AdminLoginPage({
           <label className="block">
             <span className="flex items-center gap-1.5 text-[12px] font-bold text-[var(--primary-dark)] mb-1.5">
               <Lock size={13} className="text-[var(--primary)]" />
-              <span>Password / पासवर्ड</span>
+              <span>{t("Password", "पासवर्ड")}</span>
             </span>
             <div className="relative">
               <input
@@ -61,7 +66,7 @@ export default function AdminLoginPage({
                 autoFocus
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter admin password..."
+                placeholder={t("Enter admin password...", "कारीगर पासवर्ड दर्ज करें...")}
                 className="w-full rounded-xl border-2 border-[#eedfd6] bg-[#fffdfb] px-4 py-3 text-[14px] outline-none transition-all focus:border-[var(--primary)] focus:bg-white focus:ring-3 focus:ring-[rgba(107,38,54,0.12)]"
               />
             </div>
@@ -70,14 +75,14 @@ export default function AdminLoginPage({
           <button
             type="submit"
             disabled={adminBusy}
-            className="w-full h-12 rounded-full text-white font-bold text-[14px] flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-opacity disabled:opacity-60"
+            className="w-full h-12 rounded-full text-white font-bold text-[14px] flex items-center justify-center gap-2 shadow-md hover:opacity-95 transition-opacity disabled:opacity-60 cursor-pointer"
             style={{ background: "linear-gradient(90deg,var(--primary),var(--secondary))" }}
           >
             {adminBusy ? (
-              <span>Verifying... / सत्यापन जारी...</span>
+              <span>{t("Verifying...", "सत्यापन जारी...")}</span>
             ) : (
               <>
-                <span>Sign In / लॉगिन करें</span>
+                <span>{t("Sign In", "लॉगिन करें")}</span>
                 <ArrowRight size={16} />
               </>
             )}
@@ -89,10 +94,10 @@ export default function AdminLoginPage({
           <button
             type="button"
             onClick={onBackToCustomer}
-            className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[var(--primary)] hover:underline"
+            className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[var(--primary)] hover:underline cursor-pointer"
           >
             <ArrowLeft size={13} />
-            <span>Return to Customer Website / ग्राहक वेबसाइट पर जाएं</span>
+            <span>{t("Return to Customer Website", "ग्राहक वेबसाइट पर जाएं")}</span>
           </button>
         </div>
       </div>
