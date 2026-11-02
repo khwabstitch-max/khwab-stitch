@@ -79,13 +79,16 @@ export default function MeasurementsStep({
   // Only self measurement or local tailor require manual measurement entry & sketch photo
   const isSelfMeasure = !isCourier && !isVideoCall;
 
-  // Selected outfit label & sketch info
+  // Selected outfit label & photo guide info
   const outfitTitle = outfit.type || "Outfit";
   const isBlouse = outfit.type === "Blouse";
   const outfitGuideImg =
     MEASUREMENT_GUIDES?.[outfit.type] ||
-    "./images/measurement_guides/measurement_guide_kurti.png";
-  const kurtiSketchImg = outfitGuideImg;
+    (outfit.type === "Blouse"
+      ? "./images/measurement_guides/measurement_guide_blouse.jpg"
+      : (outfit.type === "Suit Upper" || outfit.type === "Suit")
+      ? "./images/measurement_guides/measurement_guide_suit.jpg"
+      : "./images/measurement_guides/measurement_guide_kurti.jpg");
 
   const handleMethodChange = (event) => {
     const selected = event.target.value;
@@ -93,11 +96,11 @@ export default function MeasurementsStep({
   };
 
   const handleZoomSketch = () => {
-    if (openLightbox && !isBlouse) {
+    if (openLightbox) {
       openLightbox(
         t(`${outfitTitle} Measurement Guide`, `${outfitTitle} नाप का रेखाचित्र`),
-        kurtiSketchImg,
-        t("Follow points 1 to 10 on diagram", "चित्र में 1 से 10 तक के बिंदुओं के अनुसार नाप लें")
+        outfitGuideImg,
+        t("Follow points on the diagram to take exact sizes", "चित्र में दिए गए बिंदुओं के अनुसार सही नाप लें")
       );
     } else {
       setShowSketchModal(true);
@@ -372,27 +375,34 @@ export default function MeasurementsStep({
 
                 <div className="p-3 sm:p-4 md:p-6">
                   <div className="grid gap-6 lg:grid-cols-12 lg:items-center">
-                    {/* LEFT: THE SKETCH IMAGE / SVG */}
+                    {/* LEFT: THE MEASUREMENT PHOTO GUIDE */}
                     <div className="lg:col-span-6 flex flex-col items-center justify-center">
-                      {isBlouse ? (
-                        <BlouseMeasurementSketch />
-                      ) : (
-                        <div className="relative group max-w-[420px] w-full rounded-2xl border border-[#eedfd6] bg-white p-3 shadow-xs">
-                          <img
-                            src={kurtiSketchImg}
-                            alt={`${outfitTitle} Measurement Diagram`}
-                            className="mx-auto h-auto max-h-[460px] w-full object-contain cursor-zoom-in"
-                            onClick={handleZoomSketch}
-                          />
-                          <button
-                            type="button"
-                            onClick={handleZoomSketch}
-                            className="absolute bottom-5 right-5 flex items-center gap-1 rounded-full bg-black/70 px-3 py-1.5 text-[11px] font-bold text-white shadow-md backdrop-blur-xs transition-opacity hover:bg-black cursor-pointer"
-                          >
-                            <Maximize2 size={13} /> {t("Click to Enlarge", "बड़ा देखें")}
-                          </button>
-                        </div>
-                      )}
+                      <div className="relative group max-w-[420px] w-full rounded-2xl border border-[#eedfd6] bg-white p-2.5 shadow-xs">
+                        <img
+                          src={outfitGuideImg}
+                          alt={`${outfitTitle} Measurement Diagram`}
+                          className="mx-auto h-auto max-h-[490px] w-full object-contain cursor-zoom-in rounded-xl transition-transform hover:scale-[1.01]"
+                          onClick={handleZoomSketch}
+                          onError={(e) => {
+                            if (!e.currentTarget.src.includes(".png")) {
+                              e.currentTarget.src = outfitGuideImg.replace(".jpg", ".png");
+                            }
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleZoomSketch}
+                          className="absolute bottom-4 right-4 flex items-center gap-1 rounded-full bg-black/75 px-3 py-1.5 text-[11px] font-bold text-white shadow-md backdrop-blur-xs transition-opacity hover:bg-black cursor-pointer"
+                        >
+                          <Maximize2 size={13} /> {t("Click to Enlarge", "बड़ा देखें")}
+                        </button>
+                      </div>
+                      <p className="mt-2 text-[11.5px] font-medium text-stone-600 text-center">
+                        {t(
+                          "Click on image to enlarge points and lines",
+                          "पॉइंट्स को साफ़ व बड़ा देखने के लिए चित्र पर क्लिक करें"
+                        )}
+                      </p>
                     </div>
 
                     {/* RIGHT: NUMBERED QUICK GUIDE */}
@@ -540,15 +550,16 @@ export default function MeasurementsStep({
               </button>
             </div>
             <div className="flex justify-center p-2">
-              {isBlouse ? (
-                <BlouseMeasurementSketch />
-              ) : (
-                <img
-                  src={kurtiSketchImg}
-                  alt={`${outfitTitle} Measurement Diagram`}
-                  className="mx-auto h-auto max-h-[70vh] w-full object-contain"
-                />
-              )}
+              <img
+                src={outfitGuideImg}
+                alt={`${outfitTitle} Measurement Diagram`}
+                className="mx-auto h-auto max-h-[75vh] w-full object-contain rounded-xl"
+                onError={(e) => {
+                  if (!e.currentTarget.src.includes(".png")) {
+                    e.currentTarget.src = outfitGuideImg.replace(".jpg", ".png");
+                  }
+                }}
+              />
             </div>
             <div className="mt-4 text-center">
               <button
