@@ -31,7 +31,7 @@ jobs:
         run: npm test
       - name: Build
         env:
-          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || 'https://khwab-stitch.onrender.com' }}
           VITE_BASE_PATH: /khwab-stitch/
           VITE_ADMIN_PASSWORD: ${{ secrets.VITE_ADMIN_PASSWORD || vars.VITE_ADMIN_PASSWORD || 'Dhaniya123' }}
           VITE_WHATSAPP: ${{ secrets.VITE_WHATSAPP || vars.VITE_WHATSAPP || '+91 93681 36683' }}

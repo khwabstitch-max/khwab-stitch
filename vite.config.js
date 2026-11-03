@@ -11,6 +11,7 @@ export default defineConfig(({ command, mode }) => {
   return {
     base: process.env.VITE_BASE_PATH || "/",
     define: {
+      "import.meta.env.VITE_API_BASE_URL": JSON.stringify(process.env.VITE_API_BASE_URL || env.VITE_API_BASE_URL || (command === "build" ? "https://khwab-stitch.onrender.com" : "")),
       "import.meta.env.VITE_ADMIN_PASSWORD": JSON.stringify(adminPassword),
       "import.meta.env.VITE_WHATSAPP": JSON.stringify(whatsapp),
       "import.meta.env.VITE_WEBSITE": JSON.stringify(website),

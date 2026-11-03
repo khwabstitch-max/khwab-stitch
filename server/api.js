@@ -201,6 +201,9 @@ export function createApiMiddleware({ adminPassword, databasePath, allowedOrigin
     if (origins.has(origin)) return true;
     try {
       const parsed = new URL(origin);
+      if (parsed.hostname === "khwabstitch-max.github.io" || parsed.hostname === "khwab-stitch.onrender.com") {
+        return true;
+      }
       if (parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1" || parsed.hostname === "::1") {
         return true;
       }
