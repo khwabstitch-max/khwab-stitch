@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BRAND_CONFIG, resolveFabric } from "../config/fashionCatalog.js";
+import { BRAND_CONFIG, resolveFabric, getWhatsAppPhone } from "../config/fashionCatalog.js";
 import {
   Download,
   RefreshCw,
@@ -545,7 +545,7 @@ export default function AdminDashboard({
                 /\D/g,
                 ""
               );
-              const whatsappUrl = `https://wa.me/91${whatsappClean}?text=${encodeURIComponent(
+              const whatsappUrl = `https://wa.me/${getWhatsAppPhone(order.customer?.whatsapp)}?text=${encodeURIComponent(
                 `Namaste ${order.customer?.name || "Customer"} ji, we received your order #${order.orderId} for ${order.outfit?.type} at Khwab Stitch Boutique!`
               )}`;
 
