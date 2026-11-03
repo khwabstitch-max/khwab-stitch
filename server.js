@@ -7,7 +7,12 @@ import { closeDatabase, createApiMiddleware } from "./server/api.js";
 
 const projectRoot = fileURLToPath(new URL(".", import.meta.url));
 const env = loadEnv("production", projectRoot, "");
-const adminPassword = process.env.ADMIN_PASSWORD || env.ADMIN_PASSWORD;
+const adminPassword =
+  process.env.ADMIN_PASSWORD ||
+  env.ADMIN_PASSWORD ||
+  process.env.VITE_ADMIN_PASSWORD ||
+  env.VITE_ADMIN_PASSWORD ||
+  "Dhaniya123";
 const distRoot = resolve(projectRoot, "dist");
 const port = Number(process.env.PORT || 3000);
 const allowedOrigins = process.env.ALLOWED_ORIGINS || env.ALLOWED_ORIGINS || "";

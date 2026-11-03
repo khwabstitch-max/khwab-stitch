@@ -16,11 +16,15 @@ import {
   Tag,
   ShieldCheck,
   CheckCircle2,
-  Instagram,
+  Instagram, Globe,
 } from "lucide-react";
 
 import {
   BRAND_CONFIG,
+  getWhatsAppPhone,
+  formatDisplayPhone,
+  formatDisplayWebsite,
+  getWebsiteUrl,
   DESIGN_CODE_MAP as DESIGN_CODE_CATALOG,
   OUTFIT_MAP as OUTFIT_CATALOG,
   resolveSleeveLength,
@@ -794,13 +798,13 @@ export default function OrderReceiptModal({ order, onClose }) {
               </p>
               <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5 mt-2.5 text-[12.5px] sm:text-[13px] font-bold">
                 <a
-                  href={`https://wa.me/91${(BRAND_CONFIG?.helpline || "9876543210").replace(/\D/g, "")}`}
+                  href={`https://wa.me/${getWhatsAppPhone(BRAND_CONFIG.helpline)}`}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 text-emerald-900 bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-300 hover:bg-emerald-100 transition-colors"
                 >
                   <Phone size={14} className="text-emerald-700" />
-                  <span>WhatsApp: {BRAND_CONFIG?.helpline || "+91 98765 43210"}</span>
+                  <span>WhatsApp: {formatDisplayPhone(BRAND_CONFIG.helpline)}</span>
                 </a>
                 <a
                   href={`https://instagram.com/${(BRAND_CONFIG?.instagram || "khwabstitch").replace(/^@/, "")}`}
@@ -813,12 +817,13 @@ export default function OrderReceiptModal({ order, onClose }) {
                 </a>
                 {BRAND_CONFIG?.website && (
                   <a
-                    href={BRAND_CONFIG.website.startsWith("http") ? BRAND_CONFIG.website : `https://${BRAND_CONFIG.website}`}
+                    href={getWebsiteUrl(BRAND_CONFIG.website)}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-1.5 text-stone-700 bg-stone-50 px-3.5 py-1.5 rounded-full border border-stone-200 hover:bg-stone-100 transition-colors"
                   >
-                    <span>{BRAND_CONFIG.website}</span>
+                    <Globe size={13} className="text-stone-600" />
+                    <span>{formatDisplayWebsite(BRAND_CONFIG.website)}</span>
                   </a>
                 )}
               </div>

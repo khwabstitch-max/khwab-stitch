@@ -129,7 +129,8 @@ export default function StepHeader({
       </div>
 
       {/* CUSTOMER STEP PROGRESS BAR (ONLY ON CUSTOMER PAGE) */}
-      {activeMode === "customer" && (
+      {/* CUSTOMER STEP PROGRESS BAR (ONLY ON CUSTOMER PAGE & BEFORE ORDER CONFIRMED) */}
+      {activeMode === "customer" && !hasSuccessOrder && (
         <div className="step-progress">
           <div className="step-progress__top flex items-center justify-between">
             <span className="flex items-center gap-1.5">

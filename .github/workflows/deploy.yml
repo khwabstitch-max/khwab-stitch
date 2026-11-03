@@ -34,9 +34,9 @@ jobs:
           VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
           VITE_BASE_PATH: /khwab-stitch/
           VITE_ADMIN_PASSWORD: ${{ secrets.VITE_ADMIN_PASSWORD || vars.VITE_ADMIN_PASSWORD || 'Dhaniya123' }}
-          VITE_WHATSAPP: ${{ vars.VITE_WHATSAPP || '+91 98765 43210' }}
-          VITE_INSTAGRAM: ${{ vars.VITE_INSTAGRAM || '@khwabstitch' }}
-          VITE_WEBSITE: ${{ vars.VITE_WEBSITE || 'khwabstitch.com' }}
+          VITE_WHATSAPP: ${{ secrets.VITE_WHATSAPP || vars.VITE_WHATSAPP || '+91 93681 36683' }}
+          VITE_INSTAGRAM: ${{ secrets.VITE_INSTAGRAM || vars.VITE_INSTAGRAM || '@khwabstitch' }}
+          VITE_WEBSITE: ${{ secrets.VITE_WEBSITE || vars.VITE_WEBSITE || 'https://khwabstitch-max.github.io/khwab-stitch/' }}
         run: |
           if [ -z "$VITE_API_BASE_URL" ]; then
             echo "Notice: VITE_API_BASE_URL variable is not set. Building with default origin."

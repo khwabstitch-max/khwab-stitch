@@ -26,18 +26,54 @@ export const BRAND_CONFIG = {
   ...brandData,
   helpline:
     (typeof import.meta !== "undefined" &&
-      (import.meta.env?.VITE_WHATSAPP || import.meta.env?.VITE_WHATSAPP_NUMBER)) ||
+      (import.meta.env?.VITE_WHATSAPP ||
+       import.meta.env?.VITE_WHATSAPP_NUMBER ||
+       import.meta.env?.WHATSAPP)) ||
     brandData.helpline ||
-    "+91 98765 43210",
+    "+91 93681 36683",
   instagram:
-    (typeof import.meta !== "undefined" && import.meta.env?.VITE_INSTAGRAM) ||
+    (typeof import.meta !== "undefined" &&
+      (import.meta.env?.VITE_INSTAGRAM ||
+       import.meta.env?.INSTAGRAM)) ||
     brandData.instagram ||
     "@khwabstitch",
   website:
-    (typeof import.meta !== "undefined" && import.meta.env?.VITE_WEBSITE) ||
+    (typeof import.meta !== "undefined" &&
+      (import.meta.env?.VITE_WEBSITE ||
+       import.meta.env?.WEBSITE)) ||
     brandData.website ||
-    "khwabstitch.com",
+    "https://khwabstitch-max.github.io/khwab-stitch/",
 };
+
+export function getWhatsAppPhone(raw) {
+  if (!raw) return "919368136683";
+  const digits = String(raw).replace(/\D/g, "");
+  if (digits.length === 10) return `91${digits}`;
+  if (digits.length === 12 && digits.startsWith("91")) return digits;
+  if (digits.length === 11 && digits.startsWith("0")) return `91${digits.slice(1)}`;
+  return digits;
+}
+
+export function formatDisplayPhone(raw) {
+  if (!raw) return "+91 93681 36683";
+  const digits = String(raw).replace(/\D/g, "");
+  const last10 = digits.slice(-10);
+  if (last10.length === 10) {
+    return `+91 ${last10.slice(0, 5)} ${last10.slice(5)}`;
+  }
+  return String(raw);
+}
+
+export function formatDisplayWebsite(raw) {
+  if (!raw) return "khwabstitch.com";
+  return String(raw).replace(/^https?:\/\//i, "").replace(/\/$/, "");
+}
+
+export function getWebsiteUrl(raw) {
+  if (!raw) return "https://khwabstitch-max.github.io/khwab-stitch/";
+  const str = String(raw).trim();
+  return str.startsWith("http://") || str.startsWith("https://") ? str : `https://${str}`;
+}
 
 // 2. CORE CATALOG DATA ARRAYS
 export const OUTFITS = outfitsData;
