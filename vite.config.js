@@ -27,7 +27,7 @@ export default defineConfig(({ command, mode }) => {
             server.middlewares.use(createApiMiddleware({
               adminPassword,
               databasePath,
-              allowedOrigins: process.env.ALLOWED_ORIGINS || env.ALLOWED_ORIGINS || "http://localhost:5173,http://127.0.0.1:5173",
+              allowedOrigins: process.env.ALLOWED_ORIGINS || env.ALLOWED_ORIGINS || "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,http://localhost:3000,http://127.0.0.1:3000,http://localhost:4173,http://127.0.0.1:4173,https://khwabstitch-max.github.io",
             }));
           } catch (error) {
             console.warn("Dev API middleware disabled:", error.message);

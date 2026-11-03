@@ -147,7 +147,13 @@ export default function App() {
   };
 
   const [activeRole, setActiveRole] = useState(getInitialRoute);
-  const [adminToken, setAdminToken] = useState("");
+  const [adminToken, setAdminToken] = useState(() => {
+    try {
+      return sessionStorage.getItem("khwab_admin_token") || "";
+    } catch {
+      return "";
+    }
+  });
   const [adminError, setAdminError] = useState("");
   const [adminBusy, setAdminBusy] = useState(false);
   const [stepError, setStepError] = useState("");
@@ -167,6 +173,10 @@ export default function App() {
     setActiveRole("admin");
     window.location.hash = "admin";
     window.scrollTo({ top: 0, behavior: "smooth" });
+    try {
+      const token = sessionStorage.getItem("khwab_admin_token") || adminToken;
+      reloadRecords(token).catch(() => {});
+    } catch (e) {}
   };
 
   // Sync route on browser forward / back button or hash change
@@ -208,11 +218,7 @@ export default function App() {
       }
     };
 
-    try {
-      sessionStorage.removeItem("khwab_admin_token");
-    } catch (error) {
-      console.warn("Could not clear the previous admin session from this browser.", error);
-    }
+    // Session token is preserved for tailor convenience
     checkApi();
     const interval = window.setInterval(checkApi, 30000);
     return () => {
@@ -222,9 +228,27 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (activeRole === "admin" && adminToken) {
-      reloadRecords(adminToken).catch(() => {});
-    }
+    if (activeRole !== "admin") return;
+
+    const token = adminToken || (typeof sessionStorage !== "undefined" && sessionStorage.getItem("khwab_admin_token")) || "";
+    reloadRecords(token).catch(() => {});
+
+    // Real-time synchronization across browser tabs and local events
+    const handleSync = () => {
+      reloadRecords(token).catch(() => {});
+    };
+
+    window.addEventListener("storage", handleSync);
+    window.addEventListener("khwab_order_created", handleSync);
+
+    // Auto-poll every 5 seconds so new orders appear automatically
+    const pollInterval = window.setInterval(handleSync, 5000);
+
+    return () => {
+      window.removeEventListener("storage", handleSync);
+      window.removeEventListener("khwab_order_created", handleSync);
+      window.clearInterval(pollInterval);
+    };
   }, [activeRole, adminToken]);
 
   async function apiRequest(url, options = {}) {
@@ -358,6 +382,7 @@ export default function App() {
 
         setOrders(merged);
         setAdminToken(input);
+        try { sessionStorage.setItem("khwab_admin_token", input); } catch (e) {}
         setAdminError("");
         try {
           localStorage.setItem("khwab_orders", JSON.stringify(merged));
@@ -377,6 +402,7 @@ export default function App() {
           } catch (e) {}
           setOrders(localOrders);
           setAdminToken(input);
+        try { sessionStorage.setItem("khwab_admin_token", input); } catch (e) {}
           setAdminError("");
           return;
         }
@@ -392,6 +418,7 @@ export default function App() {
 
   const handleAdminLogout = () => {
     setAdminToken("");
+    try { sessionStorage.removeItem("khwab_admin_token"); } catch (e) {}
     setOrders([]);
   };
 
@@ -584,6 +611,18 @@ export default function App() {
       setSuccessOrder(savedOrder);
       setReceiptOrder(savedOrder);
       setEditingFromReview(false);
+
+      // Immediately update orders state so atelier admin sees it without delay
+      setOrders((prev) => {
+        const map = new Map();
+        map.set(savedOrder.orderId, savedOrder);
+        (prev || []).forEach((o) => o?.orderId && map.set(o.orderId, o));
+        return Array.from(map.values());
+      });
+
+      try {
+        window.dispatchEvent(new Event("khwab_order_created"));
+      } catch (e) {}
     } catch (error) {
       setStepError(t(
         `Your order could not be saved: ${error.message}. Your details are still on this page; please try again.`,

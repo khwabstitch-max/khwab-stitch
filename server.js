@@ -15,7 +15,8 @@ const adminPassword =
   "Dhaniya123";
 const distRoot = resolve(projectRoot, "dist");
 const port = Number(process.env.PORT || 3000);
-const allowedOrigins = process.env.ALLOWED_ORIGINS || env.ALLOWED_ORIGINS || "";
+const defaultOrigins = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,http://localhost:3000,http://127.0.0.1:3000,http://localhost:4173,http://127.0.0.1:4173,https://khwabstitch-max.github.io";
+const allowedOrigins = process.env.ALLOWED_ORIGINS || env.ALLOWED_ORIGINS || defaultOrigins;
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
   ".html": "text/html; charset=utf-8",

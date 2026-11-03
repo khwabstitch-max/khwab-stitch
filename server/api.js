@@ -86,7 +86,11 @@ function validateOrder(order) {
   if (!order || typeof order !== "object" || Array.isArray(order)) return "Order details are missing.";
   const customer = order.customer || {};
   const cityState = customer.cityState || [customer.city, customer.state].filter(Boolean).join(", ");
-  const cleanPhone = typeof customer.whatsapp === "string" ? customer.whatsapp.replace(/\D/g, "") : "";
+  const rawPhone = typeof customer.whatsapp === "string" ? customer.whatsapp.replace(/\D/g, "") : "";
+  const cleanPhone = rawPhone.length === 12 && rawPhone.startsWith("91") ? rawPhone.slice(2) : rawPhone;
+  const pin = typeof customer.pin === "string" ? customer.pin.replace(/\D/g, "").slice(0, 6) : "";
+  const address = (order.delivery?.address || customer.address || "").trim();
+
   if (order.privacyConsent !== true) return "Please confirm the order privacy notice.";
   if (!customer.name || !validText(customer.name, 120)) {
     return "Please provide customer name.";
@@ -97,13 +101,13 @@ function validateOrder(order) {
   if (!validText(cityState, 160) && !validText(customer.city, 120)) {
     return "Please provide a city.";
   }
-  if (typeof customer.pin !== "string" || !/^\d{6}$/.test(customer.pin)) {
+  if (pin.length !== 6) {
     return "Please provide a valid PIN code.";
   }
   if (!validText(order.outfit?.type, 40) || !outfitTypes.has(order.outfit.type)) {
     return "Please select a valid outfit.";
   }
-  if (!validText(order.delivery?.address, 1000)) return "Please enter a delivery address.";
+  if (!address || !validText(address, 1000)) return "Please enter a delivery address.";
   return null;
 }
 
@@ -192,6 +196,18 @@ export function createApiMiddleware({ adminPassword, databasePath, allowedOrigin
     allowedOrigins.split(",").map((origin) => origin.trim()).filter(Boolean)
   );
 
+  function isAllowedOrigin(origin) {
+    if (!origin) return true;
+    if (origins.has(origin)) return true;
+    try {
+      const parsed = new URL(origin);
+      if (parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1" || parsed.hostname === "::1") {
+        return true;
+      }
+    } catch {}
+    return false;
+  }
+
   return async function apiMiddleware(request, response, next) {
     const url = new URL(request.url || "/", "http://localhost");
     const { pathname } = url;
@@ -200,7 +216,7 @@ export function createApiMiddleware({ adminPassword, databasePath, allowedOrigin
     try {
       const origin = request.headers.origin;
       if (origin) {
-        if (!origins.has(origin)) {
+        if (!isAllowedOrigin(origin)) {
           return sendJson(response, 403, { error: "This website is not allowed to access the order service." });
         }
         response.setHeader("access-control-allow-origin", origin);
